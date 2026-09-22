@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary-cyan: #00E5FF;
+    --primary-cyan-dark: #00B8D4;
+    --bg-darkest: #060B14;
+    --bg-dark: #0A1628;
+    --bg-card: rgba(10, 22, 40, 0.65);
+    --border-cyan: rgba(0, 229, 255, 0.18);
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-darkest);
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+}
+
+.font-brand {
+  font-family: 'Permanent Marker', cursive, sans-serif;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(10, 22, 40, 0.65);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(0, 229, 255, 0.18);
+}
+
+.glass-nav {
+  background: rgba(6, 11, 20, 0.85);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+}
+
+.glass-stats {
+  background: linear-gradient(180deg, rgba(10, 22, 40, 0.80) 0%, rgba(6, 11, 20, 0.95) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+}
+
+/* Glow Effects */
+.cyan-glow {
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+}
+
+.cyan-glow-lg {
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.45);
+}
+
+.card-hover-glow:hover {
+  border-color: rgba(0, 229, 255, 0.45);
+  box-shadow: 0 10px 35px rgba(0, 229, 255, 0.12);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060B14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.6);
+}
+
+/* Mouse Scroll Animation */
+@keyframes scrollDot {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0.2;
+  }
+}
+
+.animate-scroll-dot {
+  animation: scrollDot 1.8s infinite ease-in-out;
+}

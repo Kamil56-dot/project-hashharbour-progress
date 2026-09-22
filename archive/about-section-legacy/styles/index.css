@@ -1,0 +1,290 @@
+/* ─────────────────────────────────────────────────────────────
+   HASHHARBOUR — CSS VARIABLE SYSTEM & GLOBAL STYLES
+   Source of Truth: forensic_audit.md, design_dna.md, architecture_blueprint.md
+   ───────────────────────────────────────────────────────────── */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@font-face {
+  font-family: 'HashHarbourCustom';
+  src: url('../assets/fonts/ZiKuXingQiuFeiYangTi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STEP 4 — CSS CUSTOM PROPERTIES (SINGLE SOURCE OF TRUTH)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Surface Scale — forensic_audit.md §9 */
+  --surface-950: #060a14;
+  --surface-900: #0a0f1e;
+  --surface-850: #0d1524;
+  --surface-800: #111b2b;
+  --surface-750: #152238;
+  --surface-700: #1a2a3f;
+  --surface-600: #233550;
+  --surface-500: #2d4060;
+
+  /* Accent Scale (Cyan) — forensic_audit.md §9 */
+  --accent-50: #e5fbff;
+  --accent-100: #b3f3ff;
+  --accent-200: #66e8ff;
+  --accent-300: #33ddff;
+  --accent-400: #1adbff;
+  --accent-500: #00d4ff;
+  --accent-600: #00bcd4;
+  --accent-700: #009ab0;
+  --accent-800: #007a8c;
+  --accent-900: #005a68;
+
+  /* Text Variants — forensic_audit.md §9 */
+  --text-primary: #ffffff;
+  --text-secondary: #e0e6ed;
+  --text-tertiary: #b0b8c4;
+  --text-body: #a0aab4;
+  --text-muted: #8899a6;
+  --text-disabled: #667788;
+  --text-inverse: #0a1020;
+  --text-accent: #00d4ff;
+
+  /* Border Variants — forensic_audit.md §9 */
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-muted: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-emphasis: rgba(255, 255, 255, 0.20);
+  --border-bright: rgba(255, 255, 255, 0.30);
+  --border-accent: rgba(0, 212, 255, 0.20);
+  --border-accent-strong: rgba(0, 212, 255, 0.40);
+
+  /* Glassmorphism System — forensic_audit.md §8, architecture_blueprint.md §4 */
+  --glass-bg: rgba(13, 27, 42, 0.35);
+  --glass-bg-hover: rgba(13, 27, 42, 0.40);
+  --glass-blur: 16px;
+  --glass-saturate: 1.2;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-top: rgba(255, 255, 255, 0.14);
+  --glass-border-hover: rgba(0, 212, 255, 0.30);
+
+  /* Overlay Variants — forensic_audit.md §9, §13 */
+  --overlay-heavy: rgba(10, 15, 30, 0.92);
+  --overlay-strong: rgba(10, 15, 30, 0.75);
+  --overlay-medium: rgba(10, 15, 30, 0.50);
+  --overlay-light: rgba(10, 15, 30, 0.25);
+  --overlay-subtle: rgba(10, 15, 30, 0.10);
+  --overlay-none: rgba(10, 15, 30, 0.00);
+
+  /* Glow Colors — forensic_audit.md §9 */
+  --glow-button: rgba(0, 212, 255, 0.25);
+  --glow-button-hover: rgba(0, 212, 255, 0.40);
+  --glow-card-hover: rgba(0, 212, 255, 0.08);
+  --glow-badge: rgba(0, 212, 255, 0.10);
+
+  /* Shadows — forensic_audit.md §9 */
+  --shadow-ambient: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-default: 0 4px 24px rgba(0, 0, 0, 0.12);
+  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.20);
+  --shadow-deep: 0 12px 48px rgba(0, 0, 0, 0.30);
+
+  /* Transitions & Timing — architecture_blueprint.md §5 */
+  --duration-fast: 150ms;
+  --duration-default: 200ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Container Max Widths — architecture_blueprint.md §4 */
+  --max-width-container: 1200px;
+  --max-width-hero-text: 520px;
+  --max-width-paragraph: 440px;
+  --max-width-tagline: 320px;
+
+  /* Z-Index Hierarchy */
+  --z-background: 0;
+  --z-overlay: 10;
+  --z-content: 20;
+  --z-navbar: 30;
+  --z-modal: 40;
+  --z-popover: 50;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Anton', Impact, sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STEP 5 — GLOBAL RESET & BASE STYLES
+   ───────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--surface-900);
+  color: var(--text-primary);
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--surface-900);
+  color: var(--text-body);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Text Selection */
+::selection {
+  background-color: rgba(0, 212, 255, 0.25);
+  color: var(--text-primary);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-950);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-750);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-600);
+}
+
+/* Link & Button Defaults */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STEP 11 — ACCESSIBILITY FOCUS STYLES & UTILITIES
+   ───────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 2px;
+}
+
+/* Screen Reader Only Base */
+.sr-only,
+.sr-only-focusable:not(:focus) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+.sr-only-focusable:focus {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  z-index: var(--z-popover) !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.75rem 1.25rem !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+  background-color: var(--accent-500) !important;
+  color: var(--text-inverse) !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-deep) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   REDUCED MOTION SUPPORT
+   ───────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   SUBTLE FLOAT ANIMATIONS FOR ABOUT FLOATING CARDS
+   ───────────────────────────────────────────────────────────── */
+@keyframes floatSlow {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes floatMedium {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-11px);
+  }
+}
+
+@keyframes floatFast {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: floatMedium 5.5s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: floatFast 6.2s ease-in-out infinite;
+}

@@ -1,0 +1,44 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node / Frontend dependencies & builds
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.db
+venv/
+.venv/
+env/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Heavy media assets
+frontend/src/assets/Videos/1000215164_gwr_videomp4.mp4
+frontend/src/assets/images/*.mp4

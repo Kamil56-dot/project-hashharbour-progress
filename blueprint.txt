@@ -1,0 +1,326 @@
+================================================================================
+HASHHARBOUR — PROJECT BLUEPRINT & TECHNICAL SPECIFICATION
+Prepared for College Viva (Oral Exam) & Architectural Review
+================================================================================
+
+1. PROJECT NAME & DESCRIPTION
+--------------------------------------------------------------------------------
+Project Name: HashHarbour — Next-Gen EXIM Trade & Logistics Platform
+
+HashHarbour is a modern, unified Export-Import (EXIM) trade and container logistics
+web application designed to digitize maritime freight and container management. The
+platform integrates high-fidelity, interactive 3D container inspection (powered by
+Three.js and React Three Fiber) with real-time multimodal shipment tracking, digital
+trade documentation workflows, and trade corridor insights. Logistics operators and
+cargo forwarders can interactively inspect 20-foot ISO containers with 360-degree
+rotation, query multimodal shipment progress across sea and land routes, and explore
+customs clearance and compliance pipelines through a modern web interface.
+
+
+2. ARCHITECTURE DIAGRAM (PLAIN TEXT)
+--------------------------------------------------------------------------------
+
++------------------------------------------------------------------------------+
+|                           CLIENT TIER (Frontend SPA)                         |
+|                                                                              |
+|   React 19.2.8 + Vite 8.2.0 + React Router DOM 7.18.3                        |
+|   - HomePage (/): Hero, 3D Container Section, Stats Bar                      |
+|   - AboutPage (/about): HTML5 2D Canvas Globe, Trade Pillars, Trust Layer    |
+|   - ServicesPage (/services): 5 Orthographic 3D Containers, Workflow Steps   |
+|   - ContainerPage (/container-section): Full 3D Inspector + Tracking Modal   |
+|   - HomePreview (/home-preview): Archived Hero Section Showcase              |
+|                                                                              |
+|   Graphics & UI: Three.js, React Three Fiber, Drei, Tailwind CSS, GSAP       |
++------------------------------------------------------------------------------+
+                                      |
+                           HTTP REST / JSON (Port 8000)
+                           CORS Middleware Whitelist
+                                      v
++------------------------------------------------------------------------------+
+|                          APPLICATION TIER (Backend API)                      |
+|                                                                              |
+|   Django 6.0.7 + Django REST Framework (DRF) 3.18.1                          |
+|   - hashharbour_backend/ (Settings, URLs router, WSGI)                       |
+|   - api/views.py (ReadOnlyModelViewSets + @action track)                     |
+|   - api/serializers.py (ModelSerializers for JSON transformation)            |
+|   - django-cors-headers 4.9.0 (Cross-Origin Resource Sharing)                |
++------------------------------------------------------------------------------+
+                                      |
+                                  Django ORM
+                                      v
++------------------------------------------------------------------------------+
+|                              DATA TIER (Database)                            |
+|                                                                              |
+|   SQLite 3 Relational Database (backend/db.sqlite3)                          |
+|   - StatItem Table (Key platform delivery metrics)                           |
+|   - FeatureCard Table (Platform capability highlights)                       |
+|   - Shipment Table (Tracking numbers, vessels, origins, ETAs, progress)      |
++------------------------------------------------------------------------------+
+
+
+3. TECH STACK & EXACT VERSIONS
+--------------------------------------------------------------------------------
+Frontend (from frontend/package.json):
+  - React: ^19.2.8
+  - React DOM: ^19.2.8
+  - React Router DOM: ^7.18.3
+  - Vite: ^8.2.0
+  - @vitejs/plugin-react: ^6.0.5
+  - Three.js: ^0.185.1
+  - @react-three/fiber: ^9.7.0
+  - @react-three/drei: ^10.7.8
+  - Tailwind CSS: ^3.4.19
+  - PostCSS: ^8.5.25
+  - Autoprefixer: ^10.5.4
+  - GSAP: ^3.15.0
+  - Lenis: ^1.3.26
+  - Lucide React: ^1.28.0
+  - React Icons: ^5.7.0
+  - Clsx: ^2.1.1
+
+Backend (from backend/requirements.txt & active virtual environment):
+  - Python: 3.14.6
+  - Django: 6.0.6 in requirements.txt (6.0.7 installed in venv)
+  - Django REST Framework (djangorestframework): >=3.15.0 (3.18.1 installed)
+  - Django CORS Headers (django-cors-headers): >=4.7.0 (4.9.0 installed)
+  - Database: SQLite 3 (built-in Python sqlite3 driver)
+
+
+4. FOLDER STRUCTURE & KEY SUBFOLDERS
+--------------------------------------------------------------------------------
+HashHarbour/
+  ├── frontend/                     - React 19 + Vite client single-page application.
+  │   ├── package.json              - Frontend dependencies, scripts, and build metadata.
+  │   ├── vite.config.js            - Bundler configuration, module aliases, and Rollup chunking.
+  │   ├── tailwind.config.js        - Design tokens, extended color palette, and custom fonts.
+  │   ├── index.html                - SPA HTML entry point loading Google fonts and viewport tags.
+  │   ├── public/                   - Static publicly accessible media (logos, fallback video).
+  │   └── src/                      - Client-side application source code.
+  │       ├── main.jsx              - Root React DOM mounting file wrapping App in BrowserRouter.
+  │       ├── App.jsx               - Root application router defining routes and suspense fallbacks.
+  │       ├── config/               - Runtime configuration and environment flag helpers.
+  │       ├── constants/            - Frozen data definitions (navigation links, stats, taglines).
+  │       ├── hooks/                - Custom hooks (useMediaQuery, useReducedMotion, useTypewriter).
+  │       ├── utils/                - Utility functions (cn class combiner, accessibility, performance).
+  │       ├── styles/               - CSS variables system (index.css) and keyframe animations.
+  │       ├── theme/                - Design token mappings and color specifications.
+  │       ├── assets/               - Embedded media (fonts, SVG icons, images, and videos).
+  │       ├── components/
+  │       │   ├── home/             - Light-theme landing page components (Hero, Navbar, 3D showcase).
+  │       │   ├── about/            - Dark-theme About components (2D Canvas 3D globe, pillars).
+  │       │   ├── services/         - Dark-theme Services components (5 3D container cards, workflow).
+  │       │   ├── layout/           - Shared global navigation bar, mobile menu, and official logo.
+  │       │   ├── archived-hero/    - Standalone dark hero preview section mounted at /home-preview.
+  │       │   └── ui/               - Universal Button primitive matching design tokens.
+  │       └── pages/
+  │           └── ContainerSection/ - Dedicated 3D container showcase page and tracking modal.
+  │               └── components/3d/- Procedural Three.js 20ft container model and canvas scene.
+  ├── backend/                      - Django REST Framework API application server.
+  │   ├── manage.py                 - Django command-line execution utility.
+  │   ├── seed.py                   - Database seeding script populating sample stats and shipments.
+  │   ├── requirements.txt          - Python dependency manifest.
+  │   ├── db.sqlite3                - Local SQLite relational database file.
+  │   ├── api/                      - Core API application.
+  │   │   ├── models.py             - Django ORM models (StatItem, FeatureCard, Shipment).
+  │   │   ├── serializers.py        - DRF ModelSerializers converting models to JSON.
+  │   │   ├── views.py              - ReadOnlyModelViewSets and custom tracking action.
+  │   │   ├── urls.py               - API route definitions mapped via DRF DefaultRouter.
+  │   │   └── migrations/           - Database schema migration files.
+  │   └── hashharbour_backend/      - Django root project configuration.
+  │       ├── settings.py           - Core Django configuration (installed apps, CORS, DRF settings).
+  │       ├── urls.py               - Root URL configuration routing /admin/ and /api/.
+  │       └── wsgi.py               - Web Server Gateway Interface configuration.
+  ├── archive/                      - Preserved legacy prototypes and computer vision dev scripts.
+  ├── .gitignore                    - Project-wide Git exclusion rules.
+  ├── README.md                     - Project overview and developer onboarding instructions.
+  ├── AUDIT_REPORT.md               - Full technical audit report covering code quality and security.
+  └── blueprint.txt                 - Viva examination technical blueprint (this file).
+
+
+5. KEY FEATURES
+--------------------------------------------------------------------------------
+5.1 Pages and Sections:
+  - "/" (HomePage): Light-theme landing page featuring a full-viewport hero section with
+    responsive background video, 3D 20ft ISO container showcase with step navigation and
+    color swatches, and a metrics stats bar.
+  - "/about" (AboutSection): Dark glassmorphic section featuring an interactive 2D HTML5
+    Canvas rendering a 3D-projected rotating globe with animated trade route arcs, glowing
+    port nodes, floating status badges, trade pillars, and security trust layers.
+  - "/services" (ServicesSection): Dark-theme logistics services display featuring 5
+    orthographic 3D container renders stencil-printed with service names, titles, and
+    descriptions, accompanied by workflow diagrams and call-to-action cards.
+  - "/container-section" (ContainerPage): Dedicated 3D container inspection workshop
+    with orbital drag, scroll-to-zoom, 8 industrial color finishes, ISO standard
+    specifications, and the integrated shipment tracking modal.
+  - "/home-preview" (ArchivedHero): Standalone dark hero section with GSAP entrance
+    choreography, multiline typewriter effect, feature cards, and statistics.
+
+5.2 Shipment Tracking System:
+  - Users enter a tracking number (e.g. "HH-100293" or "HH-849201") in the tracking modal.
+  - An asynchronous HTTP GET request is dispatched to:
+    http://localhost:8000/api/shipments/track/?tracking_no=<ID>
+  - The backend queries the SQLite database via Django ORM and returns shipment metadata:
+    status ("In Transit", "Customs Cleared"), origin, destination, vessel name, ETA date,
+    voyage progress percentage, and last checkpoint location.
+  - The client displays an animated progress bar, status ping indicator, and route points.
+  - Includes a fallback response simulation for numbers prefixed with "HH" if the Django
+    server is offline.
+
+5.3 3D Interactive Container Viewer:
+  - Built with Three.js, @react-three/fiber, and @react-three/drei.
+  - Procedurally constructs a 20ft ISO 668 shipping container: corrugated side panels,
+    transverse die-pressed roof corrugation, corner castings, double-door locking rods,
+    hinges, cam keepers, and safety hazard decals.
+  - Uses PBR (Physically Based Rendering) materials simulating marine-grade corten steel
+    with procedural bump maps (orange peel paint texture) and roughness maps.
+  - Supports 360° orbital rotation, pitch clamping, inertial damping, idle auto-rotation
+    with smooth deceleration on interaction, and 1-second idle resume timer.
+  - Live color selector dynamically updates PBR material colors across 8 marine presets.
+
+
+6. DATABASE MODELS (backend/api/models.py)
+--------------------------------------------------------------------------------
+6.1 StatItem:
+  - number (CharField, max_length=50): Display count or percentage (e.g. "1200+").
+  - label (CharField, max_length=100): Primary label (e.g. "Shipments Delivered").
+  - sublabel (CharField, max_length=150): Supporting text (e.g. "Across the Globe").
+  - icon_name (CharField, max_length=50, default="Ship"): Lucide icon component name.
+  - order (IntegerField, default=0): Sort ordering for list presentation.
+  - Meta: ordering = ['order']
+
+6.2 FeatureCard:
+  - title (CharField, max_length=100): Headline name of the feature.
+  - description (TextField): In-depth summary of feature functionality.
+  - icon_name (CharField, max_length=50, default="Ship"): Lucide icon component name.
+  - order (IntegerField, default=0): Sort ordering for list presentation.
+  - Meta: ordering = ['order']
+
+6.3 Shipment:
+  - tracking_number (CharField, max_length=50, unique=True): Unique tracking identifier.
+  - status (CharField, max_length=50, choices=STATUS_CHOICES, default='In Transit'):
+    Valid choices: 'Booked', 'In Transit', 'Customs Cleared', 'Delivered'.
+  - origin (CharField, max_length=150): Origin port name and country code.
+  - destination (CharField, max_length=150): Destination gateway and country code.
+  - vessel (CharField, max_length=100): Maritime cargo vessel or carrier name.
+  - eta (DateField): Estimated time of delivery / port arrival date.
+  - progress_percent (IntegerField, default=50): Voyage completion percentage (0-100).
+  - last_update (CharField, max_length=255): Descriptive string of last known checkpoint.
+  - created_at (DateTimeField, auto_now_add=True): Timestamp when shipment was booked.
+  - updated_at (DateTimeField, auto_now=True): Timestamp of latest shipment record edit.
+
+
+7. API ENDPOINTS (backend/api/urls.py & views.py)
+--------------------------------------------------------------------------------
+Base URL prefix: /api/ (defined in hashharbour_backend/urls.py)
+
+Endpoints registered via DRF DefaultRouter:
+  1. GET /api/stats/
+     - View: StatItemViewSet (list action)
+     - Purpose: Returns JSON array of all platform statistics ordered by `order`.
+  2. GET /api/stats/{id}/
+     - View: StatItemViewSet (retrieve action)
+     - Purpose: Returns JSON details of a single statistic record by primary key.
+  3. GET /api/features/
+     - View: FeatureCardViewSet (list action)
+     - Purpose: Returns JSON array of all platform capability feature cards.
+  4. GET /api/features/{id}/
+     - View: FeatureCardViewSet (retrieve action)
+     - Purpose: Returns JSON details of a single feature card by primary key.
+  5. GET /api/shipments/
+     - View: ShipmentViewSet (list action)
+     - Purpose: Returns JSON array of all recorded shipments in the database.
+  6. GET /api/shipments/{id}/
+     - View: ShipmentViewSet (retrieve action)
+     - Purpose: Returns JSON details of a single shipment by primary key.
+  7. GET /api/shipments/track/?tracking_no=<NUMBER>
+     - View: ShipmentViewSet (@action track)
+     - Purpose: Case-insensitive query looking up a shipment by tracking_no query param;
+       returns serialized shipment JSON data, or HTTP 400 if param is missing, or HTTP
+       404 if no matching record exists.
+
+Administrative endpoints:
+  8. GET, POST /admin/
+     - View: Django Admin Site
+     - Purpose: Standard Django administrative panel for managing models and users.
+
+
+8. HOW TO RUN LOCALLY
+--------------------------------------------------------------------------------
+8.1 Backend Setup & Execution:
+  Step 1: Open terminal in repository root and navigate to backend directory:
+          cd backend
+
+  Step 2: Create and activate a Python virtual environment:
+          python -m venv venv
+          .\venv\Scripts\activate          # On Windows
+          source venv/bin/activate        # On macOS/Linux
+
+  Step 3: Install dependencies:
+          pip install -r requirements.txt
+
+  Step 4: Check configuration and run migrations:
+          python manage.py check
+          python manage.py migrate
+
+  Step 5: (Optional) Seed the database with sample shipments and statistics:
+          python seed.py
+
+  Step 6: Start the Django development server:
+          python manage.py runserver
+          -> Server runs at http://localhost:8000/
+
+8.2 Frontend Setup & Execution:
+  Step 1: Open a separate terminal and navigate to frontend directory:
+          cd frontend
+
+  Step 2: Install Node dependencies:
+          npm install
+
+  Step 3: Start the Vite development server:
+          npm run dev
+          -> Application runs at http://localhost:5173/
+
+8.3 Frontend Production Build Verification:
+  Compile production bundles to verify zero syntax errors and chunk outputs:
+          cd frontend
+          npm run build
+          -> Production assets generated into frontend/dist/
+
+
+9. KNOWN LIMITATIONS (FACTUAL FOR VIVA DISCUSSION)
+--------------------------------------------------------------------------------
+1. Shipment List Endpoint is Public Read-Only:
+   The `GET /api/shipments/` endpoint extends ReadOnlyModelViewSet under DRF's default
+   AllowAny permission setting without pagination. Any user or external tool querying
+   this URL can read the full list of all shipments stored in the database.
+
+2. Hardcoded Localhost API URL in Client:
+   In `frontend/src/pages/ContainerSection/components/TrackingModal.jsx`, the fetch request
+   points directly to the literal string `http://localhost:8000/api/shipments/track/...`
+   instead of consuming an environment variable (e.g. `import.meta.env.VITE_API_URL`). In
+   a hosted production environment, client browsers will attempt to query their own local
+   machines unless reconfigured.
+
+3. SQLite Database Engine:
+   The backend uses SQLite (`backend/db.sqlite3`), which stores all relational data in
+   a single local file on disk. While suitable for single-developer testing and oral
+   demonstrations, SQLite serializes write operations and is not intended for concurrent,
+   high-volume production enterprise trade transactions.
+
+4. Large Media Assets in Active Source Tree:
+   The active `frontend/src/assets/` folder contains significant binary media, including
+   a 10.78 MB Chinese TTF font (`ZiKuXingQiuFeiYangTi.ttf`) imported by the archived hero
+   preview heading, as well as multiple unreferenced MP4 video files totalling over 70 MB
+   that increase repository clone and deployment weight.
+
+5. Multiple Concurrent WebGL Canvases on Services Page:
+   The `/services` page renders 5 individual `<StaticServiceContainer>` components
+   simultaneously, each initializing its own Three.js WebGL `<Canvas>` context. Browsers
+   limit active WebGL contexts to between 8 and 16 per page, which increases GPU memory
+   utilization and risks context-loss errors on mobile or lower-power devices.
+
+6. Non-Functional Navigation Auth Buttons:
+   The "Log In" and "Register" buttons in both the light and dark navigation headers are
+   purely visual UI placeholders. No user authentication views, registration forms,
+   session login endpoints, or JSON Web Token (JWT) handling are connected to them.
+================================================================================

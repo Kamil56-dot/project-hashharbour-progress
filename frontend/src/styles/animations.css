@@ -1,0 +1,464 @@
+/* ─────────────────────────────────────────────────────────────
+   HASHHARBOUR — KEYFRAME ANIMATIONS & HELPER STYLES
+   Source of Truth: forensic_audit.md §12, §14; architecture_blueprint.md §4, §5
+   ───────────────────────────────────────────────────────────── */
+
+/* Typewriter Cursor Blink Animation — forensic_audit.md §14 */
+@keyframes cursorBlink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor-blink {
+  animation: cursorBlink 1s step-end infinite;
+}
+
+/* Scroll Indicator Dot Animation — forensic_audit.md §12 */
+@keyframes scrollDot {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.animate-scroll-dot {
+  animation: scrollDot 1.5s ease-in-out infinite;
+}
+
+/* Glassmorphism Surface Base Classes — forensic_audit.md §8 */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-top-color: var(--glass-border-top);
+  border-radius: 14px;
+  box-shadow: var(--shadow-default);
+  transition: transform var(--duration-slow) var(--ease-smooth),
+    border-color var(--duration-slow) var(--ease-smooth),
+    box-shadow var(--duration-slow) var(--ease-smooth),
+    background-color var(--duration-slow) var(--ease-smooth);
+}
+
+.glass-panel-interactive:hover {
+  transform: translateY(-6px);
+  border-color: var(--glass-border-hover);
+  background: var(--glass-bg-hover);
+  box-shadow: var(--shadow-elevated), 0 0 24px var(--glow-card-hover);
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel {
+    background: rgba(13, 27, 42, 0.85);
+  }
+}
+
+/* Grunge Text Masking — forensic_audit.md §17 (High risk mitigation) */
+.grunge-text-heading {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DESKTOP NAVBAR — SIGNAL TRACE HOVER INTERACTION FOR NAV LINKS
+   ───────────────────────────────────────────────────────────── */
+.nav-signal-link {
+  position: relative;
+}
+
+/* Character Staggered Text Signal */
+.nav-signal-link .char-signal {
+  display: inline-block;
+  color: var(--text-primary);
+  transition: color 250ms ease-out,
+    transform 250ms ease-out,
+    text-shadow 250ms ease-out;
+  will-change: color, transform;
+}
+
+.nav-signal-link:hover .char-signal,
+.nav-signal-link:focus-visible .char-signal {
+  color: #00d4ff;
+  transform: translateY(-1px);
+  text-shadow: 0 0 6px rgba(0, 212, 255, 0.25);
+}
+
+/* Mouse Leave: Immediate reset of transition delay for clean reverse fade */
+.nav-signal-link:not(:hover):not(:focus-visible) .char-signal {
+  transition-delay: 0ms !important;
+}
+
+/* Underline Signal Track Container (Positioned right below text baseline) */
+.nav-signal-link .signal-track {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Base Subtle Resting Underline (Fades & expands behind comet) */
+.nav-signal-link .signal-base {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 212, 255, 0.35);
+  border-radius: 1px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: opacity 300ms ease-out, transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-signal-link:hover .signal-base,
+.nav-signal-link:focus-visible .signal-base {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Comet Tail Sweep (Bright Head + Gradient Fading Trail) */
+.nav-signal-link .comet-tail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.15) 30%, rgba(0, 212, 255, 0.75) 80%, #ffffff 100%);
+  box-shadow: 0 0 6px rgba(0, 212, 255, 0.8);
+  border-radius: 1px;
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
+.nav-signal-link:hover .comet-tail,
+.nav-signal-link:focus-visible .comet-tail {
+  animation: cometSweep 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cometSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(250%);
+  }
+}
+
+/* Micro Directional Chevron Tick (› Accent traveling with comet head) */
+.nav-signal-link .chevron-tick {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.9));
+}
+
+.nav-signal-link:hover .chevron-tick,
+.nav-signal-link:focus-visible .chevron-tick {
+  animation: tickSweep 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes tickSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(1100%);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DESKTOP NAVBAR — BRAND LOCKUP (ORGANIC SHAPE GLOW, NO RECTANGULAR BOX)
+   ───────────────────────────────────────────────────────────── */
+.brand-lockup-unit {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover,
+  .brand-lockup-unit:focus-visible {
+    transform: translateY(-1px);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Anchor SVG Container & Sustained Organic Cyan Glow */
+.brand-anchor-wrapper {
+  position: relative;
+  width: 34px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent !important;
+}
+
+.brand-anchor-svg {
+  color: inherit;
+  transition: color 250ms ease-out, filter 250ms ease-out;
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover .brand-anchor-svg,
+  .brand-lockup-unit:focus-visible .brand-anchor-svg {
+    color: #bdf2ff;
+    /* Soft organic drop-shadow following exact SVG anchor artwork contours */
+    filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.5)) drop-shadow(0 0 12px rgba(0, 212, 255, 0.25));
+  }
+}
+
+/* Center Luminous Radial Anchor Pulse (0–350ms) */
+.anchor-center-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.7) 0%, rgba(0, 212, 255, 0.2) 60%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover .anchor-center-pulse,
+  .brand-lockup-unit:focus-visible .anchor-center-pulse {
+    animation: anchorCenterPulse 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes anchorCenterPulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  40% {
+    transform: scale(1.3);
+    opacity: 0.65;
+  }
+
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Lower Fluke Signal Trace Overlay */
+.anchor-fluke-signal {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  height: 10px;
+  border-bottom: 1.5px solid rgba(0, 212, 255, 0.65);
+  border-radius: 0 0 12px 12px;
+  opacity: 0;
+  pointer-events: none;
+  clip-path: inset(0 100% 0 0);
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.8));
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover .anchor-fluke-signal,
+  .brand-lockup-unit:focus-visible .anchor-fluke-signal {
+    animation: flukeTrace 350ms ease-out forwards;
+  }
+}
+
+@keyframes flukeTrace {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+
+  100% {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Wordmark Text Container & Sustained Organic Text Glow */
+.brand-wordmark-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+.brand-wordmark-text {
+  color: inherit;
+  transition: color 250ms ease-out, text-shadow 250ms ease-out;
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover .brand-wordmark-text,
+  .brand-lockup-unit:focus-visible .brand-wordmark-text {
+    color: #d0f5ff;
+    /* Soft organic text-shadow following exact letterform contours */
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.4), 0 0 16px rgba(0, 212, 255, 0.2);
+  }
+}
+
+/* Wordmark Light Sweep Overlay (100–450ms) */
+.wordmark-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.25) 40%, rgba(255, 255, 255, 0.5) 75%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-100%);
+  mix-blend-mode: overlay;
+}
+
+@media (min-width: 1024px) {
+
+  .brand-lockup-unit:hover .wordmark-sweep,
+  .brand-lockup-unit:focus-visible .wordmark-sweep {
+    animation: wordmarkSweep 350ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
+  }
+}
+
+@keyframes wordmarkSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(190%);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ENTRANCE ANIMATIONS FOR CONTAINER SECTION (ZERO LIBRARY DEPENDENCY)
+   ───────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+}
