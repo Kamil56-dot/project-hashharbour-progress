@@ -333,3 +333,16 @@ svg {
 .animate-scroll-dot {
   animation: scrollDot 1.8s infinite ease-in-out;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   HERO CARD — RESPONSIVE ASPECT-RATIO
+   Mobile: tall card fills viewport minus navbar (min-height).
+   Desktop (lg+): 21:9 letterboxed aspect-ratio — wide & short,
+   preventing excessive vertical cropping of video/image.
+   ───────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .hero-card-ratio {
+    min-height: unset !important;
+    aspect-ratio: 21 / 9;
+  }
+}

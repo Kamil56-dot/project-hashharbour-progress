@@ -23,7 +23,7 @@ export function NavActions({ onMenuToggle, isMenuOpen, className = '' }) {
       </button>
 
       {/* Subtle Vertical Icon Divider */}
-      <div className="h-5 w-[1px] bg-white/20 mr-3.5" aria-hidden="true" />
+      <div className="h-5 w-[1px] bg-white/20 mr-3.5 lg:hidden" aria-hidden="true" />
 
       {/* Hamburger / Menu Icon (24px x 24px box, two horizontal bars with gap) */}
       <button
@@ -32,7 +32,7 @@ export function NavActions({ onMenuToggle, isMenuOpen, className = '' }) {
         aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={isMenuOpen}
         aria-controls="mobile-navigation-drawer"
-        className="w-10 h-10 flex items-center justify-center text-text-primary hover:text-accent-500 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-offset-2 rounded-sm mr-[20px]"
+        className="w-10 h-10 flex lg:hidden items-center justify-center text-text-primary hover:text-accent-500 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent-500 focus-visible:outline-offset-2 rounded-sm mr-[20px]"
       >
         <div className="w-[20px] h-[20px] flex flex-col justify-center items-center gap-[5px]">
           <span

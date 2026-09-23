@@ -311,115 +311,116 @@ function getISOMarkingsTextures() {
   return _cachedISOMarkings;
 }
 
+// Helper function to draw the official HashHarbour Anchor + H Symbol
+function drawHashHarbourSymbol(ctx, x, y, scale, isOutline = false) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.translate(-250, -250);
+
+  const whiteColor = '#FFFFFF';
+
+  if (isOutline) {
+    ctx.strokeStyle = whiteColor;
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+    ctx.arc(250, 75, 36, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(250, 75, 20, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(238, 111); ctx.lineTo(238, 130); ctx.lineTo(135, 130);
+    ctx.lineTo(152, 160); ctx.lineTo(238, 160); ctx.lineTo(238, 180);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(262, 111); ctx.lineTo(262, 130); ctx.lineTo(365, 130);
+    ctx.lineTo(348, 160); ctx.lineTo(262, 160); ctx.lineTo(262, 180);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeRect(182, 180, 28, 140);
+    ctx.strokeRect(290, 180, 28, 140);
+    ctx.strokeRect(210, 235, 80, 28);
+    ctx.moveTo(238, 180); ctx.lineTo(238, 385);
+    ctx.moveTo(262, 180); ctx.lineTo(262, 385);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 435);
+    ctx.bezierCurveTo(180, 435, 120, 395, 75, 285);
+    ctx.lineTo(112, 318);
+    ctx.bezierCurveTo(145, 362, 190, 392, 238, 392);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 435);
+    ctx.bezierCurveTo(320, 435, 380, 395, 425, 285);
+    ctx.lineTo(388, 318);
+    ctx.bezierCurveTo(355, 362, 310, 392, 262, 392);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 435);
+    ctx.lineTo(262, 462);
+    ctx.lineTo(250, 485);
+    ctx.lineTo(238, 462);
+    ctx.closePath();
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = whiteColor;
+
+    ctx.beginPath();
+    ctx.arc(250, 75, 38, 0, Math.PI * 2);
+    ctx.arc(250, 75, 22, 0, Math.PI * 2, true);
+    ctx.fill();
+
+    ctx.fillRect(238, 105, 24, 25);
+
+    ctx.beginPath();
+    ctx.moveTo(135, 130); ctx.lineTo(365, 130);
+    ctx.lineTo(348, 162); ctx.lineTo(262, 162);
+    ctx.lineTo(262, 130); ctx.lineTo(238, 130);
+    ctx.lineTo(238, 162); ctx.lineTo(152, 162);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillRect(237, 128, 26, 52);
+    ctx.fillRect(182, 180, 30, 145);
+    ctx.fillRect(288, 180, 30, 145);
+    ctx.fillRect(212, 238, 76, 28);
+    ctx.fillRect(237, 180, 26, 215);
+
+    ctx.beginPath();
+    ctx.moveTo(250, 448);
+    ctx.bezierCurveTo(185, 448, 125, 410, 75, 295);
+    ctx.lineTo(112, 330);
+    ctx.bezierCurveTo(145, 372, 190, 405, 237, 410);
+    ctx.lineTo(237, 345); ctx.lineTo(263, 345); ctx.lineTo(263, 410);
+    ctx.bezierCurveTo(310, 405, 355, 372, 388, 330);
+    ctx.lineTo(425, 295);
+    ctx.bezierCurveTo(375, 410, 315, 448, 250, 448);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 492);
+    ctx.lineTo(262, 442);
+    ctx.lineTo(238, 442);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
 /// ─── Procedural ISO 6346 Container Markings & Decals Texture Generator ───
 function createISOMarkingsTextures() {
-  // Helper function to draw the official HashHarbour Anchor + H Symbol
-  function drawHashHarbourSymbol(ctx, x, y, scale, isOutline = false) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(scale, scale);
-    ctx.translate(-250, -250);
-
-    const whiteColor = '#FFFFFF';
-
-    if (isOutline) {
-      ctx.strokeStyle = whiteColor;
-      ctx.lineWidth = 7;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.beginPath();
-      ctx.arc(250, 75, 36, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(250, 75, 20, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(238, 111); ctx.lineTo(238, 130); ctx.lineTo(135, 130);
-      ctx.lineTo(152, 160); ctx.lineTo(238, 160); ctx.lineTo(238, 180);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(262, 111); ctx.lineTo(262, 130); ctx.lineTo(365, 130);
-      ctx.lineTo(348, 160); ctx.lineTo(262, 160); ctx.lineTo(262, 180);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.strokeRect(182, 180, 28, 140);
-      ctx.strokeRect(290, 180, 28, 140);
-      ctx.strokeRect(210, 235, 80, 28);
-      ctx.moveTo(238, 180); ctx.lineTo(238, 385);
-      ctx.moveTo(262, 180); ctx.lineTo(262, 385);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(250, 435);
-      ctx.bezierCurveTo(180, 435, 120, 395, 75, 285);
-      ctx.lineTo(112, 318);
-      ctx.bezierCurveTo(145, 362, 190, 392, 238, 392);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(250, 435);
-      ctx.bezierCurveTo(320, 435, 380, 395, 425, 285);
-      ctx.lineTo(388, 318);
-      ctx.bezierCurveTo(355, 362, 310, 392, 262, 392);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(250, 435);
-      ctx.lineTo(262, 462);
-      ctx.lineTo(250, 485);
-      ctx.lineTo(238, 462);
-      ctx.closePath();
-      ctx.stroke();
-    } else {
-      ctx.fillStyle = whiteColor;
-
-      ctx.beginPath();
-      ctx.arc(250, 75, 38, 0, Math.PI * 2);
-      ctx.arc(250, 75, 22, 0, Math.PI * 2, true);
-      ctx.fill();
-
-      ctx.fillRect(238, 105, 24, 25);
-
-      ctx.beginPath();
-      ctx.moveTo(135, 130); ctx.lineTo(365, 130);
-      ctx.lineTo(348, 162); ctx.lineTo(262, 162);
-      ctx.lineTo(262, 130); ctx.lineTo(238, 130);
-      ctx.lineTo(238, 162); ctx.lineTo(152, 162);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillRect(237, 128, 26, 52);
-      ctx.fillRect(182, 180, 30, 145);
-      ctx.fillRect(288, 180, 30, 145);
-      ctx.fillRect(212, 238, 76, 28);
-      ctx.fillRect(237, 180, 26, 215);
-
-      ctx.beginPath();
-      ctx.moveTo(250, 448);
-      ctx.bezierCurveTo(185, 448, 125, 410, 75, 295);
-      ctx.lineTo(112, 330);
-      ctx.bezierCurveTo(145, 372, 190, 405, 237, 410);
-      ctx.lineTo(237, 345); ctx.lineTo(263, 345); ctx.lineTo(263, 410);
-      ctx.bezierCurveTo(310, 405, 355, 372, 388, 330);
-      ctx.lineTo(425, 295);
-      ctx.bezierCurveTo(375, 410, 315, 448, 250, 448);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(250, 492);
-      ctx.lineTo(262, 442);
-      ctx.lineTo(238, 442);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
 
   // ── 1. Door Markings Texture (1024 x 1024 Crisp Resolution) ──
   const doorCanvas = document.createElement('canvas');

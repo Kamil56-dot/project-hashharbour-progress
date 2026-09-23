@@ -217,6 +217,8 @@ export function HomeContainerSection() {
               style={{ marginTop: 'clamp(8px, 1vh, 16px)' }}
             >
               <button
+                type="button"
+                onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
                 className="flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400 transition-all duration-150 cursor-pointer"
                 style={{
                   width: 'clamp(28px, 2.5vw, 36px)',
@@ -238,12 +240,12 @@ export function HomeContainerSection() {
                   <div
                     key={dot}
                     className={`rounded-full transition-all duration-200 ${
-                      dot === 0
+                      dot === activeStep
                         ? 'bg-gray-900'
                         : 'bg-gray-200'
                     }`}
                     style={{
-                      width: dot === 0 ? 'clamp(16px, 1.4vw, 22px)' : 'clamp(5px, 0.4vw, 7px)',
+                      width: dot === activeStep ? 'clamp(16px, 1.4vw, 22px)' : 'clamp(5px, 0.4vw, 7px)',
                       height: 'clamp(5px, 0.4vw, 7px)',
                       borderRadius: '100px',
                     }}
@@ -252,6 +254,8 @@ export function HomeContainerSection() {
               </div>
 
               <button
+                type="button"
+                onClick={() => setActiveStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
                 className="flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400 transition-all duration-150 cursor-pointer"
                 style={{
                   width: 'clamp(28px, 2.5vw, 36px)',

@@ -26,16 +26,15 @@ function SectionLoadingFallback() {
 
 /**
  * Home Page — Main light-theme entry page mounted at route "/".
- * Layout: hero section fills 100dvh (navbar + hero), then additional
- * sections scroll naturally below.
+ * Layout: navbar + hero card (21:9 aspect-ratio on desktop, 100dvh on mobile),
+ * then additional sections scroll naturally below.
  */
 export function HomePage() {
   return (
     <div className="flex flex-col overflow-x-hidden bg-white" style={{ minHeight: '100dvh' }}>
-      {/* Hero viewport — locks navbar + hero to exactly 100dvh */}
+      {/* Hero viewport — on mobile fills 100dvh; on desktop the hero card sizes itself via aspect-ratio */}
       <div
         className="flex flex-col shrink-0"
-        style={{ height: '100dvh' }}
       >
         <HomeNavbar />
         <HomeHero />

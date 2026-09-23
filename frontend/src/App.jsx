@@ -9,6 +9,7 @@ const AboutSection = lazy(() => import('./components/about/AboutSection').then(m
 const ServicesSection = lazy(() => import('./components/services').then(m => ({ default: m.ServicesSection })));
 const ArchivedHero = lazy(() => import('./components/archived-hero/ArchivedHero').then(m => ({ default: m.ArchivedHero })));
 const ContainerPage = lazy(() => import('./pages/ContainerSection/ContainerPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 
 function PageLoadingFallback() {
   return (
@@ -42,9 +43,9 @@ export function App() {
   const prefersReducedMotion = useReducedMotion();
   const { pathname } = useLocation();
 
-  // Light-theme Home page (HomePage) uses its own HomeNavbar;
-  // all other pages use the shared dark-theme Navbar.
-  const isLightHomePage = pathname === '/';
+  // Light-theme pages: Home page (HomePage has HomeNavbar) and standalone Login page.
+  // All other pages use the shared dark-theme Navbar.
+  const isLightPage = pathname === '/' || pathname === '/login';
 
   useEffect(() => {
     if (!navbarRef.current) return;
@@ -63,7 +64,7 @@ export function App() {
   }, [prefersReducedMotion]);
 
   return (
-    <div className={isLightHomePage ? 'min-h-screen bg-white antialiased' : 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary'}>
+    <div className={isLightPage ? 'min-h-screen bg-white antialiased' : 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary'}>
       <ScrollToTop />
 
       {/* Skip to Main Content Link — Accessibility Infrastructure */}
@@ -71,14 +72,15 @@ export function App() {
         Skip to main content
       </a>
 
-      {/* Shared dark-theme Navbar — hidden on light Home page which has its own HomeNavbar */}
-      {!isLightHomePage && <Navbar ref={navbarRef} />}
+      {/* Shared dark-theme Navbar — hidden on light pages (Home and Login) */}
+      {!isLightPage && <Navbar ref={navbarRef} />}
 
       {/* Main Content Routes */}
       <main id="main-content" tabIndex={-1} className="outline-none">
         <Suspense fallback={<PageLoadingFallback />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<AboutSection />} />
             <Route path="/services" element={<ServicesSection />} />
             <Route path="/container-section" element={<ContainerPage />} />

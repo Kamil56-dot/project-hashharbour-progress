@@ -79,5 +79,24 @@ def seed():
 
     print("Sample shipments created!")
 
+    # Create Demo User for Auth
+    from django.contrib.auth.models import User
+    demo_email = "demo@hashharbour.com"
+    if not User.objects.filter(email=demo_email).exists():
+        User.objects.create_user(
+            username="demo_user",
+            email=demo_email,
+            password="password123",
+            first_name="Demo",
+            last_name="User"
+        )
+        print(f"Demo user created: {demo_email} (password: password123)")
+    else:
+        # Ensure password is set to password123
+        user = User.objects.filter(email=demo_email).first()
+        user.set_password("password123")
+        user.save()
+        print(f"Demo user updated: {demo_email} (password: password123)")
+
 if __name__ == "__main__":
     seed()

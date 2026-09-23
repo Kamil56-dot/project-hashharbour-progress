@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 class StatItem(models.Model):
@@ -41,7 +42,10 @@ class Shipment(models.Model):
     destination = models.CharField(max_length=150)
     vessel = models.CharField(max_length=100)
     eta = models.DateField()
-    progress_percent = models.IntegerField(default=50)
+    progress_percent = models.IntegerField(
+        default=50,
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
+    )
     last_update = models.CharField(max_length=255)
 
     created_at = models.DateTimeField(auto_now_add=True)

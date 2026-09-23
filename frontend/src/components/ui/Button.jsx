@@ -32,7 +32,7 @@ export const Button = React.forwardRef(function Button(
     'nav-ghost':
       'w-[88px] h-[40px] text-[14px] font-medium border border-white/20 bg-transparent text-white hover:border-white/40 hover:bg-white/5 active:scale-[0.98]',
     'nav-primary':
-      'w-[96px] h-[40px] text-[14px] font-semibold bg-[#00d4ff] text-white hover:bg-[#1adbff] hover:shadow-[0_0_16px_rgba(0,212,255,0.35)] active:scale-[0.98]',
+      'w-[96px] h-[40px] text-[14px] font-semibold bg-[#00d4ff] text-[#060a14] hover:bg-[#1adbff] hover:shadow-[0_0_16px_rgba(0,212,255,0.35)] active:scale-[0.98]',
   };
 
   const sizes = {

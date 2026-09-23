@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { NAV_LINKS } from '../../constants/navigation';
 import { Button } from '../ui/Button';
 
@@ -15,6 +16,16 @@ export function MobileMenu({ isOpen, onClose }) {
       id="mobile-navigation-drawer"
       className="fixed inset-0 z-[40] bg-surface-950/95 backdrop-blur-xl lg:hidden flex flex-col pt-[88px] px-6 pb-8 transition-opacity duration-200"
     >
+      {/* Explicit Close (X) Button */}
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close navigation menu"
+        className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-text-primary hover:text-accent-500 transition-colors duration-150 rounded-sm focus-visible:outline-2 focus-visible:outline-accent-500"
+      >
+        <X className="w-6 h-6 stroke-[2]" />
+      </button>
+
       <div className="flex-1 flex flex-col justify-between max-w-md mx-auto w-full">
         {/* Nav Links Stack */}
         <nav aria-label="Mobile Navigation">

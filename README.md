@@ -50,6 +50,9 @@ pip install -r requirements.txt
 # Verify database and configuration
 python manage.py check
 
+# Apply database migrations
+python manage.py migrate
+
 # (Optional) Seed demo shipments and stats
 python seed.py
 
