@@ -4,6 +4,7 @@ export default {
     './index.html',
     './src/**/*.{js,jsx}',
   ],
+  darkMode: 'class',
   theme: {
     screens: {
       'sm': '640px',

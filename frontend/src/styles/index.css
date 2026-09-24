@@ -8,8 +8,27 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   STEP 4 — CSS CUSTOM PROPERTIES (SINGLE SOURCE OF TRUTH)
+   STEP 4 — CSS CUSTOM PROPERTIES & DYNAMIC THEME SYSTEM
    ───────────────────────────────────────────────────────────── */
+:root, .dark {
+  --theme-bg: #061426;
+  --theme-card-bg: #0f172a;
+  --theme-card-border: #1e293b;
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #94a3b8;
+  --theme-accent: #00d4ff;
+}
+
+.light {
+  --theme-bg: #EBF3FC;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #E2E8F0;
+  --theme-text-primary: #0F172A;
+  --theme-text-secondary: #64748B;
+  --theme-accent: #1E88E5;
+  color-scheme: light;
+}
+
 :root {
   /* Surface Scale — forensic_audit.md §9 */
   --surface-950: #060a14;
@@ -143,6 +162,22 @@ body {
 ::selection {
   background-color: rgba(0, 212, 255, 0.25);
   color: var(--text-primary);
+}
+
+html.light {
+  background-color: var(--theme-bg);
+  color: var(--theme-text-primary);
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text-secondary);
+}
+
+html.light ::selection {
+  background-color: rgba(30, 136, 229, 0.25);
+  color: var(--theme-text-primary);
 }
 
 /* Global Hidden Scrollbar — Full Viewport Canvas */
@@ -335,14 +370,43 @@ svg {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   HERO CARD — RESPONSIVE ASPECT-RATIO
-   Mobile: tall card fills viewport minus navbar (min-height).
-   Desktop (lg+): 21:9 letterboxed aspect-ratio — wide & short,
-   preventing excessive vertical cropping of video/image.
+   HERO CARD — DESKTOP: VIEWPORT-BOUNDED HEIGHT
+   Mobile: tall card fills viewport minus navbar (min-height via inline style).
+   Desktop (lg+): card height is bounded so the hero fits in one viewport
+   without scrolling.  Video uses object-fit:cover + object-position:top
+   so any cropping happens only at the bottom of the frame.
+   Height budget: 100dvh − navbar(~72px) − outer-padding(~48px).
    ───────────────────────────────────────────────────────────── */
 @media (min-width: 1024px) {
-  .hero-card-ratio {
+  .hero-card-desktop {
     min-height: unset !important;
-    aspect-ratio: 21 / 9;
+    height: calc(100dvh - 120px);
+    max-height: calc(100dvh - 120px);
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT THEME NAVIGATION COMPATIBILITY
+   ───────────────────────────────────────────────────────────── */
+html.light .nav-signal-link .char-signal {
+  color: #0F172A;
+}
+
+html.light .nav-signal-link:hover .char-signal,
+html.light .nav-signal-link:focus-visible .char-signal {
+  color: #1E88E5;
+  text-shadow: 0 0 6px rgba(30, 136, 229, 0.25);
+}
+
+html.light .nav-signal-link .signal-base {
+  background-color: rgba(30, 136, 229, 0.2);
+}
+
+html.light .nav-signal-link:hover .signal-base,
+html.light .nav-signal-link:focus-visible .signal-base {
+  background-color: #1E88E5;
+}
+
+html.light .nav-signal-link .chevron-tick svg path {
+  stroke: #1E88E5;
 }

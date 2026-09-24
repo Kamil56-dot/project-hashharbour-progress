@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Logo } from '../layout/Logo';
+import { useTheme } from '../../context/ThemeContext';
 
 const NAV_LINKS = [
   { label: 'About', href: '/about' },
@@ -21,6 +22,7 @@ const NAV_LINKS = [
 export function HomeNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <nav className="w-full bg-[#EEF5FC] flex items-center shrink-0 relative z-30 py-3 sm:py-3.5 lg:py-4 transition-colors">
@@ -72,10 +74,25 @@ export function HomeNavbar() {
           </div>
         </div>
 
-        {/* Right: Auth buttons (desktop) + Mobile hamburger */}
+        {/* Right: Auth buttons (desktop) + Theme Toggle + Mobile hamburger */}
         <div className="flex-1 flex items-center justify-end">
-          {/* Desktop auth buttons */}
-          <div className="hidden lg:flex items-center gap-8">
+          {/* Desktop auth buttons & Theme toggle */}
+          <div className="hidden lg:flex items-center gap-6">
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              className="w-9 h-9 flex items-center justify-center rounded-full text-slate-700 hover:text-brand-500 hover:bg-white/60 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-brand-500"
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5 text-amber-500 hover:rotate-45 transition-transform" />
+              ) : (
+                <Moon className="w-5 h-5 text-slate-600 hover:-rotate-12 transition-transform" />
+              )}
+            </button>
+
             <Link
               to="/login"
               className="text-[#4B5E76] hover:text-brand-500 font-medium text-sm transition-colors duration-150"
@@ -87,14 +104,29 @@ export function HomeNavbar() {
             </button>
           </div>
 
-          {/* Mobile hamburger toggle (visible below lg) */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden text-gray-700 hover:text-brand-500 p-2 rounded-lg"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile actions (Theme toggle + hamburger) */}
+          <div className="flex items-center lg:hidden gap-1">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              className="p-2 rounded-lg text-slate-700 hover:text-brand-500"
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5 text-amber-500" />
+              ) : (
+                <Moon className="w-5 h-5 text-slate-600" />
+              )}
+            </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="text-gray-700 hover:text-brand-500 p-2 rounded-lg"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 

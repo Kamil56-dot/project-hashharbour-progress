@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { Navbar } from './components/layout/Navbar';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { HomePage } from './components/home/HomePage';
+import { useTheme } from './context/ThemeContext';
 
 const AboutSection = lazy(() => import('./components/about/AboutSection').then(m => ({ default: m.AboutSection })));
 const ServicesSection = lazy(() => import('./components/services').then(m => ({ default: m.ServicesSection })));
@@ -43,9 +44,12 @@ export function App() {
   const prefersReducedMotion = useReducedMotion();
   const { pathname } = useLocation();
 
+  const { isLight } = useTheme();
+
   // Light-theme pages: Home page (HomePage has HomeNavbar) and standalone Login page.
   // All other pages use the shared dark-theme Navbar.
   const isLightPage = pathname === '/' || pathname === '/login';
+  const isServicesLight = isLight && pathname === '/services';
 
   useEffect(() => {
     if (!navbarRef.current) return;
@@ -64,7 +68,15 @@ export function App() {
   }, [prefersReducedMotion]);
 
   return (
-    <div className={isLightPage ? 'min-h-screen bg-white antialiased' : 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary'}>
+    <div
+      className={
+        isLightPage
+          ? 'min-h-screen bg-white antialiased'
+          : isServicesLight
+          ? 'min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] antialiased transition-colors duration-200'
+          : 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200'
+      }
+    >
       <ScrollToTop />
 
       {/* Skip to Main Content Link — Accessibility Infrastructure */}

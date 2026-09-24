@@ -4,6 +4,7 @@ import { NavLinks } from './NavLinks';
 import { NavActions } from './NavActions';
 import { MobileMenu } from './MobileMenu';
 import { useScrollPosition } from '../../hooks/useScrollPosition';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * HASHHARBOUR — PIXEL-PRECISION NAVBAR COMPONENT (FULL VIEWPORT CORRECTION)
@@ -20,6 +21,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition';
 export const Navbar = React.forwardRef(function Navbar({ className = '' }, ref) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const scrollY = useScrollPosition();
+  const { isDark } = useTheme();
 
   const isScrolled = scrollY > 20;
 
@@ -32,16 +34,21 @@ export const Navbar = React.forwardRef(function Navbar({ className = '' }, ref) 
       <header
         ref={ref}
         id="main-header"
-        className={`fixed top-0 left-0 right-0 w-full h-[84px] lg:h-[96px] z-[30] transition-all duration-300 ease-smooth backdrop-blur-md ${isScrolled
-          ? 'bg-black/30'
-          : 'bg-black/20'
-          } ${className}`}
+        className={`fixed top-0 left-0 right-0 w-full h-[84px] lg:h-[96px] z-[30] transition-all duration-300 ease-smooth backdrop-blur-md ${
+          isDark
+            ? isScrolled
+              ? 'bg-black/30'
+              : 'bg-black/20'
+            : isScrolled
+              ? 'bg-white/85 shadow-xs border-b border-blue-100/60'
+              : 'bg-[#EBF3FC]/80'
+        } ${className}`}
       >
         {/* 3-Region Grid spanning 100% viewport width with 42px desktop padding */}
         <div className="w-full h-full px-6 sm:px-10 lg:px-[42px] grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center">
           {/* Left Region: Logo (justify-self: start) */}
           <div className="justify-self-start">
-            <Logo />
+            <Logo className={!isDark ? 'text-heading-navy [&_.brand-anchor-svg]:!text-brand-500' : ''} />
           </div>
 
           {/* Center Region: Nav Links (justify-self: center, mathematically centered in viewport) */}
@@ -61,7 +68,9 @@ export const Navbar = React.forwardRef(function Navbar({ className = '' }, ref) 
         {/* Inset Bottom Divider Line — aligned with content padding, clear edges */}
         <div
           aria-hidden="true"
-          className="absolute bottom-0 left-6 sm:left-10 lg:left-[42px] right-6 sm:right-10 lg:right-[42px] h-[1px] bg-white/60 pointer-events-none"
+          className={`absolute bottom-0 left-6 sm:left-10 lg:left-[42px] right-6 sm:right-10 lg:right-[42px] h-[1px] pointer-events-none transition-colors duration-200 ${
+            isDark ? 'bg-white/60' : 'bg-slate-200/80'
+          }`}
         />
       </header>
 

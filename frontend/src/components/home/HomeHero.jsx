@@ -8,9 +8,10 @@ import { useDesktopVideoMedia } from '../../hooks/useMediaQuery';
 /**
  * Light-theme hero section for the Home page.
  *
- * Single rounded-corner card with a 21:9 aspect-ratio on desktop (lg+) for a
- * wide, shorter "letterboxed" look that avoids excessive vertical cropping.
- * On mobile the card fills 100dvh minus the navbar for the full-screen image layout.
+ * Desktop (lg+): hero card is bounded to one viewport height
+ * (100dvh − navbar − outer padding). Video fills via object-fit:cover with
+ * object-position:top so any cropping happens at the bottom only.
+ * Mobile: card fills 100dvh minus navbar for the full-screen image layout.
  *
  * Video/image responsive switching logic (useDesktopVideoMedia) is preserved exactly.
  */
@@ -18,7 +19,10 @@ export function HomeHero() {
   const isDesktopVideo = useDesktopVideoMedia();
 
   return (
-    <section className="relative bg-hero-bg">
+    <section
+      className="relative bg-hero-bg"
+      style={{ marginBottom: 'clamp(32px, 3vw, 48px)' }}
+    >
       {/* Outer padding — keeps the light-blue page background visible around the card */}
       <div
         className="relative"
@@ -28,11 +32,10 @@ export function HomeHero() {
       >
         {/* ─── THE SINGLE HERO CARD ─── */}
         <div
-          className="relative w-full overflow-hidden hero-card-ratio"
+          className="relative w-full overflow-hidden hero-card-desktop"
           style={{
             /* Mobile: tall card fills viewport minus navbar.
-               Desktop (lg+): 21:9 letterboxed aspect-ratio — wide & short,
-               preventing excessive vertical cropping of video/image. */
+               Desktop (lg+): bounded to viewport via CSS class so no scroll needed. */
             minHeight: 'calc(100dvh - 72px)',
             borderRadius: 'clamp(16px, 2vw, 28px)',
             isolation: 'isolate',
@@ -50,7 +53,7 @@ export function HomeHero() {
               preload="auto"
               poster={heroImage}
               className="absolute inset-0 w-full h-full object-cover block m-0 p-0"
-              style={{ objectPosition: '50% 40%', width: '100%', height: '100%' }}
+              style={{ objectPosition: 'top center' }}
             >
               <source src={heroVideo} type="video/mp4" />
             </video>
@@ -85,7 +88,7 @@ export function HomeHero() {
 
           {/* ── Text content — layered on top, left-aligned, vertically centered ── */}
           <div
-            className="relative z-10 h-full flex flex-col justify-center"
+            className="relative z-10 h-full flex flex-col justify-center lg:absolute lg:inset-0"
             style={{
               paddingLeft: 'clamp(24px, 5vw, 80px)',
               paddingRight: 'clamp(24px, 5vw, 80px)',
