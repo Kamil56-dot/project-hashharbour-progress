@@ -44,12 +44,21 @@ export function App() {
   const prefersReducedMotion = useReducedMotion();
   const { pathname } = useLocation();
 
-  const { isLight } = useTheme();
+  const { isLight, isDark } = useTheme();
 
-  // Light-theme pages: Home page (HomePage has HomeNavbar) and standalone Login page.
-  // All other pages use the shared dark-theme Navbar.
-  const isLightPage = pathname === '/' || pathname === '/login';
+  // Login page is the ONLY unconditionally light page (no dark variant).
+  // Home page now participates in the theme system (dark default, light toggle).
+  const isLoginPage = pathname === '/login';
+
+  // Home page uses its own HomeNavbar (both dark and light themes),
+  // so hide the shared Navbar on Home AND Login. All other pages use the shared Navbar.
+  const isHomePage = pathname === '/';
+  const hideSharedNavbar = isHomePage || isLoginPage;
+
+  // Services page in light mode needs theme-var background
   const isServicesLight = isLight && pathname === '/services';
+  // Home page in light mode uses its original white design
+  const isHomeLight = isLight && isHomePage;
 
   useEffect(() => {
     if (!navbarRef.current) return;
@@ -67,16 +76,30 @@ export function App() {
     );
   }, [prefersReducedMotion]);
 
+  /**
+   * Wrapper class logic:
+   * - Login page: always white bg (light-only, not in theme scope)
+   * - Home page light: white bg (original design)
+   * - Home page dark: dark surface bg
+   * - Services light: theme-var bg
+   * - Everything else (About, Container, etc.): dark surface bg
+   */
+  const getWrapperClass = () => {
+    if (isLoginPage) {
+      return 'min-h-screen bg-white antialiased';
+    }
+    if (isHomeLight) {
+      return 'min-h-screen bg-white antialiased transition-colors duration-200';
+    }
+    if (isServicesLight) {
+      return 'min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] antialiased transition-colors duration-200';
+    }
+    // Dark mode for Home, Services, About, Container, etc.
+    return 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200';
+  };
+
   return (
-    <div
-      className={
-        isLightPage
-          ? 'min-h-screen bg-white antialiased'
-          : isServicesLight
-          ? 'min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] antialiased transition-colors duration-200'
-          : 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200'
-      }
-    >
+    <div className={getWrapperClass()}>
       <ScrollToTop />
 
       {/* Skip to Main Content Link — Accessibility Infrastructure */}
@@ -84,8 +107,8 @@ export function App() {
         Skip to main content
       </a>
 
-      {/* Shared dark-theme Navbar — hidden on light pages (Home and Login) */}
-      {!isLightPage && <Navbar ref={navbarRef} />}
+      {/* Shared dark-theme Navbar — hidden on Home (has HomeNavbar) and Login */}
+      {!hideSharedNavbar && <Navbar ref={navbarRef} />}
 
       {/* Main Content Routes */}
       <main id="main-content" tabIndex={-1} className="outline-none">

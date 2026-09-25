@@ -9,7 +9,12 @@ import { useState, useEffect } from 'react';
  * @returns {boolean} Whether the media query matches
  */
 export function useMediaQuery(query, defaultMatches = false) {
-  const [matches, setMatches] = useState(defaultMatches);
+  const [matches, setMatches] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia(query).matches;
+    }
+    return defaultMatches;
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

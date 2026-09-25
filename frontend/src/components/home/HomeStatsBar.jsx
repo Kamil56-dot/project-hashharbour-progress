@@ -1,9 +1,11 @@
 import React from 'react';
 import { Ship, Globe, Clock, Users } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
- * HomeStatsBar — Light-themed stats bar at the bottom of the container section.
+ * HomeStatsBar — Stats bar at the bottom of the container section.
  * Reuses the same data shape as StatsBar.jsx but styled for the home page palette.
+ * Supports dark and light themes.
  */
 
 const STATS = [
@@ -30,9 +32,15 @@ const STATS = [
 ];
 
 export function HomeStatsBar() {
+  const { isDark } = useTheme();
+
   return (
     <section
-      className="w-full bg-gray-50 border-t border-gray-100"
+      className={`w-full border-t transition-colors duration-200 ${
+        isDark
+          ? 'bg-surface-850 border-white/[0.06]'
+          : 'bg-gray-50 border-gray-100'
+      }`}
       style={{
         paddingTop: 'clamp(28px, 4vh, 48px)',
         paddingBottom: 'clamp(28px, 4vh, 48px)',
@@ -56,7 +64,11 @@ export function HomeStatsBar() {
             >
               {/* Icon */}
               <div
-                className="shrink-0 flex items-center justify-center bg-white border border-gray-100 text-gray-500 shadow-sm"
+                className={`shrink-0 flex items-center justify-center shadow-sm ${
+                  isDark
+                    ? 'bg-surface-800 border border-slate-700 text-slate-400'
+                    : 'bg-white border border-gray-100 text-gray-500'
+                }`}
                 style={{
                   width: 'clamp(40px, 3.5vw, 52px)',
                   height: 'clamp(40px, 3.5vw, 52px)',
@@ -75,13 +87,17 @@ export function HomeStatsBar() {
               {/* Number + Label */}
               <div className="flex flex-col">
                 <span
-                  className="font-extrabold text-gray-900 leading-none tracking-tight"
+                  className={`font-extrabold leading-none tracking-tight ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}
                   style={{ fontSize: 'clamp(20px, 2vw, 32px)' }}
                 >
                   {stat.number}
                 </span>
                 <span
-                  className="text-gray-400 font-medium leading-tight"
+                  className={`font-medium leading-tight ${
+                    isDark ? 'text-slate-500' : 'text-gray-400'
+                  }`}
                   style={{
                     fontSize: 'clamp(10px, 0.75vw, 13px)',
                     marginTop: 'clamp(2px, 0.3vh, 4px)',

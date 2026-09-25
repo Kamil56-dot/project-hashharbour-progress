@@ -1,5 +1,5 @@
 import React, { Suspense, useRef, useState, useEffect, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, ContactShadows, Center, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import ContainerModel from '../../pages/ContainerSection/components/3d/ContainerModel';
@@ -169,7 +169,7 @@ function SmoothOrbitControls({ baseSpeed = 0.5, isHovered, isDragging, setIsDrag
       enableDamping
       dampingFactor={0.06}
       minDistance={8}
-      maxDistance={16}
+      maxDistance={24}
       minPolarAngle={Math.PI * 0.15}
       maxPolarAngle={Math.PI * 0.75}
       enablePan={false}
@@ -178,6 +178,24 @@ function SmoothOrbitControls({ baseSpeed = 0.5, isHovered, isDragging, setIsDrag
       onEnd={() => setIsDragging(false)}
     />
   );
+}
+
+/* ─── Responsive Camera (adjusts camera distance based on aspect ratio) ─── */
+function ResponsiveCamera() {
+  const { size, camera } = useThree();
+
+  useEffect(() => {
+    if (!camera) return;
+    const aspect = size.width / Math.max(size.height, 1);
+    // At aspect < 1.3 (narrower screens, phones, tablets), scale camera distance inversely
+    // so the container (6.06m long) stays within horizontal frustum without clipping.
+    const targetDistance = aspect < 1.3 ? Math.max(9.5, 9.5 * (1.3 / aspect)) : 9.5;
+    const basePos = new THREE.Vector3(7, 3, 5.5).normalize();
+    camera.position.copy(basePos.multiplyScalar(targetDistance));
+    camera.updateProjectionMatrix();
+  }, [size.width, size.height, camera]);
+
+  return null;
 }
 
 /* ═══════════════════════════════════════
@@ -224,7 +242,7 @@ export default function HomeContainerViewer() {
         style={{
           aspectRatio: '4 / 3',
           minHeight: 'clamp(280px, 40vh, 500px)',
-          touchAction: 'none',
+          touchAction: 'pan-y',
           cursor: cursorStyle,
         }}
       >
@@ -248,6 +266,7 @@ export default function HomeContainerViewer() {
           }}
           style={{ background: 'transparent' }}
         >
+          <ResponsiveCamera />
           <Suspense fallback={<LoadingFallback />}>
             <SceneLighting />
 

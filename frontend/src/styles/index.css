@@ -379,9 +379,11 @@ svg {
    ───────────────────────────────────────────────────────────── */
 @media (min-width: 1024px) {
   .hero-card-desktop {
-    min-height: unset !important;
-    height: calc(100dvh - 120px);
-    max-height: calc(100dvh - 120px);
+    min-height: 540px !important;
+    height: clamp(540px, calc(100vh - 130px), 880px);
+    max-height: clamp(540px, calc(100vh - 130px), 880px);
+    height: clamp(540px, calc(100dvh - 130px), 880px);
+    max-height: clamp(540px, calc(100dvh - 130px), 880px);
   }
 }
 

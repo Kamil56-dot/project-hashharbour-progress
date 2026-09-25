@@ -4,9 +4,13 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 import heroImage from '../../assets/images/ChatGPT Image Aug 31, 2026, 06_35_14 PM.png';
 import heroVideo from '../../assets/Videos/hero_bg_compressed.mp4';
 import { useDesktopVideoMedia } from '../../hooks/useMediaQuery';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
- * Light-theme hero section for the Home page.
+ * Home page hero section — dual-theme.
+ *
+ * Light: Original design — white gradient overlays, navy text, brand-blue CTA.
+ * Dark: Dramatic dark gradient overlays, white/cyan text, cyan CTA.
  *
  * Desktop (lg+): hero card is bounded to one viewport height
  * (100dvh − navbar − outer padding). Video fills via object-fit:cover with
@@ -17,15 +21,18 @@ import { useDesktopVideoMedia } from '../../hooks/useMediaQuery';
  */
 export function HomeHero() {
   const isDesktopVideo = useDesktopVideoMedia();
+  const { isDark } = useTheme();
 
   return (
     <section
-      className="relative bg-hero-bg"
+      className={`relative transition-colors duration-200 ${
+        isDark ? 'bg-surface-900' : 'bg-hero-bg'
+      }`}
       style={{ marginBottom: 'clamp(32px, 3vw, 48px)' }}
     >
-      {/* Outer padding — keeps the light-blue page background visible around the card */}
+      {/* Outer padding — keeps the page background visible around the card */}
       <div
-        className="relative"
+        className="relative max-w-[1920px] mx-auto"
         style={{
           padding: 'clamp(10px, 1.5vw, 24px) clamp(12px, 2vw, 32px) clamp(14px, 2vw, 32px)',
         }}
@@ -53,7 +60,7 @@ export function HomeHero() {
               preload="auto"
               poster={heroImage}
               className="absolute inset-0 w-full h-full object-cover block m-0 p-0"
-              style={{ objectPosition: 'top center' }}
+              style={{ objectPosition: '50% 6%' }}
             >
               <source src={heroVideo} type="video/mp4" />
             </video>
@@ -68,21 +75,23 @@ export function HomeHero() {
             />
           )}
 
-          {/* ── Desktop gradient overlay: strong left → transparent right ── */}
+          {/* ── Desktop gradient overlay ── */}
           <div
             className="absolute inset-0 pointer-events-none hidden lg:block"
             style={{
-              background:
-                'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 18%, rgba(255,255,255,0.60) 38%, rgba(255,255,255,0.15) 58%, transparent 75%)',
+              background: isDark
+                ? 'linear-gradient(to right, rgba(6,20,38,0.95) 0%, rgba(6,20,38,0.85) 18%, rgba(6,20,38,0.60) 38%, rgba(6,20,38,0.15) 58%, transparent 75%)'
+                : 'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 18%, rgba(255,255,255,0.60) 38%, rgba(255,255,255,0.15) 58%, transparent 75%)',
             }}
           />
 
-          {/* ── Mobile gradient overlay: strong top-to-bottom for full readability ── */}
+          {/* ── Mobile gradient overlay ── */}
           <div
             className="absolute inset-0 pointer-events-none lg:hidden"
             style={{
-              background:
-                'linear-gradient(to bottom, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.88) 40%, rgba(255,255,255,0.55) 75%, rgba(255,255,255,0.20) 100%)',
+              background: isDark
+                ? 'linear-gradient(to bottom, rgba(6,20,38,0.94) 0%, rgba(6,20,38,0.88) 40%, rgba(6,20,38,0.55) 75%, rgba(6,20,38,0.20) 100%)'
+                : 'linear-gradient(to bottom, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.88) 40%, rgba(255,255,255,0.55) 75%, rgba(255,255,255,0.20) 100%)',
             }}
           />
 
@@ -99,7 +108,11 @@ export function HomeHero() {
             <div style={{ maxWidth: '580px' }}>
               {/* Badge pill */}
               <div
-                className="inline-flex items-center bg-brand-500/10 text-brand-600 uppercase font-bold tracking-wider rounded-full border border-brand-200/60"
+                className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border ${
+                  isDark
+                    ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
+                    : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
+                }`}
                 style={{
                   fontSize: 'clamp(9px, 0.7vw, 12px)',
                   padding: 'clamp(5px, 0.6vh, 8px) clamp(12px, 1.1vw, 18px)',
@@ -118,7 +131,9 @@ export function HomeHero() {
 
               {/* Main heading */}
               <h1
-                className="font-extrabold text-heading-navy uppercase leading-none tracking-tight"
+                className={`font-extrabold uppercase leading-none tracking-tight ${
+                  isDark ? 'text-white' : 'text-heading-navy'
+                }`}
                 style={{
                   fontSize: 'clamp(28px, 4vw + 0.5vh, 54px)',
                   marginBottom: 'clamp(14px, 2.5vh, 28px)',
@@ -132,7 +147,9 @@ export function HomeHero() {
 
               {/* Description paragraph */}
               <p
-                className="text-gray-600 font-normal leading-relaxed"
+                className={`font-normal leading-relaxed ${
+                  isDark ? 'text-slate-300' : 'text-gray-600'
+                }`}
                 style={{
                   fontSize: 'clamp(13px, 0.95vw + 0.2vh, 17px)',
                   maxWidth: '460px',
@@ -148,12 +165,18 @@ export function HomeHero() {
               {/* CTA button */}
               <Link
                 to="/container-section"
-                className="inline-flex items-center justify-center bg-brand-500 text-white font-semibold rounded-full hover:bg-brand-600 hover:shadow-lg transition-all duration-200 group"
+                className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 group ${
+                  isDark
+                    ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
+                    : 'bg-brand-500 text-white hover:bg-brand-600'
+                }`}
                 style={{
                   fontSize: 'clamp(13px, 0.9vw + 0.2vh, 16px)',
                   padding: 'clamp(12px, 1.4vh, 16px) clamp(24px, 2.2vw, 36px)',
                   gap: 'clamp(8px, 0.7vw, 12px)',
-                  boxShadow: '0 4px 14px rgba(30, 136, 229, 0.35)',
+                  boxShadow: isDark
+                    ? '0 4px 14px rgba(0, 212, 255, 0.35)'
+                    : '0 4px 14px rgba(30, 136, 229, 0.35)',
                 }}
               >
                 Book My Container

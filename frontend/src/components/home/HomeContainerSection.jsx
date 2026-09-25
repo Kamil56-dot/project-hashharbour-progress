@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 /* Lazy-load the 3D viewer so Three.js lives in its own chunk */
 const HomeContainerViewer = lazy(() => import('./HomeContainerViewer'));
@@ -45,9 +46,13 @@ const FEATURES = [
 
 /* ─── 3D Loading Skeleton ─── */
 function ViewerSkeleton() {
+  const { isDark } = useTheme();
+
   return (
     <div
-      className="w-full flex items-center justify-center bg-gray-50 animate-pulse"
+      className={`w-full flex items-center justify-center animate-pulse ${
+        isDark ? 'bg-surface-800/50' : 'bg-gray-50'
+      }`}
       style={{
         aspectRatio: '4 / 3',
         minHeight: 'clamp(280px, 40vh, 500px)',
@@ -55,9 +60,15 @@ function ViewerSkeleton() {
       }}
     >
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-500 animate-spin" />
+        <div
+          className={`w-8 h-8 rounded-full border-2 animate-spin ${
+            isDark
+              ? 'border-cyan-500/20 border-t-cyan-400'
+              : 'border-gray-200 border-t-gray-500'
+          }`}
+        />
         <span
-          className="text-gray-400 font-medium"
+          className={`font-medium ${isDark ? 'text-slate-400' : 'text-gray-400'}`}
           style={{ fontSize: 'clamp(11px, 0.8vw, 13px)' }}
         >
           Loading 3D Container...
@@ -72,10 +83,13 @@ function ViewerSkeleton() {
    ═══════════════════════════════════════ */
 export function HomeContainerSection() {
   const [activeStep, setActiveStep] = useState(0);
+  const { isDark } = useTheme();
 
   return (
     <section
-      className="w-full bg-white"
+      className={`w-full transition-colors duration-200 ${
+        isDark ? 'bg-surface-900' : 'bg-white'
+      }`}
       style={{
         paddingTop: 'clamp(48px, 6vh, 80px)',
         paddingBottom: 'clamp(48px, 6vh, 80px)',
@@ -90,7 +104,9 @@ export function HomeContainerSection() {
           style={{ marginBottom: 'clamp(32px, 5vh, 64px)' }}
         >
           <h2
-            className="font-extrabold text-gray-900 uppercase tracking-tight leading-none"
+            className={`font-extrabold uppercase tracking-tight leading-none ${
+              isDark ? 'text-white' : 'text-gray-900'
+            }`}
             style={{
               fontSize: 'clamp(24px, 3vw, 42px)',
               marginBottom: 'clamp(8px, 1vh, 16px)',
@@ -100,20 +116,22 @@ export function HomeContainerSection() {
           </h2>
           <div className="flex items-center justify-center gap-3">
             <div
-              className="bg-gray-900"
+              className={isDark ? 'bg-white' : 'bg-gray-900'}
               style={{
                 width: 'clamp(24px, 3vw, 48px)',
                 height: '2px',
               }}
             />
             <p
-              className="text-gray-400 font-medium uppercase tracking-widest"
+              className={`font-medium uppercase tracking-widest ${
+                isDark ? 'text-slate-400' : 'text-gray-400'
+              }`}
               style={{ fontSize: 'clamp(10px, 0.75vw, 13px)' }}
             >
               Shipping Container
             </p>
             <div
-              className="bg-gray-900"
+              className={isDark ? 'bg-white' : 'bg-gray-900'}
               style={{
                 width: 'clamp(24px, 3vw, 48px)',
                 height: '2px',
@@ -124,11 +142,8 @@ export function HomeContainerSection() {
 
         {/* 3-Column Grid */}
         <div
-          className="grid items-center"
-          style={{
-            gridTemplateColumns: 'clamp(140px, 18%, 220px) 1fr clamp(180px, 24%, 280px)',
-            gap: 'clamp(16px, 2vw, 40px)',
-          }}
+          className="grid grid-cols-1 lg:grid-cols-[clamp(140px,18%,220px)_1fr_clamp(180px,24%,280px)] items-center"
+          style={{ gap: 'clamp(16px, 2vw, 40px)' }}
         >
           {/* ── LEFT COLUMN — Steps List ── */}
           <div className="hidden lg:flex flex-col self-center">
@@ -140,10 +155,14 @@ export function HomeContainerSection() {
                   <div className="flex flex-col items-center">
                     <button
                       onClick={() => setActiveStep(idx)}
-                      className={`shrink-0 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:outline-none ${
-                        isActive
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-white text-gray-400 border-2 border-gray-200 hover:border-gray-400'
+                      className={`shrink-0 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:outline-none ${
+                        isDark
+                          ? isActive
+                            ? 'bg-white text-surface-900 focus-visible:ring-cyan-400'
+                            : 'bg-surface-800 text-slate-400 border-2 border-slate-600 hover:border-slate-400 focus-visible:ring-slate-400'
+                          : isActive
+                            ? 'bg-gray-900 text-white focus-visible:ring-gray-400'
+                            : 'bg-white text-gray-400 border-2 border-gray-200 hover:border-gray-400 focus-visible:ring-gray-400'
                       }`}
                       style={{
                         width: 'clamp(28px, 2.5vw, 36px)',
@@ -161,7 +180,7 @@ export function HomeContainerSection() {
                     {/* Connector line */}
                     {idx < STEPS.length - 1 && (
                       <div
-                        className="w-px bg-gray-200"
+                        className={`w-px ${isDark ? 'bg-slate-700' : 'bg-gray-200'}`}
                         style={{
                           height: 'clamp(20px, 2.5vh, 36px)',
                           marginTop: 'clamp(4px, 0.5vh, 8px)',
@@ -174,7 +193,9 @@ export function HomeContainerSection() {
                   {/* Label */}
                   <span
                     className={`font-semibold uppercase tracking-wider transition-colors duration-200 ${
-                      isActive ? 'text-gray-900' : 'text-gray-400'
+                      isDark
+                        ? isActive ? 'text-white' : 'text-slate-500'
+                        : isActive ? 'text-gray-900' : 'text-gray-400'
                     }`}
                     style={{
                       fontSize: 'clamp(10px, 0.8vw, 13px)',
@@ -189,11 +210,13 @@ export function HomeContainerSection() {
           </div>
 
           {/* ── CENTER COLUMN — 3D Container ── */}
-          <div className="relative flex flex-col items-center col-span-full lg:col-span-1 order-first lg:order-none">
+          <div className="relative flex flex-col items-center col-span-full lg:col-span-1 order-first lg:order-none min-w-0">
             {/* Ghost "20FT" text behind container */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
               <span
-                className="font-extrabold text-gray-100 uppercase leading-none"
+                className={`font-extrabold uppercase leading-none ${
+                  isDark ? 'text-white/[0.04]' : 'text-[#0F172A]/[0.09]'
+                }`}
                 style={{
                   fontSize: 'clamp(100px, 14vw, 220px)',
                   letterSpacing: '0.05em',
@@ -219,7 +242,11 @@ export function HomeContainerSection() {
               <button
                 type="button"
                 onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
-                className="flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400 transition-all duration-150 cursor-pointer"
+                className={`flex items-center justify-center rounded-full border transition-all duration-150 cursor-pointer ${
+                  isDark
+                    ? 'bg-surface-800 border-slate-600 text-slate-400 hover:text-white hover:border-slate-400'
+                    : 'bg-white border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400'
+                }`}
                 style={{
                   width: 'clamp(28px, 2.5vw, 36px)',
                   height: 'clamp(28px, 2.5vw, 36px)',
@@ -240,9 +267,9 @@ export function HomeContainerSection() {
                   <div
                     key={dot}
                     className={`rounded-full transition-all duration-200 ${
-                      dot === activeStep
-                        ? 'bg-gray-900'
-                        : 'bg-gray-200'
+                      isDark
+                        ? dot === activeStep ? 'bg-white' : 'bg-slate-600'
+                        : dot === activeStep ? 'bg-gray-900' : 'bg-gray-200'
                     }`}
                     style={{
                       width: dot === activeStep ? 'clamp(16px, 1.4vw, 22px)' : 'clamp(5px, 0.4vw, 7px)',
@@ -256,7 +283,11 @@ export function HomeContainerSection() {
               <button
                 type="button"
                 onClick={() => setActiveStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
-                className="flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400 transition-all duration-150 cursor-pointer"
+                className={`flex items-center justify-center rounded-full border transition-all duration-150 cursor-pointer ${
+                  isDark
+                    ? 'bg-surface-800 border-slate-600 text-slate-400 hover:text-white hover:border-slate-400'
+                    : 'bg-white border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400'
+                }`}
                 style={{
                   width: 'clamp(28px, 2.5vw, 36px)',
                   height: 'clamp(28px, 2.5vw, 36px)',
@@ -284,7 +315,11 @@ export function HomeContainerSection() {
                 <div key={idx} className="flex items-start gap-3 group">
                   {/* Icon box */}
                   <div
-                    className="shrink-0 flex items-center justify-center bg-gray-50 border border-gray-100 text-gray-500 rounded-lg group-hover:bg-gray-100 group-hover:text-gray-700 transition-all duration-200"
+                    className={`shrink-0 flex items-center justify-center rounded-lg transition-all duration-200 ${
+                      isDark
+                        ? 'bg-surface-800 border border-slate-700 text-slate-400 group-hover:bg-surface-750 group-hover:text-white'
+                        : 'bg-gray-50 border border-gray-100 text-gray-500 group-hover:bg-gray-100 group-hover:text-gray-700'
+                    }`}
                     style={{
                       width: 'clamp(36px, 3vw, 46px)',
                       height: 'clamp(36px, 3vw, 46px)',
@@ -301,13 +336,17 @@ export function HomeContainerSection() {
                   {/* Text */}
                   <div className="flex flex-col">
                     <span
-                      className="font-bold text-gray-900 leading-tight"
+                      className={`font-bold leading-tight ${
+                        isDark ? 'text-white' : 'text-gray-900'
+                      }`}
                       style={{ fontSize: 'clamp(12px, 0.9vw, 15px)' }}
                     >
                       {feat.title}
                     </span>
                     <span
-                      className="text-gray-400 font-medium leading-snug"
+                      className={`font-medium leading-snug ${
+                        isDark ? 'text-slate-400' : 'text-gray-400'
+                      }`}
                       style={{
                         fontSize: 'clamp(10px, 0.7vw, 12px)',
                         marginTop: '2px',
@@ -332,16 +371,24 @@ export function HomeContainerSection() {
             return (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 p-3 bg-gray-50 rounded-lg"
+                className={`flex items-start gap-2.5 p-3 rounded-lg ${
+                  isDark ? 'bg-surface-800' : 'bg-gray-50'
+                }`}
               >
-                <div className="shrink-0 w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-gray-500 rounded-md">
+                <div
+                  className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-md ${
+                    isDark
+                      ? 'bg-surface-750 border border-slate-700 text-slate-400'
+                      : 'bg-white border border-gray-100 text-gray-500'
+                  }`}
+                >
                   <Icon className="w-4 h-4" style={{ strokeWidth: 1.75 }} />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-bold text-gray-900 leading-tight">
+                  <span className={`text-xs font-bold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {feat.title}
                   </span>
-                  <span className="text-[10px] text-gray-400 font-medium leading-snug mt-0.5">
+                  <span className={`text-[10px] font-medium leading-snug mt-0.5 ${isDark ? 'text-slate-400' : 'text-gray-400'}`}>
                     {feat.description}
                   </span>
                 </div>
