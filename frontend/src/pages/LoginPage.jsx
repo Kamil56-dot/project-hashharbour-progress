@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import loginBg from '../assets/images/login-bg.png';
 
 /**
  * Google SVG Icon
@@ -93,7 +94,7 @@ export function LoginPage() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!email.trim() || !password) {
+    if (!email.trim() || !password.trim()) {
       setErrorMsg('Please enter both email address and password.');
       return;
     }
@@ -101,14 +102,15 @@ export function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost/hashharbour-api';
+      const response = await fetch(`${apiUrl}/api/auth/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: email.trim(),
-          password: password,
+          password: password.trim(),
         }),
       });
 
@@ -145,89 +147,16 @@ export function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#EBF3FC]">
-      {/* ── Soft Light-Blue Wavy Gradient Background ── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {/* Soft Ambient Mesh Glows */}
-        <div
-          className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(195, 225, 255, 0.75) 0%, rgba(235, 243, 252, 0) 70%)',
-          }}
-        />
-        <div
-          className="absolute top-[30%] -right-[15%] w-[55vw] h-[55vw] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(180, 218, 255, 0.65) 0%, rgba(235, 243, 252, 0) 70%)',
-          }}
-        />
-        <div
-          className="absolute -bottom-[20%] left-[20%] w-[50vw] h-[50vw] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(200, 230, 255, 0.6) 0%, rgba(235, 243, 252, 0) 70%)',
-          }}
-        />
-
-        {/* Dynamic Organic SVG Waves Layer 1 (Back wave) */}
-        <svg
-          className="absolute inset-0 w-full h-full object-cover opacity-65"
-          viewBox="0 0 1440 900"
-          fill="none"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M-50 480 C 250 350, 480 620, 850 450 C 1200 290, 1380 430, 1500 380 L 1500 950 L -50 950 Z"
-            fill="url(#wave-grad-1)"
-          />
-          <defs>
-            <linearGradient id="wave-grad-1" x1="0" y1="300" x2="1440" y2="900" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#D9ECFB" stopOpacity="0.8" />
-              <stop offset="1" stopColor="#C9E3FA" stopOpacity="0.4" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        {/* Dynamic Organic SVG Waves Layer 2 (Middle wave) */}
-        <svg
-          className="absolute inset-0 w-full h-full object-cover opacity-75"
-          viewBox="0 0 1440 900"
-          fill="none"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M-50 620 C 320 540, 520 720, 940 580 C 1250 480, 1420 590, 1500 550 L 1500 950 L -50 950 Z"
-            fill="url(#wave-grad-2)"
-          />
-          <defs>
-            <linearGradient id="wave-grad-2" x1="0" y1="500" x2="1440" y2="900" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#E2F0FD" stopOpacity="0.95" />
-              <stop offset="1" stopColor="#D2E8FB" stopOpacity="0.75" />
-            </linearGradient>
-          </defs>
-        </svg>
-
-        {/* Dynamic Organic SVG Waves Layer 3 (Foreground wave) */}
-        <svg
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-          viewBox="0 0 1440 900"
-          fill="none"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M-50 750 C 380 660, 680 820, 1050 710 C 1320 630, 1440 700, 1500 680 L 1500 950 L -50 950 Z"
-            fill="url(#wave-grad-3)"
-          />
-          <defs>
-            <linearGradient id="wave-grad-3" x1="0" y1="650" x2="1440" y2="900" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#F0F7FE" stopOpacity="0.9" />
-              <stop offset="1" stopColor="#E0EFFD" stopOpacity="0.85" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
+    <div
+      className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#F0F6FC] bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${loginBg})` }}
+    >
+      {/* ── Soft Reference Wave Background Layer (Pixel-matched) ── */}
+      <div
+        className="absolute inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${loginBg})` }}
+        aria-hidden="true"
+      />
 
       {/* ── Centered White Card ── */}
       <div className="relative z-10 w-full max-w-[420px] sm:max-w-[440px] bg-white rounded-[28px] sm:rounded-[32px] shadow-[0_20px_60px_-15px_rgba(15,40,80,0.1),0_0_1px_1px_rgba(0,0,0,0.03)] px-7 py-9 sm:px-10 sm:py-11 border border-blue-50/80 transition-all">
@@ -282,6 +211,8 @@ export function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address"
+              aria-label="Email address"
+              title="Please enter your email address"
               className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-12 sm:pl-13 pr-5 py-3 sm:py-3.5 text-sm sm:text-[15px] transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
               autoComplete="email"
             />

@@ -1,0 +1,43 @@
+# Apache Configuration for HashHarbour PHP Backend
+# Enables clean Authorization header passing to PHP under XAMPP / Apache
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pass Authorization header to PHP
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Clean URL rewrites for Auth endpoints
+    RewriteRule ^api/auth/login/?$ api/auth/login.php [L,QSA]
+    RewriteRule ^api/auth/(token/)?refresh/?$ api/auth/refresh.php [L,QSA]
+    RewriteRule ^api/auth/me/?$ api/auth/me.php [L,QSA]
+
+    # Clean URL rewrites for Containers
+    RewriteRule ^api/containers/([0-9]+)/?$ api/containers/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/containers/?$ api/containers/index.php [L,QSA]
+
+    # Clean URL rewrites for Bookings
+    RewriteRule ^api/bookings/([0-9]+)/?$ api/bookings/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/bookings/?$ api/bookings/index.php [L,QSA]
+
+    # Clean URL rewrites for Shipments
+    RewriteRule ^api/shipments/track/?$ api/shipments/index.php [L,QSA]
+    RewriteRule ^api/shipments/([0-9]+)/?$ api/shipments/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/shipments/?$ api/shipments/index.php [L,QSA]
+
+    # Clean URL rewrites for Stats & Features
+    RewriteRule ^api/stats/([0-9]+)/?$ api/stats/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/stats/?$ api/stats/index.php [L,QSA]
+    RewriteRule ^api/features/([0-9]+)/?$ api/features/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/features/?$ api/features/index.php [L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Ensure standard security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# Disable directory listing
+Options -Indexes

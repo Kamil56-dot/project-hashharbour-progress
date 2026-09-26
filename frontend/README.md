@@ -84,5 +84,5 @@ frontend/
 ---
 
 ## 🔌 API Integration
-
-The frontend connects to the Django REST backend at `http://localhost:8000/api/`. Ensure the backend server is running when testing tracking and booking functionality.
+ 
+The frontend connects to the PHP + MySQL backend (XAMPP) at `http://localhost/hashharbour-api/api/`. Ensure the Apache and MySQL services are running when testing tracking and booking functionality.

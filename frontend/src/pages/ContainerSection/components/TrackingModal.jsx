@@ -16,8 +16,8 @@ export default function TrackingModal({ isOpen, onClose }) {
     setError('');
     
     try {
-      // API call to Django REST backend
-      const res = await fetch(`http://localhost:8000/api/shipments/track/?tracking_no=${encodeURIComponent(trackingNo.trim())}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost/hashharbour-api';
+      const res = await fetch(`${apiUrl}/api/shipments/track/?tracking_no=${encodeURIComponent(trackingNo.trim())}`);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

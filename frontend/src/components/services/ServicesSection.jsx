@@ -1,23 +1,21 @@
 import React from 'react';
 import { ServicesHero } from './ServicesHero';
 import { ServicesGrid } from './ServicesGrid';
-import { ServicesWorkflow } from './ServicesWorkflow';
-import { ServicesCTA } from './ServicesCTA';
 import { useTheme } from '../../context/ThemeContext';
 
 /**
  * HashHarbour Homepage — Services Section Master Component
  * Supports Dark Theme (default) and Light Theme matching LoginPage's wavy aesthetic.
- * Expanded max-w-[1650px] container wrapper for near-full-viewport width visual presence.
+ * Clean, fluid page flow with natural vertical scrolling.
  */
 export function ServicesSection() {
   const { isDark } = useTheme();
 
   return (
-    <section
+    <div
       id="services"
       aria-label="HashHarbour Services Infrastructure"
-      className={`relative w-full min-h-screen pt-[88px] lg:pt-[96px] pb-10 sm:pb-12 lg:pb-14 px-4 sm:px-8 lg:px-12 overflow-hidden flex flex-col items-center justify-start border-t transition-colors duration-300 ${
+      className={`relative w-full pt-[88px] lg:pt-[96px] pb-16 lg:pb-24 px-4 sm:px-8 lg:px-12 flex flex-col items-center justify-start border-t transition-colors duration-300 ${
         isDark
           ? 'bg-gradient-to-b from-[#061426]/90 via-[#061426] to-surface-900 text-white border-white/5'
           : 'bg-[#EBF3FC] text-[#0F172A] border-blue-100/60'
@@ -150,14 +148,21 @@ export function ServicesSection() {
         )}
       </div>
 
-      {/* Main Structural Container (Expanded to near-full-viewport width) */}
+      {/* Main Structural Container */}
       <div className="w-full max-w-[1650px] mx-auto z-10 flex flex-col items-center">
         <ServicesHero />
         <ServicesGrid />
-        <ServicesWorkflow />
-        <ServicesCTA />
+
+        {/* Plain Tagline floating directly in the page flow (no box, no card, no background) */}
+        <p
+          className={`text-center font-sans font-medium text-base sm:text-lg md:text-xl tracking-wide mt-1 sm:mt-2 mb-4 sm:mb-8 select-none transition-colors duration-200 ${
+            isDark ? 'text-white/90' : 'text-slate-900'
+          }`}
+        >
+          Every shipment. Every step. Simplified.
+        </p>
       </div>
-    </section>
+    </div>
   );
 }
 

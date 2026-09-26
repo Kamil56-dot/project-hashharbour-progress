@@ -11,7 +11,7 @@ The repository is organized into a clean decoupled full-stack architecture:
 ```
 HashHarbour/
 ├── frontend/               # React 19 + Vite 8 SPA Client (Three.js, Tailwind CSS, GSAP)
-├── backend/                # Django REST Framework API (Shipment tracking, stats, features)
+├── backend-php/            # Pure PHP 8.1+ & MySQL 8.0+ REST API (Auth, Containers, Bookings, Shipments)
 ├── archive/                # Legacy prototypes, standalones, and development CV tools
 │   ├── about-section-legacy/
 │   ├── container-section-frontend-prototype/
@@ -25,46 +25,28 @@ HashHarbour/
 
 ## 🚀 Quick Start Guide
 
-### 1. Backend Setup (Django REST Framework)
+### 1. Backend Setup (PHP 8.1+ & MySQL / XAMPP)
 
 #### Prerequisites
-- Python 3.10 to 3.14
-- `pip` package manager
+- XAMPP (Apache with `mod_rewrite` + MySQL service)
+- PHP 8.1 or higher with `pdo_mysql` and `openssl` extensions enabled
 
 #### Setup & Run
-From the project root:
-```bash
-# Navigate to backend
-cd backend
-
-# (Optional) Create and activate a virtual environment
-python -m venv venv
-# On Windows:
-.\venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Verify database and configuration
-python manage.py check
-
-# Apply database migrations
-python manage.py migrate
-
-# (Optional) Seed demo shipments and stats
-python seed.py
-
-# Start the Django development server
-python manage.py runserver
-```
-The backend API will be available at `http://localhost:8000/`.  
-Browse API endpoints:
-- Shipment Tracking: `http://localhost:8000/api/shipments/track/?tracking_no=HH-100293`
-- Shipments List: `http://localhost:8000/api/shipments/`
-- Platform Stats: `http://localhost:8000/api/stats/`
-- Feature Cards: `http://localhost:8000/api/features/`
+1. Start **Apache** and **MySQL** services in the XAMPP Control Panel.
+2. Import the database schema and seed data into MySQL:
+   ```bash
+   mysql -u root hashharbour < backend-php/schema.sql
+   ```
+3. Map `backend-php/` into XAMPP's `htdocs` directory (e.g. symlink or directory junction):
+   ```cmd
+   mklink /J "C:\xampp\htdocs\hashharbour-api" "path\to\backend-php"
+   ```
+4. Verify backend endpoints:
+   - Platform Stats: `http://localhost/hashharbour-api/api/stats/`
+   - Feature Cards: `http://localhost/hashharbour-api/api/features/`
+   - ISO Containers Catalog: `http://localhost/hashharbour-api/api/containers/`
+   - Shipment Tracking: `http://localhost/hashharbour-api/api/shipments/track/?tracking_no=HH-100293`
+   - Auth Login: `POST http://localhost/hashharbour-api/api/auth/login/`
 
 ---
 
@@ -100,7 +82,7 @@ Compiled production assets are output to `frontend/dist/`.
 ## 📦 Repositories & Archives
 
 - **`frontend/`**: Active client application. See [`frontend/README.md`](frontend/README.md) for frontend-specific documentation.
-- **`backend/`**: Active REST API server.
+- **`backend-php/`**: Active PHP 8.1+ & MySQL 8.0+ REST API server.
 - **`archive/`**: Preserved historical assets:
   - `archive/about-section-legacy/`: Original standalone About section package.
   - `archive/container-section-frontend-prototype/`: Isolated prototype frontend for container section.
