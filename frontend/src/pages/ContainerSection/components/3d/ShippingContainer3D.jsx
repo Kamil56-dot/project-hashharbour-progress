@@ -3,9 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, ContactShadows, Center, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import ContainerModel from './ContainerModel';
+import { useTheme } from '../../../../context/ThemeContext';
 
 // ─── Loading Overlay with Thin Progress Ring & Smooth Fade-Out ───
 function ShowcaseLoadingOverlay() {
+  const { isDark } = useTheme();
   const { progress, active } = useProgress();
   const [shouldRender, setShouldRender] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
@@ -28,28 +30,32 @@ function ShowcaseLoadingOverlay() {
 
   return (
     <div
-      className={`absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#060B14]/90 backdrop-blur-md transition-opacity duration-500 ${
+      className={`absolute inset-0 z-30 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500 ${
+        isDark ? 'bg-[#060B14]/90 text-white' : 'bg-[#EBF3FC]/90 text-[#0F172A]'
+      } ${
         fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
-      {/* Thin cyan circular progress ring */}
+      {/* Thin circular progress ring */}
       <div className="relative w-12 h-12 flex items-center justify-center mb-4">
-        <div className="absolute inset-0 rounded-full border-2 border-[#00E5FF]/15" />
-        <div className="absolute inset-0 rounded-full border-2 border-t-[#00E5FF] border-r-transparent border-b-transparent border-l-transparent animate-spin" />
-        <div className="w-2.5 h-2.5 rounded-full bg-[#00E5FF] animate-pulse" />
+        <div className={`absolute inset-0 rounded-full border-2 ${isDark ? 'border-[#00E5FF]/15' : 'border-brand-500/20'}`} />
+        <div className={`absolute inset-0 rounded-full border-2 border-r-transparent border-b-transparent border-l-transparent animate-spin ${
+          isDark ? 'border-t-[#00E5FF]' : 'border-t-brand-600'
+        }`} />
+        <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${isDark ? 'bg-[#00E5FF]' : 'bg-brand-600'}`} />
       </div>
 
-      <p className="text-[13px] font-medium text-white/85 tracking-wide mb-2">
+      <p className={`text-[13px] font-medium tracking-wide mb-2 ${isDark ? 'text-white/85' : 'text-slate-700'}`}>
         Preparing Container Showcase...
       </p>
       <div className="flex items-center gap-2.5">
-        <div className="w-24 h-1 rounded-full bg-white/10 overflow-hidden">
+        <div className={`w-24 h-1 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-slate-200'}`}>
           <div
-            className="h-full bg-[#00E5FF] transition-all duration-200"
+            className={`h-full transition-all duration-200 ${isDark ? 'bg-[#00E5FF]' : 'bg-brand-600'}`}
             style={{ width: `${Math.max(10, progress)}%` }}
           />
         </div>
-        <span className="text-[10px] font-mono text-[#00E5FF]/80">
+        <span className={`text-[10px] font-mono ${isDark ? 'text-[#00E5FF]/80' : 'text-brand-600'}`}>
           {Math.round(progress)}%
         </span>
       </div>
@@ -69,6 +75,7 @@ function LoadingFallback() {
 
 // ─── Subtle Industrial Studio Blueprint Floor (Non-glossy, soft grid with radial edge fade) ───
 function StudioBlueprintFloor() {
+  const { isDark } = useTheme();
   const gridTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 256;
@@ -78,7 +85,7 @@ function StudioBlueprintFloor() {
     ctx.clearRect(0, 0, 256, 256);
 
     // Fine blueprint grid lines
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.08)';
+    ctx.strokeStyle = isDark ? 'rgba(0, 229, 255, 0.08)' : 'rgba(30, 136, 229, 0.12)';
     ctx.lineWidth = 1;
     for (let i = 0; i <= 256; i += 16) {
       ctx.beginPath();
@@ -93,7 +100,7 @@ function StudioBlueprintFloor() {
     }
 
     // Major grid accent lines
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.16)';
+    ctx.strokeStyle = isDark ? 'rgba(0, 229, 255, 0.16)' : 'rgba(30, 136, 229, 0.22)';
     ctx.lineWidth = 1.5;
     for (let i = 0; i <= 256; i += 64) {
       ctx.beginPath();
@@ -130,7 +137,7 @@ function StudioBlueprintFloor() {
     tex.wrapS = THREE.ClampToEdgeWrapping;
     tex.wrapT = THREE.ClampToEdgeWrapping;
     return tex;
-  }, []);
+  }, [isDark]);
 
   return (
     <mesh position={[0, -1.305, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -138,7 +145,7 @@ function StudioBlueprintFloor() {
       <meshStandardMaterial
         map={gridTexture}
         transparent
-        opacity={0.38}
+        opacity={isDark ? 0.38 : 0.45}
         roughness={0.92}
         metalness={0.0}
         depthWrite={false}

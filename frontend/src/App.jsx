@@ -13,11 +13,26 @@ const ContainerPage = lazy(() => import('./pages/ContainerSection/ContainerPage'
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 
 function PageLoadingFallback() {
+  const { isLight } = useTheme();
   return (
-    <div className="min-h-screen bg-[#060B14] flex items-center justify-center text-[#00E5FF]">
+    <div
+      className={`min-h-screen flex items-center justify-center transition-colors duration-200 ${
+        isLight ? 'bg-[#EBF3FC] text-brand-600' : 'bg-[#060B14] text-[#00E5FF]'
+      }`}
+    >
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-[#00E5FF]/20 border-t-[#00E5FF] animate-spin" />
-        <span className="text-[13px] font-medium tracking-wide text-white/70">Loading Section...</span>
+        <div
+          className={`w-8 h-8 rounded-full border-2 animate-spin ${
+            isLight ? 'border-brand-500/20 border-t-brand-600' : 'border-[#00E5FF]/20 border-t-[#00E5FF]'
+          }`}
+        />
+        <span
+          className={`text-[13px] font-medium tracking-wide ${
+            isLight ? 'text-slate-600' : 'text-white/70'
+          }`}
+        >
+          Loading Section...
+        </span>
       </div>
     </div>
   );
