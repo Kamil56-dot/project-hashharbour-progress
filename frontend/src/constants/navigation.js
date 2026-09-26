@@ -10,6 +10,6 @@ export const NAV_LINKS = Object.freeze([
 ]);
 
 export const NAV_ACTIONS = Object.freeze({
-  login:    { label: 'Log In',   href: '#login',    variant: 'nav-ghost' },
+  login:    { label: 'Log In',   href: '/login',    variant: 'nav-ghost' },
   register: { label: 'Register', href: '#register', variant: 'nav-primary' },
 });

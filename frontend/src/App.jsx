@@ -55,11 +55,6 @@ export function App() {
   const isHomePage = pathname === '/';
   const hideSharedNavbar = isHomePage || isLoginPage;
 
-  // Services page in light mode needs theme-var background
-  const isServicesLight = isLight && pathname === '/services';
-  // Home page in light mode uses its original white design
-  const isHomeLight = isLight && isHomePage;
-
   useEffect(() => {
     if (!navbarRef.current) return;
 
@@ -77,24 +72,19 @@ export function App() {
   }, [prefersReducedMotion]);
 
   /**
-   * Wrapper class logic:
-   * - Login page: always white bg (light-only, not in theme scope)
-   * - Home page light: white bg (original design)
-   * - Home page dark: dark surface bg
-   * - Services light: theme-var bg
-   * - Everything else (About, Container, etc.): dark surface bg
+   * Universal wrapper class logic:
+   * Driven strictly by the global ThemeContext:
+   * - Login page: always white bg (dedicated auth surface)
+   * - Light theme: theme background (--theme-bg) & theme primary text
+   * - Dark theme: dark surface background & primary text
    */
   const getWrapperClass = () => {
     if (isLoginPage) {
       return 'min-h-screen bg-white antialiased';
     }
-    if (isHomeLight) {
-      return 'min-h-screen bg-white antialiased transition-colors duration-200';
-    }
-    if (isServicesLight) {
+    if (isLight) {
       return 'min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] antialiased transition-colors duration-200';
     }
-    // Dark mode for Home, Services, About, Container, etc.
     return 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200';
   };
 

@@ -5,16 +5,14 @@ import { AboutNetwork } from './AboutNetwork';
 import { TradePillars } from './TradePillars';
 import { TrustLayer } from './TrustLayer';
 import { BrandStatement } from './BrandStatement';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * HashHarbour Homepage — Restructured About Section Master Component.
- * Homepage-first Information Architecture:
- * 1. Digital Corridor Intro & 3D Globe Network (AboutHero + AboutNetwork)
- * 2. Three Pillars of Modern Trade (TradePillars)
- * 3. Security & Trust Infrastructure (TrustLayer)
- * 4. Brand Manifesto & Transition to Services (BrandStatement)
+ * Supports dual-theme (Dark / Light) matching the HashHarbour global design system.
  */
 export function AboutSection() {
+  const { isDark } = useTheme();
   const sectionRef = useRef(null);
   const badgeRef = useRef(null);
   const headingRef = useRef(null);
@@ -66,23 +64,57 @@ export function AboutSection() {
       ref={sectionRef}
       id="about"
       aria-label="About HashHarbour Infrastructure"
-      className="relative w-full min-h-screen bg-gradient-to-b from-[#061426]/90 via-[#061426] to-surface-900 pt-[96px] lg:pt-[104px] pb-16 sm:pb-20 lg:pb-24 px-6 sm:px-10 lg:px-[42px] overflow-hidden flex flex-col items-center justify-center border-t border-white/5"
+      className={`relative w-full min-h-screen pt-[96px] lg:pt-[104px] pb-16 sm:pb-20 lg:pb-24 px-6 sm:px-10 lg:px-[42px] overflow-hidden flex flex-col items-center justify-center border-t transition-colors duration-300 ${
+        isDark
+          ? 'bg-gradient-to-b from-[#061426]/90 via-[#061426] to-surface-900 text-white border-white/5'
+          : 'bg-[#EBF3FC] text-[#0F172A] border-blue-100/60'
+      }`}
     >
-      {/* Background Decorative Layer: Faint Grid & Radial Cyan Glow */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Radial Cyan Atmosphere Glow behind 3D Globe */}
-        <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-accent-500/10 rounded-full blur-[160px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#00C8F5]/5 rounded-full blur-[140px]" />
+      {/* Background Decorative Layer */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        {isDark ? (
+          <>
+            {/* Dark Mode: Radial Cyan Atmosphere Glow behind 3D Globe */}
+            <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-accent-500/10 rounded-full blur-[160px]" />
+            <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#00C8F5]/5 rounded-full blur-[140px]" />
 
-        {/* Faint Grid Lines */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, #00C8F5 1px, transparent 1px), linear-gradient(to bottom, #00C8F5 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+            {/* Dark Mode: Faint Cyan Grid Lines */}
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, #00C8F5 1px, transparent 1px), linear-gradient(to bottom, #00C8F5 1px, transparent 1px)',
+                backgroundSize: '48px 48px',
+              }}
+            />
+          </>
+        ) : (
+          <>
+            {/* Light Mode: Soft Ambient Mesh Glows */}
+            <div
+              className="absolute top-1/4 right-1/4 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[160px]"
+              style={{
+                background: 'radial-gradient(circle, rgba(195, 225, 255, 0.75) 0%, rgba(235, 243, 252, 0) 70%)',
+              }}
+            />
+            <div
+              className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[140px]"
+              style={{
+                background: 'radial-gradient(circle, rgba(180, 218, 255, 0.65) 0%, rgba(235, 243, 252, 0) 70%)',
+              }}
+            />
+
+            {/* Light Mode: Faint Blue Grid Lines */}
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, #1E88E5 1px, transparent 1px), linear-gradient(to bottom, #1E88E5 1px, transparent 1px)',
+                backgroundSize: '48px 48px',
+              }}
+            />
+          </>
+        )}
       </div>
 
       {/* Streamlined Homepage-First Information Architecture */}
