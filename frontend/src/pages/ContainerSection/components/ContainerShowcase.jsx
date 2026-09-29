@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, RotateCcw, Smartphone, Download, ArrowRight } from 'lucide-react';
 // Phase 0: 3D implementation archived to frontend/src/archive/container-3d-legacy/
 // import ShippingContainer3D from './3d/ShippingContainer3D';
@@ -33,9 +33,51 @@ const COLOR_PRESETS = [
   { name: 'Dark Charcoal',     hex: '#2A2A2A' },
 ];
 
-export default function ContainerShowcase({ onBookContainer }) {
+const CONTAINER_TYPE_CONFIG = {
+  'reefer': {
+    badge: 'ISO Cold Chain Reefer',
+    title: '40-Foot ISO Reefer Container',
+    desc: 'Equipped with integrated refrigeration units, digital climate telemetry (-30°C to +30°C), and stainless-steel insulated liners for high-value cold-chain logistics.',
+    defaultColor: '#C8C5B8', // Industrial White
+    specTag: '#HASHHARBOUR Reefer — 40ft High Cube ISO',
+  },
+  'oil-tank': {
+    badge: 'ISO Tank Container',
+    title: 'ISO Tank Unit (Liquid Bulk)',
+    desc: 'High-grade 316 stainless steel cylindrical pressure vessel within an ISO structural frame, certified for food-grade liquids and hazardous chemical transport.',
+    defaultColor: '#B35C1E', // Orange
+    specTag: '#HASHHARBOUR Tank — 20ft ISO Certified',
+  },
+  'tank': {
+    badge: 'ISO Tank Container',
+    title: 'ISO Tank Unit (Liquid Bulk)',
+    desc: 'High-grade 316 stainless steel cylindrical pressure vessel within an ISO structural frame, certified for food-grade liquids and hazardous chemical transport.',
+    defaultColor: '#B35C1E', // Orange
+    specTag: '#HASHHARBOUR Tank — 20ft ISO Certified',
+  },
+  'standard-dry': {
+    badge: '3D Container Preview',
+    title: '20-Foot ISO Standard',
+    desc: 'Built to international ISO 668 specifications with corrugated steel walls, reinforced corner castings, and double-door locking mechanism — exactly like the real thing, rendered in your browser.',
+    defaultColor: '#8B2500', // Container Red
+    specTag: '#HASHHARBOUR Container — 20ft ISO',
+  },
+};
+
+export default function ContainerShowcase({ onBookContainer, containerType = '' }) {
   const { isDark } = useTheme();
-  const [containerColor, setContainerColor] = useState(COLOR_PRESETS[0].hex);
+  const currentConfig = CONTAINER_TYPE_CONFIG[containerType] || CONTAINER_TYPE_CONFIG['standard-dry'];
+
+  const [containerColor, setContainerColor] = useState(
+    currentConfig.defaultColor || COLOR_PRESETS[0].hex
+  );
+
+  useEffect(() => {
+    if (CONTAINER_TYPE_CONFIG[containerType]) {
+      setContainerColor(CONTAINER_TYPE_CONFIG[containerType].defaultColor);
+    }
+  }, [containerType]);
+
   const activePreset = COLOR_PRESETS.find(c => c.hex === containerColor) || COLOR_PRESETS[0];
 
   return (
@@ -82,7 +124,7 @@ export default function ContainerShowcase({ onBookContainer }) {
           >
             <Box className={`w-4 h-4 ${isDark ? 'text-[#00E5FF]' : 'text-brand-500'}`} />
             <span className="text-[13px] font-medium tracking-wide">
-              3D Container Preview
+              {currentConfig.badge}
             </span>
           </div>
 
@@ -118,16 +160,14 @@ export default function ContainerShowcase({ onBookContainer }) {
                   isDark ? 'text-white' : 'text-[#0F172A]'
                 }`}
               >
-                20-Foot ISO Standard
+                {currentConfig.title}
               </h3>
               <p
                 className={`text-[14px] leading-[1.75] max-w-[420px] transition-colors duration-200 ${
                   isDark ? 'text-white/50' : 'text-slate-600'
                 }`}
               >
-                Built to international ISO 668 specifications with corrugated
-                steel walls, reinforced corner castings, and double-door locking
-                mechanism — exactly like the real thing, rendered in your browser.
+                {currentConfig.desc}
               </p>
             </div>
 
@@ -361,7 +401,7 @@ export default function ContainerShowcase({ onBookContainer }) {
                   isDark ? 'text-white/40' : 'text-slate-500'
                 }`}
               >
-                #HASHHARBOUR Container — 20ft ISO
+                {currentConfig.specTag}
               </span>
             </div>
           </div>

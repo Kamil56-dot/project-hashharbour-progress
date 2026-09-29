@@ -25,7 +25,9 @@ function run_request(string $scriptPath, string $method, array $headers = [], ar
         2 => ['pipe', 'w']
     ];
 
-    $phpExe = 'C:\\xampp\\php\\php.exe';
+    $phpExe = is_file('C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe')
+        ? '"C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe" -c "C:\\xampp\\htdocs\\HashHarbour\\php\\php.ini"'
+        : '"C:\\xampp\\php\\php.exe"';
 
     $env = [];
     foreach (array_merge($_SERVER, $_ENV) as $k => $v) {
@@ -53,7 +55,7 @@ function run_request(string $scriptPath, string $method, array $headers = [], ar
         $env['HTTP_AUTHORIZATION'] = $headers['Authorization'];
     }
 
-    $cmd = sprintf('"%s" "%s"', $phpExe, $scriptPath);
+    $cmd = sprintf('%s "%s"', $phpExe, $scriptPath);
     $process = proc_open($cmd, $descriptors, $pipes, dirname($scriptPath), $env);
 
     if (!is_resource($process)) {
