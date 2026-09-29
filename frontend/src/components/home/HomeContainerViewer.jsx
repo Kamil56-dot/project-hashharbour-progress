@@ -2,7 +2,7 @@ import React, { Suspense, useRef, useState, useEffect, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, ContactShadows, Center, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
-import ContainerModel from '../../pages/ContainerSection/components/3d/ContainerModel';
+import ContainerModel from '../../archive/container-3d-legacy/ContainerModel';
 
 /**
  * HomeContainerViewer — Lightweight 3D container viewer for the home page.

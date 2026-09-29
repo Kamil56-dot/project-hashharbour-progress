@@ -3,7 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, ContactShadows, Center, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import ContainerModel from './ContainerModel';
-import { useTheme } from '../../../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // ─── Loading Overlay with Thin Progress Ring & Smooth Fade-Out ───
 function ShowcaseLoadingOverlay() {

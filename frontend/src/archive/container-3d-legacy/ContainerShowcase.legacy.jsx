@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Box, RotateCcw, Smartphone, Download, ArrowRight } from 'lucide-react';
-// Phase 0: 3D implementation archived to frontend/src/archive/container-3d-legacy/
-// import ShippingContainer3D from './3d/ShippingContainer3D';
-import { useTheme } from '../../../context/ThemeContext';
+import ShippingContainer3D from './ShippingContainer3D';
+import { useTheme } from '../../context/ThemeContext';
 
 const features = [
   {
@@ -224,15 +223,9 @@ export default function ContainerShowcase({ onBookContainer }) {
                 }`}
               />
 
-              {/* 3D Container Viewport Stub (Phase 0 Archive / Phase 1 Replacement) */}
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 text-center select-none">
-                <Box className={`w-12 h-12 mb-3 stroke-[1.5] animate-pulse ${isDark ? 'text-[#00E5FF]' : 'text-brand-500'}`} />
-                <span className={`text-sm font-semibold tracking-wide ${isDark ? 'text-white/80' : 'text-[#0F172A]'}`}>
-                  3D Container Viewer Placeholder
-                </span>
-                <span className={`text-xs mt-1 max-w-[260px] ${isDark ? 'text-white/45' : 'text-slate-500'}`}>
-                  Selected Finish: {activePreset.name} ({containerColor})
-                </span>
+              {/* Real 3D Container Viewport */}
+              <div className="absolute inset-0 z-10 select-none">
+                <ShippingContainer3D containerColor={containerColor} autoRotate={true} />
               </div>
 
               {/* Corner accents */}
