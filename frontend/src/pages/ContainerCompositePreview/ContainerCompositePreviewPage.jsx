@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
+import { ContainerCompositeNavbar } from './ContainerCompositeNavbar';
 import redContainerImg from '../../assets/containers/red container.png';
 import oilTankImg from '../../assets/containers/oil-tank-container.png';
 import reeferImg from '../../assets/containers/reefer container.png';
@@ -24,14 +25,6 @@ const CONTAINERS = [
     description: 'Standard 20ft & 40ft ISO dry containers available for global shipping at competitive rates.',
     image: redContainerImg,
     alt: 'Standard Dry Shipping Container',
-    shadowConfig: {
-      contactBottom: 'bottom-[9%]',
-      contactWidth: 'w-[88%]',
-      contactHeight: 'h-[14px] sm:h-[18px] lg:h-[24px]',
-      diffuseBottom: 'bottom-[1%]',
-      diffuseWidth: 'w-[104%]',
-      diffuseHeight: 'h-[24px] sm:h-[32px] lg:h-[40px]',
-    },
   },
   {
     id: 'reefer',
@@ -43,14 +36,6 @@ const CONTAINERS = [
     description: 'Advanced refrigerated cold-chain containers for perishables, pharmaceuticals, and sensitive cargo.',
     image: reeferImg,
     alt: 'Reefer Temperature-Controlled Container',
-    shadowConfig: {
-      contactBottom: 'bottom-[9%]',
-      contactWidth: 'w-[86%]',
-      contactHeight: 'h-[10px] sm:h-[14px] lg:h-[18px]',
-      diffuseBottom: 'bottom-[1%]',
-      diffuseWidth: 'w-[100%]',
-      diffuseHeight: 'h-[16px] sm:h-[22px] lg:h-[28px]',
-    },
   },
   {
     id: 'oil-tank',
@@ -62,14 +47,6 @@ const CONTAINERS = [
     description: 'High-grade stainless steel ISO tank containers engineered for food-grade liquids and hazardous chemical transport.',
     image: oilTankImg,
     alt: 'Oil and Tank Container',
-    shadowConfig: {
-      contactBottom: 'bottom-[4%]',
-      contactWidth: 'w-[86%]',
-      contactHeight: 'h-[10px] sm:h-[14px] lg:h-[18px]',
-      diffuseBottom: '-bottom-[2%]',
-      diffuseWidth: 'w-[98%]',
-      diffuseHeight: 'h-[16px] sm:h-[22px] lg:h-[26px]',
-    },
   },
 ];
 
@@ -123,10 +100,13 @@ export function ContainerCompositePreviewPage() {
 
   return (
     <div
-      className={`min-h-screen lg:h-screen lg:max-h-screen w-full transition-colors duration-300 pt-[88px] lg:pt-[102px] pb-2 px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-between overflow-x-hidden ${
+      className={`min-h-screen lg:h-screen lg:max-h-screen w-full transition-colors duration-300 pt-[78px] lg:pt-[82px] pb-2 px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-between overflow-x-hidden ${
         isDark ? 'bg-[#060B14] text-white' : 'bg-[#EBF3FC] text-[#0F172A]'
       }`}
     >
+      {/* ─── DEDICATED PREVIEW NAVBAR ─── */}
+      <ContainerCompositeNavbar />
+
       {/* ─── SCOPED CSS FOR SMOOTH CAROUSEL ROLE TRANSITIONS ─── */}
       <style>{`
         .composite-card {
@@ -363,35 +343,17 @@ export function ContainerCompositePreviewPage() {
                 }}
                 className={`composite-card role-${role} ${container.id === 'oil-tank' ? 'is-tank' : 'is-box'} w-[270px] sm:w-[340px] md:w-[410px] lg:w-[470px] xl:w-[520px]`}
               >
-                {/* Ground Contact Shadow */}
-                <div
-                  className={`absolute ${container.shadowConfig.contactBottom} left-1/2 -translate-x-1/2 ${container.shadowConfig.contactWidth} ${container.shadowConfig.contactHeight} rounded-[100%] pointer-events-none transition-opacity duration-300`}
-                  style={{
-                    background: isDark
-                      ? 'radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.55) 60%, transparent 80%)'
-                      : 'radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 0.52) 0%, rgba(15, 23, 42, 0.22) 55%, transparent 75%)',
-                    filter: isDark ? 'blur(6px)' : 'blur(5px)',
-                  }}
-                />
-                {/* Diffuse Floor Shadow */}
-                <div
-                  className={`absolute ${container.shadowConfig.diffuseBottom} left-1/2 -translate-x-1/2 ${container.shadowConfig.diffuseWidth} ${container.shadowConfig.diffuseHeight} rounded-[100%] pointer-events-none transition-opacity duration-300`}
-                  style={{
-                    background: isDark
-                      ? 'radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.65) 0%, transparent 70%)'
-                      : 'radial-gradient(ellipse at 50% 50%, rgba(15, 23, 42, 0.2) 0%, transparent 70%)',
-                    filter: 'blur(15px)',
-                  }}
-                />
-                {/* Container Image */}
+                {/* Container Image — all-sides silhouette glow via drop-shadow on alpha channel */}
                 <img
                   src={container.image}
                   alt={container.alt}
-                  className={`w-full h-auto object-contain block relative z-10 select-none ${
-                    isCenter
-                      ? 'drop-shadow-[0_6px_20px_rgba(0,0,0,0.2)]'
-                      : 'drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]'
-                  }`}
+                  className="w-full h-auto object-contain block relative z-10 select-none"
+                  style={{
+                    filter: isDark
+                      ? 'drop-shadow(0 0 7px rgba(255,255,255,0.22)) drop-shadow(0 0 18px rgba(255,255,255,0.10))'
+                      : 'drop-shadow(0 0 7px rgba(15,23,42,0.18)) drop-shadow(0 0 18px rgba(15,23,42,0.08))',
+                    transition: 'filter 300ms ease',
+                  }}
                   loading="eager"
                   draggable={false}
                 />
@@ -401,11 +363,11 @@ export function ContainerCompositePreviewPage() {
         </div>
       </div>
 
-      {/* ─── BOTTOM SECTION: INDICATORS, CTAS & PILLARS (COMPACT) ─── */}
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center shrink-0">
+      {/* ─── BOTTOM SECTION: INDICATORS, CTAS & PILLARS (UNIFIED AIM ROW) ─── */}
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col items-center shrink-0 mb-1">
         
-        {/* Pagination Indicator Dots */}
-        <div className="flex items-center justify-center gap-2 my-0.5" role="tablist" aria-label="Container indicators">
+        {/* Pagination Indicator Dots (14px circles with >=24px hit area, no wide pill) */}
+        <div className="flex items-center justify-center gap-1.5 my-0.5" role="tablist" aria-label="Container indicators">
           {CONTAINERS.map((c, idx) => {
             const isActive = idx === centerIndex;
             return (
@@ -416,67 +378,89 @@ export function ContainerCompositePreviewPage() {
                 aria-selected={isActive}
                 aria-label={`Select ${c.name} container`}
                 onClick={() => setCenterIndex(idx)}
-                className={`transition-all duration-300 rounded-full cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
-                  isActive
-                    ? 'w-6 h-2 bg-[#0088FF] shadow-[0_0_10px_rgba(0,136,255,0.7)] ring-2 ring-[#0088FF]/30'
-                    : 'w-2 h-2 bg-slate-300 hover:bg-slate-400 dark:bg-white/20 dark:hover:bg-white/40'
-                }`}
-              />
+                className="w-6 h-6 min-w-[24px] min-h-[24px] flex items-center justify-center p-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full"
+              >
+                <span
+                  className={`w-[14px] h-[14px] rounded-full transition-all duration-200 ${
+                    isActive
+                      ? isDark
+                        ? 'bg-[#38BDF8] shadow-[0_0_8px_rgba(56,189,248,0.5)]'
+                        : 'bg-[#1E88E5] shadow-[0_2px_6px_rgba(30,136,229,0.4)]'
+                      : isDark
+                        ? 'bg-white/[0.15] hover:bg-white/[0.25]'
+                        : 'bg-[#CFE3FA] hover:bg-[#B5D5F7]'
+                  }`}
+                />
+              </button>
             );
           })}
         </div>
 
-        {/* Dynamic Subtitle & Dynamic Book CTA */}
-        <div className="text-center mt-0.5">
-          <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-blue-600 dark:text-cyan-400 mb-0.5 transition-colors duration-200">
+        {/* Dynamic Subtitle & Description Block */}
+        <div className="text-center my-0.5 max-w-xl mx-auto">
+          <div className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-blue-600 dark:text-cyan-400 mb-0.5 transition-colors duration-200">
             {activeContainer.tag}
           </div>
           <h2 className="text-lg sm:text-xl lg:text-[22px] font-extrabold tracking-tight text-[#0F172A] dark:text-white mb-0.5 leading-tight transition-colors duration-200">
             {activeContainer.headline}
           </h2>
-          <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mb-2 font-normal transition-colors duration-200">
+          <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-normal transition-colors duration-200 line-clamp-1">
             {activeContainer.description}
           </p>
+        </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
+        {/* Unified Bottom Row: Far-Left Feature | Centered Buttons Pair | Far-Right Feature */}
+        <div className="w-full flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-between gap-3 md:gap-2 mt-1">
+          
+          {/* Far Left: Global Shipping (Aligned to nav logo edge, icon left, text left-aligned) */}
+          <div className="order-2 md:order-1 flex items-center justify-start gap-3 w-full md:w-auto justify-self-start">
+            <div className="w-12 h-12 rounded-full bg-[rgba(30,136,229,0.10)] dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0">
+              <Globe className="w-[22px] h-[22px] stroke-[1.8]" />
+            </div>
+            <div className="text-left">
+              <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
+                Global Shipping
+              </div>
+              <div className="text-[13px] text-[#64748B] dark:text-slate-300 leading-snug">
+                Worldwide Coverage
+              </div>
+            </div>
+          </div>
+
+          {/* Center: Dynamic Book Button + Secondary Explore Button (Fully rounded pills, ~52-54px height) */}
+          <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-3 justify-self-center">
             <button
               onClick={handleBookContainer}
               type="button"
               aria-label={activeContainer.bookLabel}
-              className="inline-flex items-center gap-2 px-5 py-1.5 sm:py-2 rounded-full bg-[#0088FF] hover:bg-[#0077EE] active:bg-[#0066DD] text-white font-semibold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-between gap-3 h-[52px] sm:h-[54px] pl-6 pr-2 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[15px] sm:text-[16px] shadow-[0_4px_16px_rgba(30,136,229,0.35)] transition-all cursor-pointer group"
             >
               <span>{activeContainer.bookLabel}</span>
-              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="w-[38px] h-[38px] rounded-full bg-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-200 group-hover:translate-x-0.5">
+                <ArrowRight className="w-5 h-5 text-[#1E88E5]" />
+              </span>
             </button>
 
             <Link
               to="/container-section"
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium border border-slate-300 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center h-[52px] sm:h-[54px] px-6 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white/40 dark:bg-white/[0.04] hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-[15px] sm:text-[16px] transition-colors"
             >
               <span>Explore All Containers</span>
             </Link>
           </div>
-        </div>
 
-        {/* Reference Bottom Feature Pillars */}
-        <div className="w-full grid grid-cols-2 gap-4 mt-1.5 pt-1.5 border-t border-black/[0.05] dark:border-white/[0.06]">
-          <div className="flex items-center justify-start gap-2 text-left">
-            <div className="w-6 h-6 rounded-full bg-blue-500/10 dark:bg-cyan-400/10 flex items-center justify-center text-blue-600 dark:text-cyan-400 shrink-0">
-              <Globe className="w-3.5 h-3.5" />
+          {/* Far Right: Safe & Secure (Aligned to nav hamburger edge, icon left, text left-aligned) */}
+          <div className="order-3 md:order-3 flex items-center justify-start md:justify-end gap-3 w-full md:w-auto justify-self-end">
+            <div className="w-12 h-12 rounded-full bg-[rgba(30,136,229,0.10)] dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0">
+              <ShieldCheck className="w-[22px] h-[22px] stroke-[1.8]" />
             </div>
-            <div>
-              <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">Global Shipping</div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Worldwide Coverage</div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-2 text-right">
-            <div className="order-2 w-6 h-6 rounded-full bg-blue-500/10 dark:bg-cyan-400/10 flex items-center justify-center text-blue-600 dark:text-cyan-400 shrink-0">
-              <ShieldCheck className="w-3.5 h-3.5" />
-            </div>
-            <div className="order-1">
-              <div className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-tight">Safe & Secure</div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Your Cargo, Our Priority</div>
+            <div className="text-left">
+              <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
+                Safe & Secure
+              </div>
+              <div className="text-[13px] text-[#64748B] dark:text-slate-300 leading-snug">
+                Your Cargo, Our Priority
+              </div>
             </div>
           </div>
         </div>

@@ -68,9 +68,11 @@ export function App() {
   const isLoginPage = pathname === '/login';
 
   // Home page uses its own HomeNavbar (both dark and light themes),
-  // so hide the shared Navbar on Home AND Login. All other pages use the shared Navbar.
+  // Login has no navbar, and ContainerCompositePreview uses its dedicated preview navbar.
+  // All other pages continue using the shared Navbar.
   const isHomePage = pathname === '/';
-  const hideSharedNavbar = isHomePage || isLoginPage;
+  const isContainerCompositePreview = pathname === '/container-composite-preview';
+  const hideSharedNavbar = isHomePage || isLoginPage || isContainerCompositePreview;
 
   useEffect(() => {
     if (!navbarRef.current) return;

@@ -8,7 +8,7 @@ const fs = require('fs');
     fs.mkdirSync(screenshotsDir, { recursive: true });
   }
 
-  const brainDir = 'C:\\Users\\ARB\\.gemini\\antigravity-ide\\brain\\3dd20820-a094-4b2c-b77a-774c133f7f4b';
+  const brainDir = 'C:\\Users\\ARB\\.gemini\\antigravity-ide\\brain\\28de817b-1a25-48d4-add7-8ad5febf1dfb';
 
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',

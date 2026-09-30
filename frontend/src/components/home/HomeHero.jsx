@@ -25,9 +25,8 @@ export function HomeHero() {
 
   return (
     <section
-      className={`relative transition-colors duration-200 ${
-        isDark ? 'bg-surface-900' : 'bg-hero-bg'
-      }`}
+      className={`relative transition-colors duration-200 ${isDark ? 'bg-surface-900' : 'bg-hero-bg'
+        }`}
       style={{ marginBottom: 'clamp(32px, 3vw, 48px)' }}
     >
       {/* Outer padding — keeps the page background visible around the card */}
@@ -108,11 +107,10 @@ export function HomeHero() {
             <div style={{ maxWidth: '580px' }}>
               {/* Badge pill */}
               <div
-                className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border ${
-                  isDark
-                    ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                    : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
-                }`}
+                className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border ${isDark
+                  ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
+                  : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
+                  }`}
                 style={{
                   fontSize: 'clamp(9px, 0.7vw, 12px)',
                   padding: 'clamp(5px, 0.6vh, 8px) clamp(12px, 1.1vw, 18px)',
@@ -131,9 +129,8 @@ export function HomeHero() {
 
               {/* Main heading */}
               <h1
-                className={`font-extrabold uppercase leading-none tracking-tight ${
-                  isDark ? 'text-white' : 'text-heading-navy'
-                }`}
+                className={`font-extrabold uppercase leading-none tracking-tight ${isDark ? 'text-white' : 'text-heading-navy'
+                  }`}
                 style={{
                   fontSize: 'clamp(28px, 4vw + 0.5vh, 54px)',
                   marginBottom: 'clamp(14px, 2.5vh, 28px)',
@@ -147,9 +144,8 @@ export function HomeHero() {
 
               {/* Description paragraph */}
               <p
-                className={`font-normal leading-relaxed ${
-                  isDark ? 'text-slate-300' : 'text-gray-600'
-                }`}
+                className={`font-normal leading-relaxed ${isDark ? 'text-slate-300' : 'text-gray-600'
+                  }`}
                 style={{
                   fontSize: 'clamp(13px, 0.95vw + 0.2vh, 17px)',
                   maxWidth: '460px',
@@ -165,11 +161,10 @@ export function HomeHero() {
               {/* CTA button */}
               <Link
                 to="/container-section"
-                className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 group ${
-                  isDark
-                    ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
-                    : 'bg-brand-500 text-white hover:bg-brand-600'
-                }`}
+                className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 group ${isDark
+                  ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
+                  : 'bg-brand-500 text-white hover:bg-brand-600'
+                  }`}
                 style={{
                   fontSize: 'clamp(13px, 0.9vw + 0.2vh, 16px)',
                   padding: 'clamp(12px, 1.4vh, 16px) clamp(24px, 2.2vw, 36px)',
