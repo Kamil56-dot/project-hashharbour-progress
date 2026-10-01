@@ -404,7 +404,7 @@ export function ContainerCompositePreviewPage() {
           <h2 className="text-lg sm:text-xl lg:text-[22px] font-extrabold tracking-tight text-[#0F172A] dark:text-white mb-0.5 leading-tight transition-colors duration-200">
             {activeContainer.headline}
           </h2>
-          <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-normal transition-colors duration-200 line-clamp-1">
+          <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 font-normal transition-colors duration-200 line-clamp-2 sm:line-clamp-1">
             {activeContainer.description}
           </p>
         </div>
