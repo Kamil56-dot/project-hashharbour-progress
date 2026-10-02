@@ -157,7 +157,7 @@ export function ContainerCompositePreviewPage() {
         }
         @media (min-width: 1280px) {
           .composite-card.role-left {
-            transform: translate(calc(-50% - 450px), -24px) scale(0.68);
+            transform: translate(calc(-50% - clamp(310px, calc(50vw - 330px), 440px)), -24px) scale(0.68);
           }
         }
 
@@ -189,7 +189,7 @@ export function ContainerCompositePreviewPage() {
         }
         @media (min-width: 1280px) {
           .composite-card.role-right {
-            transform: translate(calc(-50% + 450px), -24px) scale(0.68);
+            transform: translate(calc(-50% + clamp(310px, calc(50vw - 330px), 440px)), -24px) scale(0.68);
           }
         }
 
@@ -219,7 +219,7 @@ export function ContainerCompositePreviewPage() {
         }
         @media (min-width: 1280px) {
           .composite-card.is-tank.role-left {
-            transform: translate(calc(-50% - 505px), -24px) scale(0.87);
+            transform: translate(calc(-50% - clamp(340px, calc(50vw - 305px), 485px)), -24px) scale(0.87);
           }
         }
 
@@ -243,8 +243,61 @@ export function ContainerCompositePreviewPage() {
         }
         @media (min-width: 1280px) {
           .composite-card.is-tank.role-right {
-            transform: translate(calc(-50% + 505px), -24px) scale(0.87);
+            transform: translate(calc(-50% + clamp(340px, calc(50vw - 305px), 485px)), -24px) scale(0.87);
           }
+        }
+
+        /* ─── BOOK BUTTON SHINE SWEEP EFFECT ───
+           A subtle diagonal light sheen that periodically sweeps across the button.
+           3s cycle: ~1.2s sweep across button width (0% to 40%), ~1.8s pause (40% to 100%). */
+        @keyframes book-btn-shine {
+          0% {
+            transform: translateX(-160%) skewX(-20deg);
+            opacity: 0;
+          }
+          8% {
+            opacity: 1;
+          }
+          38% {
+            transform: translateX(280%) skewX(-20deg);
+            opacity: 1;
+          }
+          39%, 100% {
+            transform: translateX(280%) skewX(-20deg);
+            opacity: 0;
+          }
+        }
+
+        .book-btn-shine-streak {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 55%;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.06) 20%,
+            rgba(255, 255, 255, 0.38) 50%,
+            rgba(255, 255, 255, 0.06) 80%,
+            transparent 100%
+          );
+          transform: translateX(-160%) skewX(-20deg);
+          animation: book-btn-shine 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .book-btn-shine-streak {
+            animation: none;
+            display: none;
+          }
+        }
+
+        /* Stage clipping: full viewport width, visible so no container is cut off inside stage */
+        .composite-stage-clip {
+          overflow: visible;
         }
       `}</style>
 
@@ -276,39 +329,43 @@ export function ContainerCompositePreviewPage() {
         </div>
       </div>
 
-      {/* ─── CENTER STAGE: 3-CONTAINER SPACIOUS CAROUSEL ─── */}
-      <div className="relative w-full max-w-[1440px] mx-auto flex items-center justify-center my-auto shrink-0 px-2 sm:px-6 lg:px-12">
-        
-        {/* Left Floating Circular Navigation Button */}
+      {/* ─── CENTER STAGE: 3-CONTAINER SPACIOUS CAROUSEL (FULL-WIDTH VIEWPORT SECTION) ─── */}
+      <div className="relative w-auto -mx-4 sm:-mx-6 lg:-mx-8 xl:-mx-12 flex items-center justify-center my-auto shrink-0">
+
+        {/* ── DESKTOP NAV ARROWS (≥1024px) — viewport-edge positioned, clear of containers ── */}
         <button
           type="button"
           onClick={handlePrev}
           aria-label="Previous container"
-          className={`flex absolute left-1 sm:left-2 lg:left-4 xl:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 lg:w-12 lg:h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+          className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
             isDark
-              ? 'bg-white/5 hover:bg-white/15 active:bg-white/20 border border-white/10 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
-              : 'bg-blue-500/10 hover:bg-blue-500/20 active:bg-blue-500/25 border border-blue-200/70 text-blue-600 shadow-sm hover:scale-110 active:scale-95'
+              ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 backdrop-blur-sm border border-white/15 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
+              : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 backdrop-blur-sm border border-blue-200 text-blue-600 shadow-md hover:scale-110 active:scale-95'
           }`}
+          style={{ left: 'clamp(12px, 3vw, 40px)' }}
         >
-          <ChevronLeft className="w-5 h-5 transition-transform duration-200" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Right Floating Circular Navigation Button */}
         <button
           type="button"
           onClick={handleNext}
           aria-label="Next container"
-          className={`flex absolute right-1 sm:right-2 lg:right-4 xl:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 lg:w-12 lg:h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+          className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
             isDark
-              ? 'bg-white/5 hover:bg-white/15 active:bg-white/20 border border-white/10 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
-              : 'bg-blue-500/10 hover:bg-blue-500/20 active:bg-blue-500/25 border border-blue-200/70 text-blue-600 shadow-sm hover:scale-110 active:scale-95'
+              ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 backdrop-blur-sm border border-white/15 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
+              : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 backdrop-blur-sm border border-blue-200 text-blue-600 shadow-md hover:scale-110 active:scale-95'
           }`}
+          style={{ right: 'clamp(12px, 3vw, 40px)' }}
         >
-          <ChevronRight className="w-5 h-5 transition-transform duration-200" />
+          <ChevronRight className="w-5 h-5" />
         </button>
 
+        {/* ── Container Content Area ── */}
+        <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-6 lg:px-12">
+
         {/* ── Container Stage (Exact Height & Baseline Ground Plane) ── */}
-        <div className="relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible">
+        <div className="composite-stage-clip relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible">
           
           {/* Subtle Studio Floor Atmosphere */}
           <div
@@ -361,39 +418,70 @@ export function ContainerCompositePreviewPage() {
             );
           })}
         </div>
+        </div>{/* close content area */}
       </div>
 
       {/* ─── BOTTOM SECTION: INDICATORS, CTAS & PILLARS (UNIFIED AIM ROW) ─── */}
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col items-center shrink-0 mb-1">
         
-        {/* Pagination Indicator Dots (14px circles with >=24px hit area, no wide pill) */}
-        <div className="flex items-center justify-center gap-1.5 my-0.5" role="tablist" aria-label="Container indicators">
-          {CONTAINERS.map((c, idx) => {
-            const isActive = idx === centerIndex;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-label={`Select ${c.name} container`}
-                onClick={() => setCenterIndex(idx)}
-                className="w-6 h-6 min-w-[24px] min-h-[24px] flex items-center justify-center p-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full"
-              >
-                <span
-                  className={`w-[14px] h-[14px] rounded-full transition-all duration-200 ${
-                    isActive
-                      ? isDark
-                        ? 'bg-[#38BDF8] shadow-[0_0_8px_rgba(56,189,248,0.5)]'
-                        : 'bg-[#1E88E5] shadow-[0_2px_6px_rgba(30,136,229,0.4)]'
-                      : isDark
-                        ? 'bg-white/[0.15] hover:bg-white/[0.25]'
-                        : 'bg-[#CFE3FA] hover:bg-[#B5D5F7]'
-                  }`}
-                />
-              </button>
-            );
-          })}
+        {/* Pagination Indicator Dots with Mobile Arrows (<1024px) */}
+        <div className="flex items-center justify-center gap-2 my-0.5">
+          {/* Mobile Left Arrow (< 1024px only) */}
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous container"
+            className={`lg:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              isDark
+                ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 border border-white/15 text-cyan-400'
+                : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200 text-blue-600'
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <div className="flex items-center justify-center gap-1.5" role="tablist" aria-label="Container indicators">
+            {CONTAINERS.map((c, idx) => {
+              const isActive = idx === centerIndex;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Select ${c.name} container`}
+                  onClick={() => setCenterIndex(idx)}
+                  className="w-6 h-6 min-w-[24px] min-h-[24px] flex items-center justify-center p-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full"
+                >
+                  <span
+                    className={`w-[14px] h-[14px] rounded-full transition-all duration-200 ${
+                      isActive
+                        ? isDark
+                          ? 'bg-[#38BDF8] shadow-[0_0_8px_rgba(56,189,248,0.5)]'
+                          : 'bg-[#1E88E5] shadow-[0_2px_6px_rgba(30,136,229,0.4)]'
+                        : isDark
+                          ? 'bg-white/[0.15] hover:bg-white/[0.25]'
+                          : 'bg-[#CFE3FA] hover:bg-[#B5D5F7]'
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Mobile Right Arrow (< 1024px only) */}
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next container"
+            className={`lg:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              isDark
+                ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 border border-white/15 text-cyan-400'
+                : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200 text-blue-600'
+            }`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Dynamic Subtitle & Description Block */}
@@ -427,23 +515,26 @@ export function ContainerCompositePreviewPage() {
             </div>
           </div>
 
-          {/* Center: Dynamic Book Button + Secondary Explore Button (Fully rounded pills, ~52-54px height) */}
-          <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-3 justify-self-center">
+          {/* Center: Dynamic Book Button (with periodic shine sweep) + Secondary Explore Button (Refined standard CTA size) */}
+          <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 justify-self-center">
             <button
               onClick={handleBookContainer}
               type="button"
               aria-label={activeContainer.bookLabel}
-              className="inline-flex items-center justify-between gap-3 h-[52px] sm:h-[54px] pl-6 pr-2 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[15px] sm:text-[16px] shadow-[0_4px_16px_rgba(30,136,229,0.35)] transition-all cursor-pointer group"
+              className="relative overflow-hidden inline-flex items-center justify-between gap-2.5 sm:gap-3 h-[42px] sm:h-[44px] pl-4 sm:pl-5 pr-1.5 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[13px] sm:text-[14px] shadow-[0_4px_14px_rgba(30,136,229,0.30)] transition-all cursor-pointer group"
             >
-              <span>{activeContainer.bookLabel}</span>
-              <span className="w-[38px] h-[38px] rounded-full bg-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-200 group-hover:translate-x-0.5">
-                <ArrowRight className="w-5 h-5 text-[#1E88E5]" />
+              {/* Periodic diagonal shine sweep effect */}
+              <span className="book-btn-shine-streak" aria-hidden="true" />
+
+              <span className="relative z-10">{activeContainer.bookLabel}</span>
+              <span className="relative z-10 w-[30px] h-[30px] sm:w-[32px] sm:h-[32px] rounded-full bg-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-200 group-hover:translate-x-0.5">
+                <ArrowRight className="w-4 h-4 text-[#1E88E5]" />
               </span>
             </button>
 
             <Link
               to="/container-section"
-              className="inline-flex items-center justify-center h-[52px] sm:h-[54px] px-6 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white/40 dark:bg-white/[0.04] hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-[15px] sm:text-[16px] transition-colors"
+              className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white/40 dark:bg-white/[0.04] hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-colors"
             >
               <span>Explore All Containers</span>
             </Link>
