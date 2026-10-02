@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import loginBg from '../assets/images/login-bg.png';
+// loginBg removed — global background image provides the wavy background
 
 /**
  * Google SVG Icon
@@ -148,15 +148,9 @@ export function LoginPage() {
 
   return (
     <div
-      className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#F0F6FC] bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${loginBg})` }}
+      className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-transparent"
     >
-      {/* ── Soft Reference Wave Background Layer (Pixel-matched) ── */}
-      <div
-        className="absolute inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${loginBg})` }}
-        aria-hidden="true"
-      />
+      {/* Global body::before provides the wavy background image */}
 
       {/* ── Centered White Card ── */}
       <div className="relative z-10 w-full max-w-[420px] sm:max-w-[440px] bg-white rounded-[28px] sm:rounded-[32px] shadow-[0_20px_60px_-15px_rgba(15,40,80,0.1),0_0_1px_1px_rgba(0,0,0,0.03)] px-7 py-9 sm:px-10 sm:py-11 border border-blue-50/80 transition-all">

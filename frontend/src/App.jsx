@@ -19,7 +19,7 @@ function PageLoadingFallback() {
   return (
     <div
       className={`min-h-screen flex items-center justify-center transition-colors duration-200 ${
-        isLight ? 'bg-[#EBF3FC] text-brand-600' : 'bg-[#060B14] text-[#00E5FF]'
+        isLight ? 'bg-transparent text-brand-600' : 'bg-transparent text-[#00E5FF]'
       }`}
     >
       <div className="flex flex-col items-center gap-3">
@@ -67,6 +67,18 @@ export function App() {
   // Home page now participates in the theme system (dark default, light toggle).
   const isLoginPage = pathname === '/login';
 
+  // Force light global background on login page (no dark overlay)
+  useEffect(() => {
+    if (isLoginPage) {
+      document.body.setAttribute('data-route', 'login');
+    } else {
+      document.body.removeAttribute('data-route');
+    }
+    return () => {
+      document.body.removeAttribute('data-route');
+    };
+  }, [isLoginPage]);
+
   // Home page uses its own HomeNavbar (both dark and light themes),
   // Login has no navbar, and ContainerCompositePreview uses its dedicated preview navbar.
   // All other pages continue using the shared Navbar.
@@ -99,12 +111,12 @@ export function App() {
    */
   const getWrapperClass = () => {
     if (isLoginPage) {
-      return 'min-h-screen bg-white antialiased';
+      return 'min-h-screen bg-transparent antialiased';
     }
     if (isLight) {
-      return 'min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text-primary)] antialiased transition-colors duration-200';
+      return 'min-h-screen bg-transparent text-[var(--theme-text-primary)] antialiased transition-colors duration-200';
     }
-    return 'min-h-screen bg-surface-900 text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200';
+    return 'min-h-screen bg-transparent text-text-primary antialiased selection:bg-accent-500/25 selection:text-text-primary transition-colors duration-200';
   };
 
   return (

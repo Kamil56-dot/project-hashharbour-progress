@@ -40,8 +40,8 @@ export const Navbar = React.forwardRef(function Navbar({ className = '' }, ref) 
               ? 'bg-black/30'
               : 'bg-black/20'
             : isScrolled
-              ? 'bg-white/85 shadow-xs border-b border-blue-100/60'
-              : 'bg-[#EBF3FC]/80'
+              ? 'bg-[#E5E9F0] shadow-sm border-b border-[#CBD5E1]'
+              : 'bg-[#E5E9F0] border-b border-[#CBD5E1]'
         } ${className}`}
       >
         {/* 3-Region Grid spanning 100% viewport width with 42px desktop padding */}

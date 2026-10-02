@@ -66,8 +66,8 @@ export function AboutSection() {
       aria-label="About HashHarbour Infrastructure"
       className={`relative w-full min-h-screen pt-[96px] lg:pt-[104px] pb-16 sm:pb-20 lg:pb-24 px-6 sm:px-10 lg:px-[42px] overflow-hidden flex flex-col items-center justify-center border-t transition-colors duration-300 ${
         isDark
-          ? 'bg-gradient-to-b from-[#061426]/90 via-[#061426] to-surface-900 text-white border-white/5'
-          : 'bg-[#EBF3FC] text-[#0F172A] border-blue-100/60'
+          ? 'bg-transparent text-white border-white/5'
+          : 'bg-transparent text-[#0F172A] border-blue-100/60'
       }`}
     >
       {/* Background Decorative Layer */}

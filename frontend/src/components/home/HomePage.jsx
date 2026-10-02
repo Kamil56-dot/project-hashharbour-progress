@@ -15,7 +15,7 @@ function SectionLoadingFallback() {
   return (
     <div
       className={`w-full flex items-center justify-center ${
-        isDark ? 'bg-surface-900' : 'bg-white'
+        isDark ? 'bg-transparent' : 'bg-transparent'
       }`}
       style={{ minHeight: 'clamp(320px, 50vh, 600px)' }}
     >
@@ -51,7 +51,7 @@ export function HomePage() {
   return (
     <div
       className={`flex flex-col overflow-x-hidden transition-colors duration-200 ${
-        isDark ? 'bg-surface-900' : 'bg-white'
+        isDark ? 'bg-transparent' : 'bg-transparent'
       }`}
       style={{ minHeight: '100dvh' }}
     >
@@ -62,7 +62,7 @@ export function HomePage() {
       </div>
 
       {/* New content below hero — scrollable */}
-      <div className={`relative ${isDark ? 'bg-surface-900' : 'bg-white'} transition-colors duration-200`}>
+      <div className={`relative bg-transparent transition-colors duration-200`}>
         <Suspense fallback={<SectionLoadingFallback />}>
           <HomeContainerSection />
         </Suspense>

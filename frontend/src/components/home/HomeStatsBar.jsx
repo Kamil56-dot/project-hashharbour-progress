@@ -38,8 +38,8 @@ export function HomeStatsBar() {
     <section
       className={`w-full border-t transition-colors duration-200 ${
         isDark
-          ? 'bg-surface-850 border-white/[0.06]'
-          : 'bg-gray-50 border-gray-100'
+          ? 'bg-surface-850/70 backdrop-blur-sm border-white/[0.06]'
+          : 'bg-white/70 backdrop-blur-sm border-gray-100'
       }`}
       style={{
         paddingTop: 'clamp(28px, 4vh, 48px)',

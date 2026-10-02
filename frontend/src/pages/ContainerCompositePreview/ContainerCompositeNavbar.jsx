@@ -164,7 +164,7 @@ export function ContainerCompositeNavbar() {
               className={`flex items-center rounded-full p-1 transition-colors duration-200 ${
                 isDark
                   ? 'bg-white/[0.06] backdrop-blur-xs'
-                  : 'bg-[#E5F0FC]/90 backdrop-blur-xs'
+                  : 'bg-[#E5E9F0] border border-[#CBD5E1] shadow-sm'
               }`}
             >
               {navItems.map((item) => {
@@ -181,10 +181,10 @@ export function ContainerCompositeNavbar() {
                       isActive
                         ? isDark
                           ? 'bg-[#0284C7]/30 text-[#38BDF8] font-semibold shadow-xs'
-                          : 'bg-[#D6E6FB] text-[#1E88E5] font-semibold shadow-xs'
+                          : 'bg-white text-[#1E88E5] font-semibold shadow-xs'
                         : isDark
                           ? 'text-slate-400 hover:text-slate-200'
-                          : 'text-[#64748B] hover:text-[#0F172A]'
+                          : 'text-[#334155] hover:text-[#0F172A]'
                     }`}
                   >
                     {item.label}

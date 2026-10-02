@@ -88,7 +88,7 @@ export function HomeContainerSection() {
   return (
     <section
       className={`w-full transition-colors duration-200 ${
-        isDark ? 'bg-surface-900' : 'bg-white'
+        isDark ? 'bg-transparent' : 'bg-transparent'
       }`}
       style={{
         paddingTop: 'clamp(48px, 6vh, 80px)',
@@ -124,7 +124,7 @@ export function HomeContainerSection() {
             />
             <p
               className={`font-medium uppercase tracking-widest ${
-                isDark ? 'text-slate-400' : 'text-gray-400'
+                isDark ? 'text-slate-400' : 'text-[#475569]'
               }`}
               style={{ fontSize: 'clamp(10px, 0.75vw, 13px)' }}
             >
@@ -195,7 +195,7 @@ export function HomeContainerSection() {
                     className={`font-semibold uppercase tracking-wider transition-colors duration-200 ${
                       isDark
                         ? isActive ? 'text-white' : 'text-slate-500'
-                        : isActive ? 'text-gray-900' : 'text-gray-400'
+                        : isActive ? 'text-gray-900' : 'text-[#475569]'
                     }`}
                     style={{
                       fontSize: 'clamp(10px, 0.8vw, 13px)',
@@ -345,7 +345,7 @@ export function HomeContainerSection() {
                     </span>
                     <span
                       className={`font-medium leading-snug ${
-                        isDark ? 'text-slate-400' : 'text-gray-400'
+                        isDark ? 'text-slate-400' : 'text-[#475569]'
                       }`}
                       style={{
                         fontSize: 'clamp(10px, 0.7vw, 12px)',

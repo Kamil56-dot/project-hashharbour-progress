@@ -101,7 +101,7 @@ export function ContainerCompositePreviewPage() {
   return (
     <div
       className={`min-h-screen lg:h-screen lg:max-h-screen w-full transition-colors duration-300 pt-[78px] lg:pt-[82px] pb-2 px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-between overflow-x-hidden ${
-        isDark ? 'bg-[#060B14] text-white' : 'bg-[#EBF3FC] text-[#0F172A]'
+        isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >
       {/* ─── DEDICATED PREVIEW NAVBAR ─── */}
@@ -308,7 +308,7 @@ export function ContainerCompositePreviewPage() {
         <div className="w-full flex items-center justify-start mb-2 lg:mb-2.5">
           <Link
             to="/container-section"
-            className="group inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors py-1 px-2.5 -ml-2.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/[0.06]"
+            className="group inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#475569] hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors py-1 px-2.5 -ml-2.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/[0.06]"
           >
             <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
             <span>Back to Container Section</span>
@@ -509,7 +509,7 @@ export function ContainerCompositePreviewPage() {
               <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
                 Global Shipping
               </div>
-              <div className="text-[13px] text-[#64748B] dark:text-slate-300 leading-snug">
+              <div className="text-[13px] text-[#475569] dark:text-slate-300 leading-snug">
                 Worldwide Coverage
               </div>
             </div>
@@ -549,7 +549,7 @@ export function ContainerCompositePreviewPage() {
               <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
                 Safe & Secure
               </div>
-              <div className="text-[13px] text-[#64748B] dark:text-slate-300 leading-snug">
+              <div className="text-[13px] text-[#475569] dark:text-slate-300 leading-snug">
                 Your Cargo, Our Priority
               </div>
             </div>

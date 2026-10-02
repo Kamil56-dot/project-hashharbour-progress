@@ -29,7 +29,7 @@ export function ContainerPage() {
   return (
     <div
       className={`min-h-screen w-full overflow-x-hidden pt-[72px] lg:pt-[80px] transition-colors duration-300 ${
-        isDark ? 'bg-[#060B14] text-white' : 'bg-[#EBF3FC] text-[#0F172A]'
+        isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >
       {/* 3D Interactive Shipping Container Showcase */}

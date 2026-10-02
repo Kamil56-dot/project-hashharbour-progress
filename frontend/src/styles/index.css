@@ -24,7 +24,7 @@
   --theme-card-bg: #ffffff;
   --theme-card-border: #E2E8F0;
   --theme-text-primary: #0F172A;
-  --theme-text-secondary: #64748B;
+  --theme-text-secondary: #475569;
   --theme-accent: #1E88E5;
   color-scheme: light;
 }
@@ -152,10 +152,39 @@ html {
 
 body {
   min-height: 100vh;
-  background-color: var(--surface-900);
+  background-color: transparent;
   color: var(--text-body);
   overflow-x: hidden;
   line-height: 1.6;
+}
+
+/* ─── GLOBAL BACKGROUND IMAGE LAYER ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: url('../assets/backgrounds/global-bg.webp') center / cover no-repeat;
+  pointer-events: none;
+}
+
+/* Dark theme via filter (no overlay) — inverted light-blue image produces dark navy with visible waves */
+html.dark body::before {
+  filter: invert(1) hue-rotate(180deg) brightness(0.5) saturate(1.3);
+}
+
+/* Overlay removed on dark theme */
+html.dark body::after,
+html.light body::after {
+  display: none;
+}
+
+/* Login route — always show original light variant (no filter, no overlay) */
+body[data-route="login"]::before {
+  filter: none !important;
+}
+body[data-route="login"]::after {
+  display: none !important;
 }
 
 /* Text Selection */
@@ -171,7 +200,7 @@ html.light {
 }
 
 html.light body {
-  background-color: var(--theme-bg);
+  background-color: transparent;
   color: var(--theme-text-secondary);
 }
 
