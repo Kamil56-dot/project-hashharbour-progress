@@ -287,9 +287,13 @@ export function ContainerCompositeSection({
             transform: translate(calc(-50% - 350px), -16px) scale(0.67);
           }
         }
-        @media (min-width: 1024px) {
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .composite-card {
+            --center-card-w: min(470px, calc((100vw - 58px) / 2.55));
+            width: var(--center-card-w) !important;
+          }
           .composite-card.role-left {
-            transform: translate(calc(-50% - 405px), -20px) scale(0.68);
+            transform: translate(calc(-50% - var(--center-card-w) * 0.85), -20px) scale(0.68);
           }
         }
         @media (min-width: 1280px) {
@@ -316,9 +320,9 @@ export function ContainerCompositeSection({
             transform: translate(calc(-50% + 350px), -16px) scale(0.67);
           }
         }
-        @media (min-width: 1024px) {
+        @media (min-width: 1024px) and (max-width: 1279px) {
           .composite-card.role-right {
-            transform: translate(calc(-50% + 405px), -20px) scale(0.68);
+            transform: translate(calc(-50% + var(--center-card-w) * 0.85), -20px) scale(0.68);
           }
         }
         @media (min-width: 1280px) {
@@ -346,9 +350,9 @@ export function ContainerCompositeSection({
             transform: translate(calc(-50% - 395px), -16px) scale(0.858);
           }
         }
-        @media (min-width: 1024px) {
+        @media (min-width: 1024px) and (max-width: 1279px) {
           .composite-card.is-tank.role-left {
-            transform: translate(calc(-50% - 455px), -20px) scale(0.87);
+            transform: translate(calc(-50% - var(--center-card-w) * 0.86), -20px) scale(0.87);
           }
         }
         @media (min-width: 1280px) {
@@ -370,9 +374,9 @@ export function ContainerCompositeSection({
             transform: translate(calc(-50% + 395px), -16px) scale(0.858);
           }
         }
-        @media (min-width: 1024px) {
+        @media (min-width: 1024px) and (max-width: 1279px) {
           .composite-card.is-tank.role-right {
-            transform: translate(calc(-50% + 455px), -20px) scale(0.87);
+            transform: translate(calc(-50% + var(--center-card-w) * 0.86), -20px) scale(0.87);
           }
         }
         @media (min-width: 1280px) {
@@ -440,12 +444,12 @@ export function ContainerCompositeSection({
       {/* ─── CENTER STAGE: 3-CONTAINER SPACIOUS CAROUSEL (FULL-WIDTH VIEWPORT SECTION) ─── */}
       <div className="relative w-auto -mx-4 sm:-mx-6 lg:-mx-8 xl:-mx-12 flex items-center justify-center my-auto shrink-0">
 
-        {/* ── DESKTOP NAV ARROWS (≥1024px) — viewport-edge positioned, clear of containers ── */}
+        {/* ── DESKTOP NAV ARROWS (≥1280px) — viewport-edge positioned, clear of containers ── */}
         <button
           type="button"
           onClick={handlePrev}
           aria-label="Previous container"
-          className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+          className={`hidden xl:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
             isDark
               ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 backdrop-blur-sm border border-white/15 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
               : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 backdrop-blur-sm border border-blue-200 text-blue-600 shadow-md hover:scale-110 active:scale-95'
@@ -459,7 +463,7 @@ export function ContainerCompositeSection({
           type="button"
           onClick={handleNext}
           aria-label="Next container"
-          className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+          className={`hidden xl:flex absolute top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
             isDark
               ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 backdrop-blur-sm border border-white/15 text-cyan-400 shadow-lg shadow-black/40 hover:scale-110 active:scale-95'
               : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 backdrop-blur-sm border border-blue-200 text-blue-600 shadow-md hover:scale-110 active:scale-95'
@@ -542,14 +546,14 @@ export function ContainerCompositeSection({
       {/* ─── BOTTOM SECTION: INDICATORS, CTAS & PILLARS (UNIFIED AIM ROW) ─── */}
       <div className="w-full max-w-[1440px] mx-auto flex flex-col items-center shrink-0 mb-6">
         
-        {/* Pagination Indicator Dots with Mobile Arrows (<1024px) */}
+        {/* Pagination Indicator Dots with Flank Arrows (<1280px) */}
         <div className="flex items-center justify-center gap-2 mt-0 mb-0.5">
-          {/* Mobile Left Arrow (< 1024px only) */}
+          {/* Flank Left Arrow (< 1280px only) */}
           <button
             type="button"
             onClick={handlePrev}
             aria-label="Previous container"
-            className={`lg:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+            className={`xl:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
               isDark
                 ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 border border-white/15 text-cyan-400'
                 : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200 text-blue-600'
@@ -587,12 +591,12 @@ export function ContainerCompositeSection({
             })}
           </div>
 
-          {/* Mobile Right Arrow (< 1024px only) */}
+          {/* Flank Right Arrow (< 1280px only) */}
           <button
             type="button"
             onClick={handleNext}
             aria-label="Next container"
-            className={`lg:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
+            className={`xl:hidden flex w-8 h-8 rounded-full items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-500 ${
               isDark
                 ? 'bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600/90 border border-white/15 text-cyan-400'
                 : 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200 text-blue-600'
