@@ -422,10 +422,10 @@ export function ContainerCompositePreviewPage() {
       </div>
 
       {/* ─── BOTTOM SECTION: INDICATORS, CTAS & PILLARS (UNIFIED AIM ROW) ─── */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col items-center shrink-0 mb-1">
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col items-center shrink-0 mb-6">
         
         {/* Pagination Indicator Dots with Mobile Arrows (<1024px) */}
-        <div className="flex items-center justify-center gap-2 my-0.5">
+        <div className="flex items-center justify-center gap-2 mt-0 mb-0.5">
           {/* Mobile Left Arrow (< 1024px only) */}
           <button
             type="button"
@@ -497,60 +497,75 @@ export function ContainerCompositePreviewPage() {
           </p>
         </div>
 
-        {/* Unified Bottom Row: Far-Left Feature | Centered Buttons Pair | Far-Right Feature */}
-        <div className="w-full flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-between gap-3 md:gap-2 mt-1">
-          
-          {/* Far Left: Global Shipping (Aligned to nav logo edge, icon left, text left-aligned) */}
-          <div className="order-2 md:order-1 flex items-center justify-start gap-3 w-full md:w-auto justify-self-start">
-            <div className="w-12 h-12 rounded-full bg-[rgba(30,136,229,0.10)] dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0">
-              <Globe className="w-[22px] h-[22px] stroke-[1.8]" />
-            </div>
-            <div className="text-left">
-              <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
-                Global Shipping
+        {/* ─── BOTTOM CARD WRAPPER ─── */}
+        <div
+          id="bottom-features-card"
+          className={`w-full rounded-[24px] py-[14px] px-4 sm:px-[28px] mt-1.5 transition-all duration-300 ${
+            isDark
+              ? 'border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.35)]'
+              : 'border border-[rgba(30,136,229,0.18)] shadow-[0_8px_24px_rgba(30,136,229,0.10)]'
+          }`}
+          style={{
+            background: isDark
+              ? 'linear-gradient(135deg, #12304F 0%, #0D2340 55%, #0A1B33 100%)'
+              : 'linear-gradient(135deg, #EAF3FF 0%, #D6E8FB 55%, #C4DDF7 100%)',
+          }}
+        >
+          {/* Unified Bottom Row: Far-Left Feature | Centered Buttons Pair | Far-Right Feature */}
+          <div className="w-full flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-between gap-3 md:gap-2">
+            
+            {/* Far Left: Global Shipping (Aligned to nav logo edge, icon left, text left-aligned) */}
+            <div className="order-2 md:order-1 flex items-center justify-start gap-3 w-full md:w-auto justify-self-start">
+              <div className="w-12 h-12 rounded-full bg-white/80 dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0 shadow-xs">
+                <Globe className="w-[22px] h-[22px] stroke-[1.8]" />
               </div>
-              <div className="text-[13px] text-[#475569] dark:text-slate-300 leading-snug">
-                Worldwide Coverage
+              <div className="text-left">
+                <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
+                  Global Shipping
+                </div>
+                <div className="text-[13px] text-[#334155] dark:text-slate-300 leading-snug">
+                  Worldwide Coverage
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Center: Dynamic Book Button (with periodic shine sweep) + Secondary Explore Button (Refined standard CTA size) */}
-          <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 justify-self-center">
-            <button
-              onClick={handleBookContainer}
-              type="button"
-              aria-label={activeContainer.bookLabel}
-              className="relative overflow-hidden inline-flex items-center justify-between gap-2.5 sm:gap-3 h-[42px] sm:h-[44px] pl-4 sm:pl-5 pr-1.5 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[13px] sm:text-[14px] shadow-[0_4px_14px_rgba(30,136,229,0.30)] transition-all cursor-pointer group"
-            >
-              {/* Periodic diagonal shine sweep effect */}
-              <span className="book-btn-shine-streak" aria-hidden="true" />
+            {/* Center: Dynamic Book Button (with periodic shine sweep) + Secondary Explore Button (Refined standard CTA size) */}
+            <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 justify-self-center">
+              <button
+                onClick={handleBookContainer}
+                type="button"
+                aria-label={activeContainer.bookLabel}
+                className="relative overflow-hidden inline-flex items-center justify-between gap-2.5 sm:gap-3 h-[42px] sm:h-[44px] pl-4 sm:pl-5 pr-1.5 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[13px] sm:text-[14px] shadow-[0_4px_14px_rgba(30,136,229,0.30)] transition-all cursor-pointer group"
+              >
+                {/* Periodic diagonal shine sweep effect */}
+                <span className="book-btn-shine-streak" aria-hidden="true" />
 
-              <span className="relative z-10">{activeContainer.bookLabel}</span>
-              <span className="relative z-10 w-[30px] h-[30px] sm:w-[32px] sm:h-[32px] rounded-full bg-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-200 group-hover:translate-x-0.5">
-                <ArrowRight className="w-4 h-4 text-[#1E88E5]" />
-              </span>
-            </button>
+                <span className="relative z-10">{activeContainer.bookLabel}</span>
+                <span className="relative z-10 w-[30px] h-[30px] sm:w-[32px] sm:h-[32px] rounded-full bg-white flex items-center justify-center shrink-0 shadow-xs transition-transform duration-200 group-hover:translate-x-0.5">
+                  <ArrowRight className="w-4 h-4 text-[#1E88E5]" />
+                </span>
+              </button>
 
-            <Link
-              to="/container-section"
-              className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white/40 dark:bg-white/[0.04] hover:bg-white/80 dark:hover:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-colors"
-            >
-              <span>Explore All Containers</span>
-            </Link>
-          </div>
-
-          {/* Far Right: Safe & Secure (Aligned to nav hamburger edge, icon left, text left-aligned) */}
-          <div className="order-3 md:order-3 flex items-center justify-start md:justify-end gap-3 w-full md:w-auto justify-self-end">
-            <div className="w-12 h-12 rounded-full bg-[rgba(30,136,229,0.10)] dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0">
-              <ShieldCheck className="w-[22px] h-[22px] stroke-[1.8]" />
+              <Link
+                to="/container-section"
+                className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-colors shadow-xs"
+              >
+                <span>Explore All Containers</span>
+              </Link>
             </div>
-            <div className="text-left">
-              <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
-                Safe & Secure
+
+            {/* Far Right: Safe & Secure (Aligned to nav hamburger edge, icon left, text left-aligned) */}
+            <div className="order-3 md:order-3 flex items-center justify-start md:justify-end gap-3 w-full md:w-auto justify-self-end">
+              <div className="w-12 h-12 rounded-full bg-white/80 dark:bg-white/[0.08] flex items-center justify-center text-[#1E88E5] dark:text-[#38BDF8] shrink-0 shadow-xs">
+                <ShieldCheck className="w-[22px] h-[22px] stroke-[1.8]" />
               </div>
-              <div className="text-[13px] text-[#475569] dark:text-slate-300 leading-snug">
-                Your Cargo, Our Priority
+              <div className="text-left">
+                <div className="text-[14px] font-medium leading-snug text-[#0B192C] dark:text-white">
+                  Safe & Secure
+                </div>
+                <div className="text-[13px] text-[#334155] dark:text-slate-300 leading-snug">
+                  Your Cargo, Our Priority
+                </div>
               </div>
             </div>
           </div>
