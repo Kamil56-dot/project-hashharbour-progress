@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { ContainerCompositeNavbar } from './ContainerCompositeNavbar';
@@ -50,10 +50,124 @@ const CONTAINERS = [
   },
 ];
 
+/**
+ * Center Container Shine Overlay Component
+ * Cloned look of Book button shine streak, clipped to container silhouette with mask-image.
+ * Phase-locked via Web Animations API (offset by P/2 = 1500ms from Book button).
+ */
+function CenterContainerShine({ container, isSlide }) {
+  const streakRef = useRef(null);
+
+  useEffect(() => {
+    // Respect prefers-reduced-motion
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const streakEl = streakRef.current;
+    if (!streakEl) return;
+
+    let anim = null;
+    let timerId = null;
+
+    const P = 3000;
+    // Sweep duration 1.4s (1400ms) within the required 1.4s to 1.8s window
+    // Offset is P/2 = 1500ms
+    // Button sweeps 0ms to 1170ms
+    // Container sweeps 0ms to 1400ms within its cycle (1500ms to 2900ms of button's cycle)
+    // Zero overlap!
+    const keyframes = [
+      { transform: 'translateX(-180%) skewX(-20deg)', opacity: 0, offset: 0 },
+      { opacity: 1, offset: 0.04 },
+      { transform: 'translateX(280%) skewX(-20deg)', opacity: 1, offset: 0.45 },
+      { transform: 'translateX(280%) skewX(-20deg)', opacity: 0, offset: 0.4667 },
+      { transform: 'translateX(280%) skewX(-20deg)', opacity: 0, offset: 1 },
+    ];
+
+    const startShine = () => {
+      if (!streakRef.current) return;
+      const btnStreak = document.querySelector('.book-btn-shine-streak');
+      const btnAnims = btnStreak ? btnStreak.getAnimations() : [];
+      const btnAnim = btnAnims[0];
+      const btnStartTime = btnAnim?.startTime ?? document.timeline?.currentTime ?? performance.now();
+      const slotBase = btnStartTime + P / 2;
+
+      anim = streakRef.current.animate(keyframes, {
+        duration: P,
+        iterations: Infinity,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      });
+
+      // Synchronize startTime so phase never drifts
+      anim.startTime = slotBase;
+    };
+
+    if (!isSlide) {
+      startShine();
+    } else {
+      const btnStreak = document.querySelector('.book-btn-shine-streak');
+      const btnAnims = btnStreak ? btnStreak.getAnimations() : [];
+      const btnAnim = btnAnims[0];
+      const btnStartTime = btnAnim?.startTime ?? document.timeline?.currentTime ?? performance.now();
+      const slotBase = btnStartTime + P / 2;
+      const now = document.timeline?.currentTime ?? performance.now();
+      const readyTime = now + 630;
+      const k = Math.ceil((readyTime - slotBase) / P);
+      const targetSlotTime = slotBase + k * P;
+      const delayMs = Math.max(0, targetSlotTime - now);
+
+      timerId = setTimeout(() => {
+        startShine();
+      }, delayMs);
+    }
+
+    return () => {
+      if (timerId) clearTimeout(timerId);
+      if (anim) anim.cancel();
+    };
+  }, [container.id, isSlide]);
+
+  return (
+    <div
+      className="center-shine-wrapper pointer-events-none absolute inset-0 z-20 overflow-hidden select-none"
+      aria-hidden="true"
+      style={{
+        maskImage: `url("${container.image}")`,
+        WebkitMaskImage: `url("${container.image}")`,
+        maskSize: '100% 100%',
+        WebkitMaskSize: '100% 100%',
+        maskRepeat: 'no-repeat',
+        WebkitMaskRepeat: 'no-repeat',
+        maskPosition: 'center',
+        WebkitMaskPosition: 'center',
+      }}
+    >
+      <div
+        ref={streakRef}
+        className="center-shine-streak absolute inset-y-0 left-0"
+        style={{
+          width: '55%',
+          background:
+            'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 20%, rgba(255, 255, 255, 0.38) 50%, rgba(255, 255, 255, 0.06) 80%, transparent 100%)',
+          transform: 'translateX(-180%) skewX(-20deg)',
+          willChange: 'transform',
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
+}
+
 export function ContainerCompositePreviewPage() {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const [centerIndex, setCenterIndex] = useState(0);
+  const isInitialMountRef = useRef(true);
+
+  useEffect(() => {
+    isInitialMountRef.current = false;
+  }, []);
 
   /**
    * Determine the current spatial role for each container:
@@ -137,9 +251,6 @@ export function ContainerCompositePreviewPage() {
           pointer-events: auto;
           cursor: pointer;
         }
-        .composite-card.role-left:hover {
-          opacity: 1;
-        }
         @media (min-width: 640px) {
           .composite-card.role-left {
             transform: translate(calc(-50% - 290px), -12px) scale(0.66);
@@ -168,9 +279,6 @@ export function ContainerCompositePreviewPage() {
           transform: translate(calc(-50% + 235px), -8px) scale(0.65);
           pointer-events: auto;
           cursor: pointer;
-        }
-        .composite-card.role-right:hover {
-          opacity: 1;
         }
         @media (min-width: 640px) {
           .composite-card.role-right {
@@ -289,9 +397,11 @@ export function ContainerCompositePreviewPage() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .book-btn-shine-streak {
-            animation: none;
-            display: none;
+          .book-btn-shine-streak,
+          .center-shine-wrapper,
+          .center-shine-streak {
+            animation: none !important;
+            display: none !important;
           }
         }
 
@@ -414,6 +524,15 @@ export function ContainerCompositePreviewPage() {
                   loading="eager"
                   draggable={false}
                 />
+
+                {/* Center-only Shine Overlay, clipped to container silhouette */}
+                {isCenter && (
+                  <CenterContainerShine
+                    key={container.id}
+                    container={container}
+                    isSlide={!isInitialMountRef.current}
+                  />
+                )}
               </div>
             );
           })}
