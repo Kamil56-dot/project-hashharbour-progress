@@ -84,6 +84,18 @@ export function ContainerCompositeNavbar() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isMenuOpen]);
 
+  // Close dropdown on window resize past mobile breakpoint (>= 1024px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       <header
@@ -158,7 +170,7 @@ export function ContainerCompositeNavbar() {
           {/* ─── CENTER: ONE FULLY ROUNDED PILL CONTAINER ─── */}
           <nav
             aria-label="Main navigation"
-            className="hidden md:flex items-center justify-center"
+            className="hidden lg:flex items-center justify-center"
           >
             <div
               className={`flex items-center rounded-full p-1 transition-colors duration-200 ${
@@ -226,7 +238,7 @@ export function ContainerCompositeNavbar() {
               <ShoppingCart className="w-[28px] h-[28px] stroke-[2.2]" />
             </Link>
 
-            {/* Hamburger Icon Button (Opens Dropdown Panel on Desktop & Mobile) */}
+            {/* Hamburger Icon Button (Opens Dropdown Panel on Mobile Only) */}
             <button
               ref={buttonRef}
               id="nav-hamburger-btn"
@@ -236,7 +248,7 @@ export function ContainerCompositeNavbar() {
               aria-expanded={isMenuOpen}
               aria-haspopup="true"
               aria-controls="nav-dropdown-panel"
-              className={`p-1.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`lg:hidden p-1.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark
                   ? 'text-slate-200 hover:bg-white/[0.08]'
                   : 'text-slate-700 hover:bg-slate-200/50'
@@ -262,14 +274,14 @@ export function ContainerCompositeNavbar() {
               )}
             </button>
 
-            {/* ─── DROPDOWN PANEL (Desktop & Mobile) ─── */}
+            {/* ─── DROPDOWN PANEL (Mobile Only) ─── */}
             {isMenuOpen && (
               <div
                 ref={menuRef}
                 id="nav-dropdown-panel"
                 role="menu"
                 aria-label="Extended navigation menu"
-                className={`absolute top-[52px] right-0 w-64 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl border transition-all duration-200 z-50 animate-in fade-in slide-in-from-top-2 ${
+                className={`lg:hidden absolute top-[52px] right-0 w-64 rounded-2xl p-2.5 shadow-2xl backdrop-blur-xl border transition-all duration-200 z-50 animate-in fade-in slide-in-from-top-2 ${
                   isDark
                     ? 'bg-[#080E1A]/95 border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
                     : 'bg-white/95 border-slate-200 text-slate-800 shadow-[0_20px_50px_rgba(15,23,42,0.15)]'
