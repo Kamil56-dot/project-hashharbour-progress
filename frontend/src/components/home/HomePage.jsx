@@ -4,9 +4,9 @@ import { HomeHero } from './HomeHero';
 import { HomeStatsBar } from './HomeStatsBar';
 import { useTheme } from '../../context/ThemeContext';
 
-/* Lazy-load the heavy 3D container section (Three.js) into its own chunk */
-const HomeContainerSection = lazy(() =>
-  import('./HomeContainerSection').then(m => ({ default: m.HomeContainerSection }))
+/* Lazy-load the container composite carousel section */
+const ContainerCompositeSection = lazy(() =>
+  import('../containers/ContainerCompositeSection').then(m => ({ default: m.ContainerCompositeSection }))
 );
 
 function SectionLoadingFallback() {
@@ -64,7 +64,10 @@ export function HomePage() {
       {/* New content below hero — scrollable */}
       <div className={`relative bg-transparent transition-colors duration-200`}>
         <Suspense fallback={<SectionLoadingFallback />}>
-          <HomeContainerSection />
+          <ContainerCompositeSection
+            className="py-10 lg:py-14 px-4 sm:px-6 lg:px-8 xl:px-12"
+            exploreTo="/containers"
+          />
         </Suspense>
         <HomeStatsBar />
       </div>

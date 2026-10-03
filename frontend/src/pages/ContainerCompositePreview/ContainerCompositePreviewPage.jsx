@@ -46,7 +46,7 @@ export function ContainerCompositePreviewPage() {
       </div>
 
       {/* ─── REUSABLE COMPOSITE CONTAINER SECTION ─── */}
-      <ContainerCompositeSection className="flex-1 flex flex-col justify-between min-h-0" />
+      <ContainerCompositeSection className="flex-1 flex flex-col justify-between min-h-0" exploreTo="/containers" />
     </div>
   );
 }
