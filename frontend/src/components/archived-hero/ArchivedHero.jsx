@@ -169,8 +169,8 @@ export function ArchivedHero({ navbarRef }) {
       {/* Layer 1 & 2: Background Image & Cinematic Gradient Overlays */}
       <HeroBackground />
 
-      {/* Layer 3, 4 & 5: Broad Full-Width Composition (42px side padding) */}
-      <div className="w-full px-6 sm:px-10 lg:px-[42px] z-10 flex flex-col gap-4 sm:gap-5 lg:gap-5.5 my-auto py-1">
+      {/* Layer 3, 4 & 5: Broad Full-Width Composition (SiteNavbar-aligned side padding: px-4 sm:px-8 lg:px-12) */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 z-10 flex flex-col gap-4 sm:gap-5 lg:gap-5.5 my-auto py-1">
         <HeroContent
           elementsRef={{
             badge: badgeRef,

@@ -64,7 +64,7 @@ export function AboutSection() {
       ref={sectionRef}
       id="about"
       aria-label="About HashHarbour Infrastructure"
-      className={`relative w-full min-h-screen pt-[78px] lg:pt-[82px] pb-16 sm:pb-20 lg:pb-24 px-6 sm:px-10 lg:px-[42px] overflow-hidden flex flex-col items-center justify-center border-t transition-colors duration-300 ${
+      className={`relative w-full min-h-screen pt-[78px] lg:pt-[82px] pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-8 lg:px-12 overflow-hidden flex flex-col items-center justify-center border-t transition-colors duration-300 ${
         isDark
           ? 'bg-transparent text-white border-white/5'
           : 'bg-transparent text-[#0F172A] border-blue-100/60'
