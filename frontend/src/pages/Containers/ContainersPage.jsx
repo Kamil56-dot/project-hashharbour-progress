@@ -46,7 +46,7 @@ export function ContainersPage() {
 
   return (
     <div
-      className={`min-h-screen w-full overflow-x-hidden pt-[72px] lg:pt-[80px] transition-colors duration-300 ${
+      className={`min-h-screen w-full overflow-x-hidden pt-[78px] lg:pt-[82px] transition-colors duration-300 ${
         isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >

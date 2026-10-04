@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from 'react';
-import { HomeNavbar } from './HomeNavbar';
 import { HomeHero } from './HomeHero';
 import { HomeStatsBar } from './HomeStatsBar';
 import { useTheme } from '../../context/ThemeContext';
@@ -57,7 +56,6 @@ export function HomePage() {
     >
       {/* Hero viewport — on mobile fills 100dvh; on desktop the hero card sizes itself via aspect-ratio */}
       <div className="flex flex-col shrink-0">
-        <HomeNavbar />
         <HomeHero />
       </div>
 

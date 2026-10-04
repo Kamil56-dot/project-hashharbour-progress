@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
-import { Navbar } from './components/layout/Navbar';
+import { SiteNavbar } from './components/layout/SiteNavbar';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { HomePage } from './components/home/HomePage';
 import { useTheme } from './context/ThemeContext';
@@ -80,12 +80,8 @@ export function App() {
     };
   }, [isLoginPage]);
 
-  // Home page uses its own HomeNavbar (both dark and light themes),
-  // Login has no navbar, and ContainerCompositePreview uses its dedicated preview navbar.
-  // All other pages continue using the shared Navbar.
-  const isHomePage = pathname === '/';
-  const isContainerCompositePreview = pathname === '/container-composite-preview';
-  const hideSharedNavbar = isHomePage || isLoginPage || isContainerCompositePreview;
+  // SiteNavbar is shown on all routes except /login.
+  const hideSharedNavbar = isLoginPage;
 
   useEffect(() => {
     if (!navbarRef.current) return;
@@ -129,8 +125,8 @@ export function App() {
         Skip to main content
       </a>
 
-      {/* Shared dark-theme Navbar — hidden on Home (has HomeNavbar) and Login */}
-      {!hideSharedNavbar && <Navbar ref={navbarRef} />}
+      {/* Unified SiteNavbar — shown on all routes except /login */}
+      {!hideSharedNavbar && <SiteNavbar ref={navbarRef} />}
 
       {/* Main Content Routes */}
       <main id="main-content" tabIndex={-1} className="outline-none">

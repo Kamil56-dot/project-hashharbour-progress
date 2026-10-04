@@ -184,7 +184,7 @@ export function ContainerPreviewPage() {
 
   return (
     <div
-      className={`min-h-screen w-full transition-colors duration-300 pt-[100px] lg:pt-[115px] pb-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start ${
+      className={`min-h-screen w-full transition-colors duration-300 pt-[78px] lg:pt-[82px] pb-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start ${
         isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >

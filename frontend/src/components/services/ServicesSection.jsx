@@ -15,7 +15,7 @@ export function ServicesSection() {
     <div
       id="services"
       aria-label="HashHarbour Services Infrastructure"
-      className={`relative w-full pt-[88px] lg:pt-[96px] pb-16 lg:pb-24 px-4 sm:px-8 lg:px-12 flex flex-col items-center justify-start border-t transition-colors duration-300 ${
+      className={`relative w-full pt-[78px] lg:pt-[82px] pb-16 lg:pb-24 px-4 sm:px-8 lg:px-12 flex flex-col items-center justify-start border-t transition-colors duration-300 ${
         isDark
           ? 'bg-transparent text-white border-white/5'
           : 'bg-transparent text-[#0F172A] border-blue-100/60'

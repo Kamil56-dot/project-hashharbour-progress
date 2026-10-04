@@ -164,7 +164,7 @@ export function ArchivedHero({ navbarRef }) {
   return (
     <section
       aria-label="Hero"
-      className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden pt-[96px] lg:pt-[104px] pb-[40px]"
+      className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden pt-[78px] lg:pt-[82px] pb-[40px]"
     >
       {/* Layer 1 & 2: Background Image & Cinematic Gradient Overlays */}
       <HeroBackground />

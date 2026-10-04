@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { ContainerCompositeNavbar } from './ContainerCompositeNavbar';
 import { ContainerCompositeSection } from '../../components/containers/ContainerCompositeSection';
 import { ArrowLeft } from 'lucide-react';
 
@@ -14,8 +13,6 @@ export function ContainerCompositePreviewPage() {
         isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >
-      {/* ─── DEDICATED PREVIEW NAVBAR ─── */}
-      <ContainerCompositeNavbar />
 
       {/* ─── TOP SECTION: BACK BUTTON & HERO HEADINGS ─── */}
       <div className="w-full max-w-6xl mx-auto flex flex-col shrink-0">

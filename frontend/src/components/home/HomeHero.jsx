@@ -25,7 +25,7 @@ export function HomeHero() {
 
   return (
     <section
-      className={`relative transition-colors duration-200 ${isDark ? 'bg-surface-900' : 'bg-hero-bg'
+      className={`relative pt-[74px] transition-colors duration-200 ${isDark ? 'bg-surface-900' : 'bg-hero-bg'
         }`}
       style={{ marginBottom: 'clamp(32px, 3vw, 48px)' }}
     >
@@ -42,7 +42,7 @@ export function HomeHero() {
           style={{
             /* Mobile: tall card fills viewport minus navbar.
                Desktop (lg+): bounded to viewport via CSS class so no scroll needed. */
-            minHeight: 'calc(100dvh - 72px)',
+            minHeight: 'calc(100dvh - 74px)',
             borderRadius: 'clamp(16px, 2vw, 28px)',
             isolation: 'isolate',
             WebkitMaskImage: '-webkit-radial-gradient(white, black)',
