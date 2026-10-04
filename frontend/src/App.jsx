@@ -7,7 +7,7 @@ import { HomePage } from './components/home/HomePage';
 import { useTheme } from './context/ThemeContext';
 
 const AboutSection = lazy(() => import('./components/about/AboutSection').then(m => ({ default: m.AboutSection })));
-const ServicesSection = lazy(() => import('./components/services').then(m => ({ default: m.ServicesSection })));
+const ServicesSection = lazy(() => import('./components/services/ServicesSection').then(m => ({ default: m.ServicesSection })));
 const ArchivedHero = lazy(() => import('./components/archived-hero/ArchivedHero').then(m => ({ default: m.ArchivedHero })));
 const ContainerPage = lazy(() => import('./pages/ContainerSection/ContainerPage'));
 const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/ContainerPreviewPage'));

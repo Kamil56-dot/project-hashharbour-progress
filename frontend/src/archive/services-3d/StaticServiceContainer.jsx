@@ -2,7 +2,7 @@ import React, { Suspense, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { Center, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
-import ContainerModel from '../../archive/container-3d-legacy/ContainerModel';
+import ContainerModel from '../container-3d-legacy/ContainerModel';
 
 /**
  * StaticServiceContainer — Orthographic 3D Container Render
