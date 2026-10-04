@@ -25,8 +25,7 @@ export function HomeHero() {
 
   return (
     <section
-      className={`relative pt-[74px] transition-colors duration-200 ${isDark ? 'bg-surface-900' : 'bg-hero-bg'
-        }`}
+      className="relative pt-[74px] transition-colors duration-200"
       style={{ marginBottom: 'clamp(32px, 3vw, 48px)' }}
     >
       {/* Outer padding — keeps the page background visible around the card */}
