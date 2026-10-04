@@ -21,19 +21,29 @@ export default defineConfig({
     cssMinify: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
-            return 'vendor-react';
-          }
-          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
-            return 'vendor-3d';
-          }
-          if (id.includes('node_modules/gsap')) {
-            return 'vendor-gsap';
-          }
-          if (id.includes('node_modules/lucide-react')) {
-            return 'vendor-icons';
-          }
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor-react',
+              test: /node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom)[\\/]/,
+              priority: 30,
+            },
+            {
+              name: 'vendor-3d',
+              test: /node_modules[\\/](three|@react-three|three-stdlib|zustand|suspend-react|its-fine|react-use-measure|use-sync-external-store)[\\/]/,
+              priority: 20,
+            },
+            {
+              name: 'vendor-gsap',
+              test: /node_modules[\\/]gsap[\\/]/,
+              priority: 10,
+            },
+            {
+              name: 'vendor-icons',
+              test: /node_modules[\\/]lucide-react[\\/]/,
+              priority: 10,
+            },
+          ],
         },
       },
     },
