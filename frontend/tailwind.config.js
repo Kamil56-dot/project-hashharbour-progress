@@ -15,6 +15,19 @@ export default {
     },
     extend: {
       colors: {
+        hh: {
+          'btn-primary': 'var(--hh-btn-primary-bg)',
+          'btn-primary-hover': 'var(--hh-btn-primary-hover)',
+          'btn-primary-text': 'var(--hh-btn-primary-text)',
+          'btn-secondary': 'var(--hh-btn-secondary-bg)',
+          'btn-secondary-border': 'var(--hh-btn-secondary-border)',
+          'btn-secondary-text': 'var(--hh-btn-secondary-text)',
+          'card-border': 'var(--hh-card-border)',
+          heading: 'var(--hh-text-heading)',
+          body: 'var(--hh-text-body)',
+          muted: 'var(--hh-text-muted)',
+          eyebrow: 'var(--hh-text-eyebrow)',
+        },
         surface: {
           950: '#060a14',
           900: '#0a0f1e',
@@ -99,6 +112,7 @@ export default {
       },
 
       borderRadius: {
+        'hh-card': 'var(--hh-card-radius)',
         'button': '8px',
         'card':   '14px',
         'panel':  '16px',
@@ -106,6 +120,8 @@ export default {
       },
 
       boxShadow: {
+        'hh-btn':          'var(--hh-btn-primary-shadow)',
+        'hh-card':         'var(--hh-card-shadow)',
         'card':            '0 4px 24px rgba(0, 0, 0, 0.12)',
         'card-hover':      '0 8px 32px rgba(0, 0, 0, 0.2), 0 0 24px rgba(0, 212, 255, 0.08)',
         'glow-cyan':       '0 4px 24px rgba(0, 212, 255, 0.25)',
@@ -113,6 +129,10 @@ export default {
         'glow-soft':       '0 0 40px rgba(0, 212, 255, 0.15)',
         'panel':           '0 8px 32px rgba(0, 0, 0, 0.2)',
         'nav-glow':        '0 0 16px rgba(0, 212, 255, 0.3)',
+      },
+
+      height: {
+        'hh-btn': 'var(--hh-btn-height)',
       },
 
       maxWidth: {

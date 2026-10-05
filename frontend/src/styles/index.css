@@ -17,6 +17,24 @@
   --theme-text-primary: #ffffff;
   --theme-text-secondary: #94a3b8;
   --theme-accent: #00d4ff;
+
+  /* Theme tokens: dark values
+     Rationale: eyebrow light is blue-700 for >=4.5:1; muted is not lighter than body; reference page values otherwise. */
+  --hh-btn-primary-bg: #1E88E5;
+  --hh-btn-primary-hover: #1976D2;
+  --hh-btn-primary-text: #FFFFFF;
+  --hh-btn-primary-shadow: 0 4px 14px rgba(30,136,229,0.30);
+  --hh-btn-secondary-bg: rgba(255,255,255,0.04);
+  --hh-btn-secondary-border: rgba(255,255,255,0.20);
+  --hh-btn-secondary-text: #E2E8F0;
+  --hh-btn-height: 44px;
+  --hh-card-radius: 24px;
+  --hh-card-border: rgba(255,255,255,0.10);
+  --hh-card-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  --hh-text-heading: #FFFFFF;
+  --hh-text-body: #94A3B8;
+  --hh-text-muted: #94A3B8;
+  --hh-text-eyebrow: #22D3EE;
 }
 
 .light {
@@ -27,6 +45,24 @@
   --theme-text-secondary: #475569;
   --theme-accent: #1E88E5;
   color-scheme: light;
+
+  /* Theme tokens: light values
+     Rationale: eyebrow light is blue-700 for >=4.5:1; muted is not lighter than body; reference page values otherwise. */
+  --hh-btn-primary-bg: #1E88E5;
+  --hh-btn-primary-hover: #1976D2;
+  --hh-btn-primary-text: #FFFFFF;
+  --hh-btn-primary-shadow: 0 4px 14px rgba(30,136,229,0.30);
+  --hh-btn-secondary-bg: #FFFFFF;
+  --hh-btn-secondary-border: #CBD5E1;
+  --hh-btn-secondary-text: #0F172A;
+  --hh-btn-height: 44px;
+  --hh-card-radius: 24px;
+  --hh-card-border: rgba(30,136,229,0.18);
+  --hh-card-shadow: 0 8px 24px rgba(30,136,229,0.10);
+  --hh-text-heading: #0F172A;
+  --hh-text-body: #475569;
+  --hh-text-muted: #475569;
+  --hh-text-eyebrow: #1D4ED8;
 }
 
 :root {
