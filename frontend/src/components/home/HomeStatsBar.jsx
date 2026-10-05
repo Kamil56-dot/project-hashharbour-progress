@@ -3,8 +3,9 @@ import { Ship, Globe, Clock, Users } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 /**
- * HomeStatsBar — Stats bar at the bottom of the container section.
- * Reuses the same data shape as StatsBar.jsx but styled for the home page palette.
+ * HomeStatsBar — Compact rounded glass stats pill.
+ * Centered below the hero video row with thin dividers.
+ * 2x2 grid on mobile/tablet, single row on desktop.
  * Supports dark and light themes.
  */
 
@@ -35,81 +36,73 @@ export function HomeStatsBar() {
   const { isDark } = useTheme();
 
   return (
-    <section
-      className={`w-full border-t transition-colors duration-200 ${
+    <div
+      className={`w-full max-w-[820px] mx-auto rounded-2xl lg:rounded-full border border-hh-card-border shadow-hh-card transition-colors duration-200 ${
         isDark
-          ? 'bg-transparent border-white/[0.06]'
-          : 'bg-transparent border-gray-100'
+          ? 'bg-[var(--glass-bg)] backdrop-blur-md'
+          : 'bg-white/80 backdrop-blur-md'
       }`}
       style={{
-        paddingTop: 'clamp(28px, 4vh, 48px)',
-        paddingBottom: 'clamp(28px, 4vh, 48px)',
-        paddingLeft: 'clamp(16px, 4vw, 64px)',
-        paddingRight: 'clamp(16px, 4vw, 64px)',
+        padding: 'clamp(10px, 1vh, 14px) clamp(16px, 1.8vw, 32px)',
       }}
     >
-      <div
-        className="w-full mx-auto grid grid-cols-2 lg:grid-cols-4"
-        style={{
-          maxWidth: '1100px',
-          gap: 'clamp(20px, 3vw, 48px)',
-        }}
-      >
+      <div className="grid grid-cols-2 gap-y-3 gap-x-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:gap-0">
         {STATS.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={idx}
-              className="flex items-center gap-3"
-            >
-              {/* Icon */}
-              <div
-                className={`shrink-0 flex items-center justify-center shadow-sm ${
-                  isDark
-                    ? 'bg-surface-800 border border-slate-700 text-slate-400'
-                    : 'bg-white border border-gray-100 text-gray-500'
-                }`}
-                style={{
-                  width: 'clamp(40px, 3.5vw, 52px)',
-                  height: 'clamp(40px, 3.5vw, 52px)',
-                  borderRadius: 'clamp(10px, 0.8vw, 14px)',
-                }}
-              >
-                <Icon
+            <React.Fragment key={idx}>
+              <div className="flex items-center gap-2.5 lg:flex-1 lg:justify-center">
+                <div
+                  className={`shrink-0 flex items-center justify-center rounded-lg ${
+                    isDark
+                      ? 'bg-cyan-500/10 text-cyan-400'
+                      : 'bg-brand-500/10 text-brand-600'
+                  }`}
                   style={{
-                    width: 'clamp(18px, 1.4vw, 24px)',
-                    height: 'clamp(18px, 1.4vw, 24px)',
-                    strokeWidth: 1.6,
+                    width: 'clamp(28px, 2vw, 34px)',
+                    height: 'clamp(28px, 2vw, 34px)',
                   }}
+                >
+                  <Icon
+                    style={{
+                      width: 'clamp(14px, 1vw, 17px)',
+                      height: 'clamp(14px, 1vw, 17px)',
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span
+                    className={`font-extrabold leading-none tracking-tight ${
+                      isDark ? 'text-white' : 'text-slate-900'
+                    }`}
+                    style={{ fontSize: 'clamp(14px, 0.95vw + 0.1vh, 18px)' }}
+                  >
+                    {stat.number}
+                  </span>
+                  <span
+                    className={`font-medium leading-tight whitespace-nowrap truncate ${
+                      isDark ? 'text-slate-400' : 'text-slate-500'
+                    }`}
+                    style={{
+                      fontSize: 'clamp(10px, 0.65vw, 12px)',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {stat.label}
+                  </span>
+                </div>
+              </div>
+              {idx < STATS.length - 1 && (
+                <div
+                  className={`hidden lg:block h-6 w-px shrink-0 ${
+                    isDark ? 'bg-white/10' : 'bg-slate-200'
+                  }`}
                 />
-              </div>
-
-              {/* Number + Label */}
-              <div className="flex flex-col">
-                <span
-                  className={`font-extrabold leading-none tracking-tight ${
-                    isDark ? 'text-white' : 'text-gray-900'
-                  }`}
-                  style={{ fontSize: 'clamp(20px, 2vw, 32px)' }}
-                >
-                  {stat.number}
-                </span>
-                <span
-                  className={`font-medium leading-tight ${
-                    isDark ? 'text-slate-500' : 'text-gray-400'
-                  }`}
-                  style={{
-                    fontSize: 'clamp(10px, 0.75vw, 13px)',
-                    marginTop: 'clamp(2px, 0.3vh, 4px)',
-                  }}
-                >
-                  {stat.label}
-                </span>
-              </div>
-            </div>
+              )}
+            </React.Fragment>
           );
         })}
       </div>
-    </section>
+    </div>
   );
 }

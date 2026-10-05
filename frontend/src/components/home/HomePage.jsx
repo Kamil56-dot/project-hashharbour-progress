@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { HomeHero } from './HomeHero';
-import { HomeStatsBar } from './HomeStatsBar';
 import { useTheme } from '../../context/ThemeContext';
 
 /* Lazy-load the container composite carousel section */
@@ -67,7 +66,6 @@ export function HomePage() {
             exploreTo="/containers"
           />
         </Suspense>
-        <HomeStatsBar />
       </div>
     </div>
   );
