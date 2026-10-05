@@ -191,10 +191,10 @@ export function ContainerPreviewPage() {
       {/* Isolated Preview Section Header */}
       <div className="w-full max-w-5xl mx-auto text-center mb-8 sm:mb-12">
         <div
-          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 backdrop-blur-md border transition-colors duration-200 ${
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 backdrop-blur-md border transition-colors duration-200 text-hh-eyebrow ${
             isDark
-              ? 'bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]'
-              : 'bg-brand-500/10 border-brand-200 text-brand-600'
+              ? 'bg-[#00E5FF]/10 border-[#00E5FF]/30'
+              : 'bg-brand-500/10 border-brand-200'
           }`}
         >
           <span
@@ -206,16 +206,12 @@ export function ContainerPreviewPage() {
         </div>
 
         <h1
-          className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-200 ${
-            isDark ? 'text-white' : 'text-[#0F172A]'
-          }`}
+          className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-3 transition-colors duration-200 text-hh-heading"
         >
           Bookable Container Types
         </h1>
         <p
-          className={`text-sm sm:text-base max-w-xl mx-auto transition-colors duration-200 ${
-            isDark ? 'text-slate-400' : 'text-slate-600'
-          }`}
+          className="text-sm sm:text-base max-w-xl mx-auto transition-colors duration-200 text-hh-body"
         >
           Select from our primary shipping container specifications engineered for global intermodal transport.
         </p>
@@ -235,10 +231,10 @@ export function ContainerPreviewPage() {
               <div
                 key={container.id}
                 ref={(el) => (cardRefs.current[idx] = el)}
-                className={`snap-center shrink-0 w-[80vw] max-w-[325px] md:w-auto md:max-w-none rounded-2xl md:rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-1.5 ${
+                className={`snap-center shrink-0 w-[80vw] max-w-[325px] md:w-auto md:max-w-none rounded-hh-card border border-hh-card-border shadow-hh-card p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 md:hover:-translate-y-1.5 ${
                   isDark
-                    ? 'bg-[#0D1525] border border-white/[0.08] shadow-[0_16px_36px_rgba(0,0,0,0.5)] md:hover:border-white/20'
-                    : 'bg-[#F2F6FB] border border-[#D5E2F0] shadow-[0_12px_30px_rgba(15,23,42,0.06)] md:hover:border-brand-300'
+                    ? 'bg-[#0D1525] md:hover:border-white/20'
+                    : 'bg-[#F2F6FB] md:hover:border-brand-300'
                 }`}
               >
                 {/* Card Top Label & Badge */}
@@ -288,9 +284,7 @@ export function ContainerPreviewPage() {
                     {container.name}
                   </h3>
                   <p
-                    className={`text-xs font-medium mt-0.5 transition-colors duration-200 ${
-                      isDark ? 'text-slate-400' : 'text-slate-500'
-                    }`}
+                    className="text-xs font-medium mt-0.5 transition-colors duration-200 text-hh-muted"
                   >
                     {container.category}
                   </p>
