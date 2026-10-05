@@ -1,9 +1,8 @@
-NAVIGATION - NAVIGATION LIGHT THEME ME SAHI SE NAHI DIKHTA MATLAB LIGHT THEME ME MERGE HO JATA HE AB TU USME GREY COLOR ADD KAR OR MUJSE MAVKGROUND ME RAKHNE KE LIYE IMAGE MAANG JO PURE PAGE KE BACKGROUND ME RAHEGI OR PURE PROJECT ME WAHI BACKGROUND USE HOGA LIGHT+DARK THEME DONO ME WAHI IMAGE BACKGROUND HOGA --GLOBAL BACKGROUND
+**HOME PAGE CONTAINERS MOBILE FINGER SWIPE-**ON MOBILE SCREEEN CONTAINERS ARE NOT SWIPABLE FROM THE FINGER GESTURE --THIS PROBLEM IS ALSO HAPPENS ON SERVICES PAGE SLIDING CARDS
 
-HAMBURGE MANU-YE DESKTOP PE KYU SHOW HO RAHA HE YE SIRF MOBILE ME AANA CHAHIYE FIX IT
-
-BOTTOM OF COMPOSITE PAGE- BOTTOM KI IN CHIZO KO EK GREY YA BLUE SECTION ME RAKH JISSE UNIQUE OR BETTER DIKHNE LAGE-Global Shipping,Worldwide Coverage,Book Standard Dry Container,Explore All Containers,Safe & Secure,Your Cargo, Our Priority IN BUTTONS YAAD RAHE LAYOUT NAHI BIGDE SIRF CSS CARD-in btns ko thoda upar laa bohot niche he
-
-SHINNIG IN ONLY CENTER CONTAINER-jo container center me selected ho woh 3-4 seconf me shine ho sahi se meaningfully -matlab niche jo book container btn he uske jesa left to right shine ho only center wala container not left right wale uncenter containers agar red container center me he to wahi shine kare or agar red shine kar raha tha or user ne use left me slide kiya or reefer container center me liya to ab reefer shine karega or red unshine--KYA YE CHIZ KARNI CHAHIYE YA UI BIGAD JAYEGA PEHLE YE BATA
-
-SWAPPING PAGES-ab jo container page homepage ke niche he usko or Container-composit-preview wale pages ko swap karde copy paste karna he -matlab Home page wale container section ko is composite preview wali file me lele or composit wale page ke ui/ux/ context home page ke niche lele wahan se containers book honge kyunki user site pe jo kaam ke liye aaya he uskojaldi woh de dena chahiye or jab user explore all containers btn dabaye tab 3d rotating wala container page jisko ham swap karne wale he woh khule--MATLAB home page ke niche wala 3d container he woh page khule explore all container btn dabane ke baad
+**SERVICES CARDS SIDES CUTOFF-**CARDS KE LEFT RIGHT SIDES CUT RAHI HE
+**MOBILE ME HOME PAGE KA IMAGE WALA SECTION BOHOT BADA HEIGHT SE LAG RAHA HE-**MATLAB HEIGHT MOBILE VIEW ME BOHOT JYADA HO GAYI HE
+**MOBILE VEIW NAVBAR--**MOBILE VIEW ME NAVBAR KO TRANSPARENT NAHGI RAKHNA WHITE SECTION ME HO OR DESKTOP PE ABHI JESA HE WESA NON CHANGES
+ABOUT SECTION GRID-BACKGROUND ME SQUARE GRID HE USKO REMOVE KARWANA HE
+**MOBILE HOME PAGE TAG LINES OR TEXT-**MOBILE SCREEN PE TAGLINE OR TEXT BOHOT WIDTH ME SPACE LE RAHE HE OR WHITE SHAODW JO HE SECTION KA YA WHITE RADIUS JO LEFT SIDE SE FILL KARTI HE WOH MOBILE ME 80% VISIBILITY BLOCK KAR DETI HE
+**EXPLORE ALL CONTAINERS BTN-**MOBILE ME LAGING-LAP BOHOT HOTA HE DIFFRENT DEVICES ME DIFFRENT TARIKESE
