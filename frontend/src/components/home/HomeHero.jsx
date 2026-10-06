@@ -37,11 +37,10 @@ export function HomeHero() {
       >
         {/* ─── THE SINGLE HERO CARD ─── */}
         <div
-          className="relative w-full overflow-hidden hero-card-desktop"
+          className="relative w-full overflow-hidden hero-card-desktop hero-card-mobile"
           style={{
-            /* Mobile: tall card fills viewport minus navbar.
-               Desktop (lg+): bounded to viewport via CSS class so no scroll needed. */
-            minHeight: 'calc(100dvh - 74px)',
+            /* Mobile: fluid sane height via .hero-card-mobile.
+               Desktop (lg+): bounded to viewport via .hero-card-desktop. */
             borderRadius: 'clamp(16px, 2vw, 28px)',
             isolation: 'isolate',
             WebkitMaskImage: '-webkit-radial-gradient(white, black)',
@@ -69,7 +68,7 @@ export function HomeHero() {
               loading="eager"
               fetchPriority="high"
               className="absolute inset-0 w-full h-full object-cover block m-0 p-0"
-              style={{ objectPosition: '50% 40%', width: '100%', height: '100%' }}
+              style={{ objectPosition: '50% 35%', width: '100%', height: '100%' }}
             />
           )}
 
@@ -83,27 +82,27 @@ export function HomeHero() {
             }}
           />
 
-          {/* ── Mobile gradient overlay ── */}
+          {/* ── Mobile gradient overlay — gentle text backing so image remains clearly visible ── */}
           <div
             className="absolute inset-0 pointer-events-none lg:hidden"
             style={{
               background: isDark
-                ? 'linear-gradient(to bottom, rgba(6,20,38,0.94) 0%, rgba(6,20,38,0.88) 40%, rgba(6,20,38,0.55) 75%, rgba(6,20,38,0.20) 100%)'
-                : 'linear-gradient(to bottom, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.88) 40%, rgba(255,255,255,0.55) 75%, rgba(255,255,255,0.20) 100%)',
+                ? 'linear-gradient(to bottom, rgba(6,20,38,0.78) 0%, rgba(6,20,38,0.52) 48%, rgba(6,20,38,0.12) 78%, transparent 100%)'
+                : 'linear-gradient(to bottom, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0.66) 42%, rgba(255,255,255,0.15) 75%, transparent 100%)',
             }}
           />
 
           {/* ── Text content — layered on top, left-aligned, vertically centered ── */}
           <div
-            className="relative z-10 h-full flex flex-col justify-center lg:absolute lg:inset-0"
+            className="relative z-10 h-full flex flex-col justify-center px-4 py-6 sm:px-6 sm:py-8 lg:absolute lg:inset-0"
             style={{
-              paddingLeft: 'clamp(24px, 5vw, 80px)',
-              paddingRight: 'clamp(24px, 5vw, 80px)',
-              paddingTop: 'clamp(32px, 4vh, 56px)',
-              paddingBottom: 'clamp(32px, 4vh, 56px)',
+              paddingLeft: 'clamp(20px, 5vw, 80px)',
+              paddingRight: 'clamp(20px, 5vw, 80px)',
+              paddingTop: 'clamp(24px, 4vh, 56px)',
+              paddingBottom: 'clamp(24px, 4vh, 56px)',
             }}
           >
-            <div style={{ maxWidth: '580px' }}>
+            <div className="w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[580px]">
               {/* Badge pill */}
               <div
                 className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border ${isDark
@@ -112,15 +111,15 @@ export function HomeHero() {
                   }`}
                 style={{
                   fontSize: 'clamp(9px, 0.7vw, 12px)',
-                  padding: 'clamp(5px, 0.6vh, 8px) clamp(12px, 1.1vw, 18px)',
-                  marginBottom: 'clamp(18px, 3vh, 32px)',
-                  gap: 'clamp(5px, 0.5vw, 8px)',
+                  padding: 'clamp(4px, 0.5vh, 8px) clamp(10px, 1.1vw, 18px)',
+                  marginBottom: 'clamp(10px, 1.8vh, 32px)',
+                  gap: 'clamp(4px, 0.5vw, 8px)',
                 }}
               >
                 <ShieldCheck
                   style={{
-                    width: 'clamp(13px, 0.9vw, 16px)',
-                    height: 'clamp(13px, 0.9vw, 16px)',
+                    width: 'clamp(12px, 0.9vw, 16px)',
+                    height: 'clamp(12px, 0.9vw, 16px)',
                   }}
                 />
                 #1 Trusted Shipping Partner
@@ -131,9 +130,10 @@ export function HomeHero() {
                 className={`font-extrabold uppercase leading-none tracking-tight ${isDark ? 'text-white' : 'text-heading-navy'
                   }`}
                 style={{
-                  fontSize: 'clamp(28px, 4vw + 0.5vh, 54px)',
-                  marginBottom: 'clamp(14px, 2.5vh, 28px)',
-                  lineHeight: '1.08',
+                  fontSize: 'clamp(22px, 5.2vw, 54px)',
+                  marginBottom: 'clamp(8px, 1.8vh, 28px)',
+                  lineHeight: '1.1',
+                  textShadow: isDark ? 'none' : '0 1px 6px rgba(255, 255, 255, 0.85)',
                 }}
               >
                 Moving Goods.
@@ -143,13 +143,14 @@ export function HomeHero() {
 
               {/* Description paragraph */}
               <p
-                className={`font-normal leading-relaxed ${isDark ? 'text-slate-300' : 'text-gray-600'
+                className={`font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-900'
                   }`}
                 style={{
-                  fontSize: 'clamp(13px, 0.95vw + 0.2vh, 17px)',
-                  maxWidth: '460px',
-                  marginBottom: 'clamp(24px, 3.5vh, 40px)',
-                  lineHeight: '1.7',
+                  fontSize: 'clamp(12px, 2.8vw, 17px)',
+                  maxWidth: 'clamp(260px, 85%, 460px)',
+                  marginBottom: 'clamp(14px, 2.4vh, 40px)',
+                  lineHeight: '1.55',
+                  textShadow: isDark ? 'none' : '0 1px 4px rgba(255, 255, 255, 0.9)',
                 }}
               >
                 Seamless container booking, shipment tracking, document
@@ -165,9 +166,9 @@ export function HomeHero() {
                   : 'bg-brand-500 text-white hover:bg-brand-600'
                   }`}
                 style={{
-                  fontSize: 'clamp(13px, 0.9vw + 0.2vh, 16px)',
-                  padding: 'clamp(12px, 1.4vh, 16px) clamp(24px, 2.2vw, 36px)',
-                  gap: 'clamp(8px, 0.7vw, 12px)',
+                  fontSize: 'clamp(12px, 0.9vw + 0.2vh, 16px)',
+                  padding: 'clamp(10px, 1.2vh, 16px) clamp(20px, 2.2vw, 36px)',
+                  gap: 'clamp(6px, 0.7vw, 12px)',
                   boxShadow: isDark
                     ? '0 4px 14px rgba(0, 212, 255, 0.35)'
                     : '0 4px 14px rgba(30, 136, 229, 0.35)',
@@ -177,8 +178,8 @@ export function HomeHero() {
                 <ArrowRight
                   className="transition-transform duration-200 group-hover:translate-x-1"
                   style={{
-                    width: 'clamp(15px, 1vw, 18px)',
-                    height: 'clamp(15px, 1vw, 18px)',
+                    width: 'clamp(14px, 1vw, 18px)',
+                    height: 'clamp(14px, 1vw, 18px)',
                   }}
                 />
               </Link>
