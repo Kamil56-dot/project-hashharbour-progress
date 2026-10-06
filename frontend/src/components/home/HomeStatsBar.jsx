@@ -37,16 +37,16 @@ export function HomeStatsBar() {
 
   return (
     <div
-      className={`w-full max-w-[820px] mx-auto rounded-2xl lg:rounded-full border border-hh-card-border shadow-hh-card transition-colors duration-200 ${
+      className={`w-full max-w-[820px] mx-auto rounded-hh-card border border-hh-card-border shadow-hh-card transition-colors duration-200 motion-reduce:transition-none ${
         isDark
           ? 'bg-[var(--glass-bg)] backdrop-blur-md'
           : 'bg-white/80 backdrop-blur-md'
       }`}
       style={{
-        padding: 'clamp(10px, 1vh, 14px) clamp(16px, 1.8vw, 32px)',
+        padding: 'clamp(8px, 1vh, 14px) clamp(12px, 1.6vw, 32px)',
       }}
     >
-      <div className="grid grid-cols-2 gap-y-3 gap-x-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:gap-0">
+      <div className="grid grid-cols-2 gap-y-3 gap-x-2 sm:gap-x-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:gap-0">
         {STATS.map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -56,7 +56,7 @@ export function HomeStatsBar() {
                   className={`shrink-0 flex items-center justify-center rounded-lg ${
                     isDark
                       ? 'bg-cyan-500/10 text-cyan-400'
-                      : 'bg-brand-500/10 text-brand-600'
+                      : 'bg-brand-500/10 text-brand-700'
                   }`}
                   style={{
                     width: 'clamp(28px, 2vw, 34px)',
@@ -81,7 +81,7 @@ export function HomeStatsBar() {
                   </span>
                   <span
                     className={`font-medium leading-tight whitespace-nowrap truncate ${
-                      isDark ? 'text-slate-400' : 'text-slate-500'
+                      isDark ? 'text-slate-400' : 'text-slate-600'
                     }`}
                     style={{
                       fontSize: 'clamp(10px, 0.65vw, 12px)',

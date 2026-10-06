@@ -444,6 +444,23 @@ svg {
    so any cropping happens only at the bottom of the frame.
    Height budget: 100dvh − navbar(~72px) − outer-padding(~48px).
    ───────────────────────────────────────────────────────────── */
+.hero-card-desktop {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-card-desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+}
+
 @media (min-width: 1024px) {
   .hero-card-desktop {
     display: grid;
