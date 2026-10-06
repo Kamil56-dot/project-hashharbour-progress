@@ -37,7 +37,7 @@ export function HomeStatsBar() {
 
   return (
     <div
-      className={`w-full max-w-[820px] mx-auto rounded-hh-card border border-hh-card-border shadow-hh-card transition-colors duration-200 motion-reduce:transition-none ${
+      className={`w-full max-w-[820px] mx-auto rounded-hh-card border border-hh-card-border shadow-hh-card max-md:!py-1.5 transition-colors duration-200 motion-reduce:transition-none ${
         isDark
           ? 'bg-[var(--glass-bg)] backdrop-blur-md'
           : 'bg-white/80 backdrop-blur-md'
@@ -46,7 +46,7 @@ export function HomeStatsBar() {
         padding: 'clamp(8px, 1vh, 14px) clamp(12px, 1.6vw, 32px)',
       }}
     >
-      <div className="grid grid-cols-2 gap-y-3 gap-x-2 sm:gap-x-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:gap-0">
+      <div className="grid grid-cols-2 gap-y-2 md:gap-y-3 gap-x-2 sm:gap-x-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:gap-0">
         {STATS.map((stat, idx) => {
           const Icon = stat.icon;
           return (

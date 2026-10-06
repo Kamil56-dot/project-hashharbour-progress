@@ -39,7 +39,7 @@ export function HomeHero() {
         <div className="hero-card-desktop w-full">
           {/* ── Left panel ── */}
           <div
-            className={`order-2 lg:order-1 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
+            className={`order-2 lg:order-1 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card max-md:!p-2.5 flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
               isDark
                 ? 'bg-[var(--glass-bg)] backdrop-blur-md'
                 : 'bg-white/80 backdrop-blur-md'
@@ -167,7 +167,7 @@ export function HomeHero() {
 
           {/* ── Right panel ── */}
           <div
-            className={`order-3 lg:order-3 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
+            className={`order-3 lg:order-3 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card hidden md:flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
               isDark
                 ? 'bg-[var(--glass-bg)] backdrop-blur-md'
                 : 'bg-white/80 backdrop-blur-md'
@@ -271,7 +271,7 @@ export function HomeHero() {
         </div>
 
         {/* ─── STATS PILL UNDER HERO ─── */}
-        <div className="mt-4 sm:mt-5 lg:mt-6 w-full flex justify-center">
+        <div className="mt-2.5 md:mt-5 lg:mt-6 w-full flex justify-center">
           <HomeStatsBar />
         </div>
       </div>
