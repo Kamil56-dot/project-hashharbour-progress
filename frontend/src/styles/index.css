@@ -444,6 +444,20 @@ svg {
    so any cropping happens only at the bottom of the frame.
    Height budget: 100dvh − navbar(~72px) − outer-padding(~48px).
    ───────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   HERO CARD — MOBILE (< 1024px): FLUID SANE HEIGHT
+   Mobile: natural fit within initial viewport using aspect-ratio and
+   sanity clamp (~58-60svh max). Desktop (lg+) untouched.
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .hero-card-mobile {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: clamp(380px, 58svh, 540px) !important;
+    aspect-ratio: 4 / 4.6;
+  }
+}
+
 @media (min-width: 1024px) {
   .hero-card-desktop {
     min-height: 540px !important;
@@ -451,6 +465,31 @@ svg {
     max-height: clamp(540px, calc(100vh - 130px), 880px);
     height: clamp(540px, calc(100dvh - 130px), 880px);
     max-height: clamp(540px, calc(100dvh - 130px), 880px);
+  }
+
+  .services-track-container [data-carousel-track] {
+    padding-left: max(1.5rem, calc(50vw - 170px));
+    padding-right: max(1.5rem, calc(50vw - 170px));
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SERVICES CAROUSEL — MOBILE (< 1024px): FULL WIDTH & FLUID EDGES
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .services-track-container {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .services-track-container [data-carousel-track] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    scroll-padding-inline: 16px !important;
+    padding-left: max(16px, calc(50vw - min(80vw, 300px) / 2)) !important;
+    padding-right: max(16px, calc(50vw - min(80vw, 300px) / 2)) !important;
   }
 }
 

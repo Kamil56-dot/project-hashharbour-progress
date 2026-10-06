@@ -316,7 +316,7 @@ export function ServicesGrid() {
   };
 
   return (
-    <div className="services-track-container relative w-full max-w-[1520px] mx-auto pt-4 sm:pt-8 pb-8 sm:pb-12 px-1 sm:px-4 select-none">
+    <div className="services-track-container relative w-full max-w-[1520px] mx-auto pt-4 sm:pt-8 pb-8 sm:pb-12 px-0 sm:px-4 select-none box-border">
       {/* ── Scoped CSS for Pure Hover Focus Effect & Scrollbar Elimination ── */}
       <style>{`
         /* Hide scrollbars completely on the track across all browsers */
@@ -420,21 +420,19 @@ export function ServicesGrid() {
         data-carousel-track
         onMouseDown={handleMouseDown}
         onScroll={handleScroll}
-        className="relative z-10 w-full flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-24 lg:pb-28 cursor-grab active:cursor-grabbing"
+        className="relative z-10 w-full flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-24 lg:pb-28 cursor-grab active:cursor-grabbing box-border"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
           touchAction: 'pan-y pinch-zoom', // Free vertical page scrolling
-          paddingLeft: 'max(1.5rem, calc(50vw - 170px))',
-          paddingRight: 'max(1.5rem, calc(50vw - 170px))',
         }}
       >
         {SERVICES_DATA.map((service, idx) => (
           <div
             key={service.id}
             data-service-card
-            className="shrink-0 snap-center w-[82vw] min-w-[270px] max-w-[320px] sm:w-[330px] lg:w-[350px] xl:w-[370px]"
+            className="shrink-0 snap-center w-[clamp(260px,78vw,300px)] sm:w-[330px] lg:w-[350px] xl:w-[370px]"
             onClickCapture={(e) => {
               if (hasMovedRef.current) {
                 e.stopPropagation();

@@ -11,7 +11,7 @@ export function ServicesHero() {
   const { isDark } = useTheme();
 
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center mb-3 sm:mb-4 lg:mb-5">
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center px-4 sm:px-0 mb-3 sm:mb-4 lg:mb-5">
       {/* Category Badge */}
       <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
         <span

@@ -50,7 +50,7 @@ export function ServiceCard({
 
       {/* ── Rounded Card Frame ── */}
       <div
-        className={`w-full rounded-[22px] sm:rounded-[26px] p-3 sm:p-3.5 border transition-all duration-300 flex flex-col items-center ${
+        className={`w-full rounded-[24px] sm:rounded-[26px] p-3 sm:p-3.5 border transition-all duration-300 flex flex-col items-center ${
           isDark
             ? 'bg-[#0B1E36]/95 backdrop-blur-md border-white/10 group-hover:border-[#00E5FF]/80 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(0,229,255,0.04)] group-hover:shadow-[0_24px_55px_rgba(0,229,255,0.3)]'
             : 'bg-white border-blue-100/90 group-hover:border-brand-400 shadow-[0_16px_40px_rgba(15,40,80,0.07),0_0_1px_1px_rgba(0,0,0,0.03)] group-hover:shadow-[0_24px_50px_rgba(15,40,80,0.18)]'

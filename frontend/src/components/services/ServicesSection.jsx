@@ -15,7 +15,7 @@ export function ServicesSection() {
     <div
       id="services"
       aria-label="HashHarbour Services Infrastructure"
-      className={`relative w-full pt-[78px] lg:pt-[82px] pb-16 lg:pb-24 px-4 sm:px-8 lg:px-12 flex flex-col items-center justify-start border-t transition-colors duration-300 ${
+      className={`relative w-full pt-[78px] lg:pt-[82px] pb-16 lg:pb-24 px-0 sm:px-8 lg:px-12 flex flex-col items-center justify-start border-t transition-colors duration-300 ${
         isDark
           ? 'bg-transparent text-white border-white/5'
           : 'bg-transparent text-[#0F172A] border-blue-100/60'
@@ -155,7 +155,7 @@ export function ServicesSection() {
 
         {/* Plain Tagline floating directly in the page flow (no box, no card, no background) */}
         <p
-          className={`text-center font-sans font-medium text-base sm:text-lg md:text-xl tracking-wide mt-1 sm:mt-2 mb-4 sm:mb-8 select-none transition-colors duration-200 ${
+          className={`text-center font-sans font-medium text-base sm:text-lg md:text-xl tracking-wide mt-1 sm:mt-2 mb-4 sm:mb-8 px-4 sm:px-0 select-none transition-colors duration-200 ${
             isDark ? 'text-white/90' : 'text-slate-900'
           }`}
         >
