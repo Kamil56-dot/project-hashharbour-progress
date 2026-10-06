@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 // loginBg removed — global background image provides the wavy background
 
@@ -82,6 +82,7 @@ function AnchorIcon({ className = 'w-12 h-[54px] text-brand-500' }) {
  */
 export function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -133,7 +134,14 @@ export function LoginPage() {
 
       setSuccessMsg('Login successful! Redirecting...');
       setTimeout(() => {
-        navigate('/');
+        // Phase 3: If a safe returnUrl query param exists, redirect there after login.
+        const returnUrl = searchParams.get('returnUrl');
+        const isSafeReturn =
+          returnUrl &&
+          returnUrl.startsWith('/') &&
+          !returnUrl.startsWith('//') &&
+          !returnUrl.includes('://');
+        navigate(isSafeReturn ? returnUrl : '/');
       }, 700);
     } catch (err) {
       setErrorMsg(err.message || 'Unable to connect to the authentication server.');
