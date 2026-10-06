@@ -42,3 +42,7 @@ env/
 # Heavy media assets
 frontend/src/assets/Videos/1000215164_gwr_videomp4.mp4
 frontend/src/assets/images/*.mp4
+
+# Database Backups
+backend-php/backups/
+

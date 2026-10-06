@@ -23,7 +23,7 @@ function run_simulated_request(string $scriptPath, string $method, array $header
         2 => ['pipe', 'w']  // stderr
     ];
 
-    $phpExe = 'C:\\xampp\\php\\php.exe';
+    $phpExe = '"C:\\xampp\\php\\php.exe" -d extension_dir="C:\\xampp\\php\\ext" -d browscap="C:\\xampp\\php\\extras\\browscap.ini"';
 
     // Build environment variables (ensure only string values)
     $env = [];
@@ -44,7 +44,7 @@ function run_simulated_request(string $scriptPath, string $method, array $header
         $env['HTTP_AUTHORIZATION'] = $headers['Authorization'];
     }
 
-    $cmd = sprintf('"%s" "%s"', $phpExe, $scriptPath);
+    $cmd = sprintf('%s "%s"', $phpExe, $scriptPath);
     $process = proc_open($cmd, $descriptors, $pipes, dirname($scriptPath), $env);
 
     if (!is_resource($process)) {

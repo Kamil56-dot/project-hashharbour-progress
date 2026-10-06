@@ -27,7 +27,7 @@ function run_request(string $scriptPath, string $method, array $headers = [], ar
 
     $phpExe = is_file('C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe')
         ? '"C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe" -c "C:\\xampp\\htdocs\\HashHarbour\\php\\php.ini"'
-        : '"C:\\xampp\\php\\php.exe"';
+        : '"C:\\xampp\\php\\php.exe" -d extension_dir="C:\\xampp\\php\\ext" -d browscap="C:\\xampp\\php\\extras\\browscap.ini"';
 
     $env = [];
     foreach (array_merge($_SERVER, $_ENV) as $k => $v) {

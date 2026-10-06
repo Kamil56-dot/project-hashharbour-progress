@@ -4,9 +4,9 @@
  * Handles:
  * - GET /api/containers/     : Public list of all containers
  * - GET /api/containers/{id} : Public container detail
- * - POST /api/containers/    : Role-protected (admin, operator) - Create container
- * - PUT /api/containers/{id} : Role-protected (admin, operator) - Update container
- * - DELETE /api/containers/{id} : Role-protected (admin, operator) - Delete container
+ * - POST /api/containers/    : Role-protected (super_admin, admin, manager) - Create container
+ * - PUT /api/containers/{id} : Role-protected (super_admin, admin, manager) - Update container
+ * - DELETE /api/containers/{id} : Role-protected (super_admin, admin, manager) - Delete container
  */
 
 declare(strict_types=1);
@@ -69,9 +69,9 @@ if ($method === 'GET') {
 }
 
 // ------------------------------------------------------------------------------
-// 2. Write Endpoints: Role-protected (admin, operator)
+// 2. Write Endpoints: Role-protected (super_admin, admin, manager)
 // ------------------------------------------------------------------------------
-$currentUser = require_role(['admin', 'operator']);
+$currentUser = require_role(['super_admin', 'admin', 'manager']);
 
 if ($method === 'POST') {
     $input = get_json_input();
