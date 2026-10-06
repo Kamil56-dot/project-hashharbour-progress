@@ -60,6 +60,13 @@ if ($password === null && isset($argv[2]) && !str_starts_with($argv[2], '--')) {
     $password = $argv[2];
 }
 
+// Safety warning if password was provided via CLI argument
+if ($password !== null) {
+    fwrite(STDERR, "[WARNING] Supplying the password via command-line arguments poses a security risk:\n");
+    fwrite(STDERR, "          Shell history and system process lists (e.g. ps, Task Manager) can expose plain text credentials.\n");
+    fwrite(STDERR, "          Recommendation: Run the script without arguments to use the interactive prompt securely.\n\n");
+}
+
 // Interactive prompt for Email if not supplied via argv
 if (empty($email)) {
     echo "Enter super_admin email [default: superadmin@hashharbour.com]: ";

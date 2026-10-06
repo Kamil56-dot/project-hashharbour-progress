@@ -23,7 +23,37 @@ function run_simulated_request(string $scriptPath, string $method, array $header
         2 => ['pipe', 'w']  // stderr
     ];
 
-    $phpExe = '"C:\\xampp\\php\\php.exe" -d extension_dir="C:\\xampp\\php\\ext" -d browscap="C:\\xampp\\php\\extras\\browscap.ini"';
+    $phpBin = PHP_BINARY;
+    $phpDrive = preg_match('/^([a-zA-Z]:)/', $phpBin, $m) ? $m[1] : '';
+
+    $extDir = ini_get('extension_dir');
+    if ($extDir && preg_match('/^[\\/][^\\/]/', $extDir) && $phpDrive !== '') {
+        $extDir = $phpDrive . $extDir;
+    } elseif (!$extDir || !is_dir($extDir)) {
+        $candidate = dirname($phpBin) . DIRECTORY_SEPARATOR . 'ext';
+        if (is_dir($candidate)) {
+            $extDir = $candidate;
+        }
+    }
+
+    $browscapCandidate = dirname($phpBin) . DIRECTORY_SEPARATOR . 'extras' . DIRECTORY_SEPARATOR . 'browscap.ini';
+    $browscap = file_exists($browscapCandidate) ? $browscapCandidate : ini_get('browscap');
+    if ($browscap && preg_match('/^[\\/][^\\/]/', $browscap) && $phpDrive !== '') {
+        $browscap = $phpDrive . $browscap;
+    }
+
+    $cmdParts = [escapeshellarg($phpBin)];
+    $iniFile = php_ini_loaded_file();
+    if ($iniFile) {
+        $cmdParts[] = '-c ' . escapeshellarg($iniFile);
+    }
+    if ($extDir && is_dir($extDir)) {
+        $cmdParts[] = '-d extension_dir=' . escapeshellarg($extDir);
+    }
+    if ($browscap && file_exists($browscap)) {
+        $cmdParts[] = '-d browscap=' . escapeshellarg($browscap);
+    }
+    $phpExe = implode(' ', $cmdParts);
 
     // Build environment variables (ensure only string values)
     $env = [];

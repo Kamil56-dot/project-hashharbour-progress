@@ -4,12 +4,6 @@
 -- Charset: utf8mb4 | Collation: utf8mb4_unicode_ci
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS `hashharbour`
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE `hashharbour`;
-
 -- Disable foreign key checks during table setup
 SET FOREIGN_KEY_CHECKS = 0;
 
