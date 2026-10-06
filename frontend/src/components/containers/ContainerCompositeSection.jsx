@@ -158,6 +158,15 @@ function CenterContainerShine({ container, isSlide }) {
   );
 }
 
+// Pre-load target route and container chunks on idle or interaction to eliminate mobile transition lag
+const prefetchTargetChunk = () => {
+  if (typeof window === 'undefined') return;
+  // Prefetch target page and child chunks
+  import('../../pages/Containers/ContainersPage').catch(() => {});
+  import('../home/HomeContainerSection').catch(() => {});
+  import('../../pages/ContainerSection/ContainerPage').catch(() => {});
+};
+
 export function ContainerCompositeSection({
   className = '',
   exploreTo = '/container-section',
@@ -172,6 +181,17 @@ export function ContainerCompositeSection({
 
   useEffect(() => {
     isInitialMountRef.current = false;
+  }, []);
+
+  // Idle prefetch: warm the target route chunk so mobile navigation is instantaneous
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(() => prefetchTargetChunk(), { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(() => prefetchTargetChunk(), 1500);
+      return () => clearTimeout(id);
+    }
   }, []);
 
   // IntersectionObserver: section at least 40% visible to enable keyboard arrows
@@ -452,6 +472,7 @@ export function ContainerCompositeSection({
           );
           transform: translateX(-160%) skewX(-20deg);
           animation: book-btn-shine 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          will-change: transform;
           pointer-events: none;
           z-index: 1;
         }
@@ -692,7 +713,8 @@ export function ContainerCompositeSection({
                 onClick={handleBookContainer}
                 type="button"
                 aria-label={activeContainer.bookLabel}
-                className="relative overflow-hidden inline-flex items-center justify-between gap-2.5 sm:gap-3 h-[42px] sm:h-[44px] pl-4 sm:pl-5 pr-1.5 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[13px] sm:text-[14px] shadow-[0_4px_14px_rgba(30,136,229,0.30)] transition-all cursor-pointer group"
+                style={{ touchAction: 'manipulation' }}
+                className="relative overflow-hidden inline-flex items-center justify-between gap-2.5 sm:gap-3 h-[42px] sm:h-[44px] pl-4 sm:pl-5 pr-1.5 rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[13px] sm:text-[14px] shadow-[0_4px_14px_rgba(30,136,229,0.30)] transition-[background-color,transform] duration-150 cursor-pointer touch-manipulation group"
               >
                 {/* Periodic diagonal shine sweep effect */}
                 <span className="book-btn-shine-streak" aria-hidden="true" />
@@ -705,7 +727,12 @@ export function ContainerCompositeSection({
 
               <Link
                 to={exploreTo}
-                className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-colors shadow-xs"
+                onPointerDown={prefetchTargetChunk}
+                onTouchStart={prefetchTargetChunk}
+                onMouseEnter={prefetchTargetChunk}
+                onFocus={prefetchTargetChunk}
+                style={{ touchAction: 'manipulation' }}
+                className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/10 active:scale-[0.98] font-semibold text-[13px] sm:text-[14px] shadow-xs cursor-pointer select-none transition-[background-color,border-color,color,transform] duration-150 touch-manipulation"
               >
                 <span>Explore All Containers</span>
               </Link>
