@@ -315,6 +315,39 @@ export function ServicesGrid() {
     scrollToCard(nextIdx);
   };
 
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const isTouchSwipingRef = useRef(false);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    isTouchSwipingRef.current = true;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isTouchSwipingRef.current) return;
+    isTouchSwipingRef.current = false;
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartXRef.current;
+    const dy = touch.clientY - touchStartYRef.current;
+
+    // Minimum swipe threshold (30px), horizontal intent must exceed vertical
+    if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+      hasMovedRef.current = true;
+      if (dx < 0) {
+        scrollDirection('right');
+      } else {
+        scrollDirection('left');
+      }
+      setTimeout(() => {
+        hasMovedRef.current = false;
+      }, 100);
+    }
+  };
+
   return (
     <div className="services-track-container relative w-full max-w-[1520px] mx-auto pt-4 sm:pt-8 pb-8 sm:pb-12 px-0 sm:px-4 select-none box-border">
       {/* ── Scoped CSS for Pure Hover Focus Effect & Scrollbar Elimination ── */}
@@ -419,13 +452,15 @@ export function ServicesGrid() {
         ref={trackRef}
         data-carousel-track
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onScroll={handleScroll}
-        className="relative z-10 w-full flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-24 lg:pb-28 cursor-grab active:cursor-grabbing box-border"
+        className="relative z-10 w-full flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-24 lg:pb-28 cursor-grab active:cursor-grabbing box-border mobile-touch-slider"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y pinch-zoom', // Free vertical page scrolling
+          touchAction: 'pan-x pan-y', // Native horizontal swipe + vertical page scrolling
         }}
       >
         {SERVICES_DATA.map((service, idx) => (

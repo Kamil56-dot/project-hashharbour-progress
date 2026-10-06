@@ -215,6 +215,36 @@ export function ContainerCompositeSection({
     setCenterIndex((prev) => (prev - 1 + 3) % 3);
   }, []);
 
+  // Touch Swipe Gesture Support on Mobile
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const isSwipingRef = useRef(false);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    isSwipingRef.current = true;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!isSwipingRef.current) return;
+    isSwipingRef.current = false;
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartXRef.current;
+    const dy = touch.clientY - touchStartYRef.current;
+
+    // Minimum swipe threshold (30px), horizontal intent must exceed vertical
+    if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) {
+        handleNext(); // Finger swiped left -> show next container
+      } else {
+        handlePrev(); // Finger swiped right -> show previous container
+      }
+    }
+  };
+
   // Keyboard navigation support: only when section >= 40% visible & not in input/textarea/select/contenteditable
   useEffect(() => {
     if (!isVisible) return;
@@ -477,7 +507,12 @@ export function ContainerCompositeSection({
         <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-6 lg:px-12">
 
           {/* ── Container Stage (Exact Height & Baseline Ground Plane) ── */}
-          <div className="composite-stage-clip relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible">
+          <div
+            className="composite-stage-clip relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible cursor-grab active:cursor-grabbing"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            style={{ touchAction: 'pan-y' }}
+          >
             
             {/* Subtle Studio Floor Atmosphere */}
             <div

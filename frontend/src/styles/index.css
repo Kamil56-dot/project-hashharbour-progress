@@ -487,9 +487,31 @@ svg {
   .services-track-container [data-carousel-track] {
     width: 100% !important;
     box-sizing: border-box !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
     scroll-padding-inline: 16px !important;
     padding-left: max(16px, calc(50vw - min(80vw, 300px) / 2)) !important;
     padding-right: max(16px, calc(50vw - min(80vw, 300px) / 2)) !important;
+  }
+
+  .services-track-container [data-service-card] {
+    scroll-snap-align: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Shared Native Mobile Touch Slider Utility */
+  .mobile-touch-slider {
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+
+  .mobile-touch-card {
+    scroll-snap-align: center !important;
+    flex-shrink: 0 !important;
   }
 }
 
