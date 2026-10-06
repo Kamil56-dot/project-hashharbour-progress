@@ -14,6 +14,7 @@ const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/Contain
 const ContainerCompositePreviewPage = lazy(() => import('./pages/ContainerCompositePreview/ContainerCompositePreviewPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ContainersPage = lazy(() => import('./pages/Containers/ContainersPage'));
+const CheckoutPage = lazy(() => import('./pages/Checkout/CheckoutPage'));
 
 function PageLoadingFallback() {
   const { isLight } = useTheme();
@@ -142,6 +143,7 @@ export function App() {
             <Route path="/container-composite-preview" element={<ContainerCompositePreviewPage />} />
             <Route path="/home-preview" element={<ArchivedHero navbarRef={navbarRef} />} />
             <Route path="/containers" element={<ContainersPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
