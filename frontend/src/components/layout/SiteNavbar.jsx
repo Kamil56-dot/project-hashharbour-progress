@@ -101,7 +101,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
       <header
         ref={ref}
         id="preview-header"
-        className="fixed top-0 left-0 right-0 w-full h-[74px] z-30 bg-transparent transition-colors duration-200"
+        className="fixed top-0 left-0 right-0 w-full h-[74px] z-30 bg-transparent transition-colors duration-200 max-lg:bg-white/80 max-lg:dark:bg-[#080E1A]/85 max-lg:backdrop-blur-md max-lg:border-b max-lg:border-slate-200/50 max-lg:dark:border-white/10"
       >
         <div className="w-full h-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
           

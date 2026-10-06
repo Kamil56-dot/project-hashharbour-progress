@@ -22,15 +22,6 @@ export function BrandStatement() {
               isDark ? 'bg-accent-500/10' : 'bg-brand-500/10'
             }`}
           />
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: isDark
-                ? 'linear-gradient(to right, #00C8F5 1px, transparent 1px), linear-gradient(to bottom, #00C8F5 1px, transparent 1px)'
-                : 'linear-gradient(to right, #1E88E5 1px, transparent 1px), linear-gradient(to bottom, #1E88E5 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }}
-          />
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
