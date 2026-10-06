@@ -109,6 +109,30 @@ export function ServicesGrid() {
     });
   }, []);
 
+  const syncActiveIndex = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    setCanScrollLeft(track.scrollLeft > 15);
+    setCanScrollRight(track.scrollLeft + track.clientWidth < track.scrollWidth - 15);
+
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    const cards = track.querySelectorAll('[data-service-card]');
+    let closestIdx = 0;
+    let minDiff = Infinity;
+
+    cards.forEach((card, idx) => {
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const diff = Math.abs(cardCenter - trackCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = idx;
+      }
+    });
+
+    setActiveIndex(closestIdx);
+  }, []);
+
   /**
    * Throttled UI state updater (dots & buttons) to prevent re-render jank
    */
@@ -117,29 +141,9 @@ export function ServicesGrid() {
 
     throttleTimerRef.current = setTimeout(() => {
       throttleTimerRef.current = null;
-      const track = trackRef.current;
-      if (!track) return;
-
-      setCanScrollLeft(track.scrollLeft > 15);
-      setCanScrollRight(track.scrollLeft + track.clientWidth < track.scrollWidth - 15);
-
-      const trackCenter = track.scrollLeft + track.clientWidth / 2;
-      const cards = track.querySelectorAll('[data-service-card]');
-      let closestIdx = 0;
-      let minDiff = Infinity;
-
-      cards.forEach((card, idx) => {
-        const cardCenter = card.offsetLeft + card.clientWidth / 2;
-        const diff = Math.abs(cardCenter - trackCenter);
-        if (diff < minDiff) {
-          minDiff = diff;
-          closestIdx = idx;
-        }
-      });
-
-      setActiveIndex(closestIdx);
+      syncActiveIndex();
     }, 80);
-  }, []);
+  }, [syncActiveIndex]);
 
   // Center on middle card (Trade Documentation) on initial load
   useEffect(() => {
@@ -167,8 +171,10 @@ export function ServicesGrid() {
     return () => window.removeEventListener('resize', handleResize);
   }, [updateCardTransforms, updateUIStateThrottled]);
 
+  const scrollEndTimerRef = useRef(null);
+
   /**
-   * Scroll listener with RAF throttle
+   * Scroll listener with RAF throttle & trailing settle sync
    */
   const handleScroll = () => {
     if (!rafCurveRef.current) {
@@ -178,7 +184,26 @@ export function ServicesGrid() {
       });
     }
     updateUIStateThrottled();
+
+    // Trailing settle check ensuring exact sync when scroll/snap completes
+    if (scrollEndTimerRef.current) clearTimeout(scrollEndTimerRef.current);
+    scrollEndTimerRef.current = setTimeout(() => {
+      syncActiveIndex();
+      updateCardTransforms();
+    }, 100);
   };
+
+  // Sync state on native scrollend event (supported in modern browsers)
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const onScrollEnd = () => {
+      syncActiveIndex();
+      updateCardTransforms();
+    };
+    track.addEventListener('scrollend', onScrollEnd);
+    return () => track.removeEventListener('scrollend', onScrollEnd);
+  }, [syncActiveIndex, updateCardTransforms]);
 
   /**
    * Snap to closest card
@@ -293,6 +318,82 @@ export function ServicesGrid() {
     window.addEventListener('blur', onMouseUp);
   };
 
+  /**
+   * Mobile Touch Swipe & Gesture Handling:
+   * Enables horizontal card swiping on touch devices while allowing free vertical page scrolling.
+   */
+  const touchStartRef = useRef({ x: 0, y: 0, scrollLeft: 0, time: 0 });
+  const touchDidMoveRef = useRef(false);
+  const suppressClickRef = useRef(false);
+  const touchIsHorizontalRef = useRef(false);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    const track = trackRef.current;
+    if (!track) return;
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      scrollLeft: track.scrollLeft,
+      time: performance.now(),
+    };
+    touchDidMoveRef.current = false;
+    touchIsHorizontalRef.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches.length !== 1) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const dx = e.touches[0].clientX - touchStartRef.current.x;
+    const dy = e.touches[0].clientY - touchStartRef.current.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    if (!touchIsHorizontalRef.current && (absX > 8 || absY > 8)) {
+      if (absX > absY * 1.1) {
+        touchIsHorizontalRef.current = true;
+      }
+    }
+
+    if (touchIsHorizontalRef.current && absX > 8) {
+      touchDidMoveRef.current = true;
+      track.scrollLeft = touchStartRef.current.scrollLeft - dx;
+      if (!rafCurveRef.current) {
+        rafCurveRef.current = requestAnimationFrame(() => {
+          updateCardTransforms();
+          rafCurveRef.current = null;
+        });
+      }
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchDidMoveRef.current) {
+      suppressClickRef.current = true;
+      const track = trackRef.current;
+      if (track) {
+        const touch = e.changedTouches[0];
+        const dx = touch ? touch.clientX - touchStartRef.current.x : 0;
+        const dt = performance.now() - touchStartRef.current.time;
+        const velocity = dt > 0 ? dx / dt : 0;
+
+        if (Math.abs(velocity) > 0.35 || Math.abs(dx) > 50) {
+          const dir = dx < 0 ? 1 : -1;
+          const nextIdx = Math.max(0, Math.min(SERVICES_DATA.length - 1, activeIndex + dir));
+          scrollToCard(nextIdx);
+        } else {
+          snapToNearest();
+        }
+      }
+      setTimeout(() => {
+        suppressClickRef.current = false;
+        touchDidMoveRef.current = false;
+      }, 150);
+    }
+    touchIsHorizontalRef.current = false;
+  };
+
   // Navigate to specific card
   const scrollToCard = (index) => {
     const track = trackRef.current;
@@ -343,6 +444,30 @@ export function ServicesGrid() {
           filter: blur(0px) !important;
           transform: translate3d(0, calc(var(--card-y, 0px) - 10px), 0) rotate(0deg) scale(1.04) !important;
           z-index: 50 !important;
+        }
+
+        /* ── Mobile Centered Symmetrical Card Edges (<768px) ── */
+        @media (max-width: 767px) {
+          .services-track-container [data-carousel-track] {
+            padding-left: calc(50vw - 145px) !important;
+            padding-right: calc(50vw - 145px) !important;
+          }
+          .services-track-container [data-service-card] {
+            width: 290px !important;
+            min-width: 290px !important;
+            max-width: 290px !important;
+          }
+        }
+        @media (max-width: 374px) {
+          .services-track-container [data-carousel-track] {
+            padding-left: calc(50vw - 140px) !important;
+            padding-right: calc(50vw - 140px) !important;
+          }
+          .services-track-container [data-service-card] {
+            width: 280px !important;
+            min-width: 280px !important;
+            max-width: 280px !important;
+          }
         }
       `}</style>
 
@@ -419,13 +544,16 @@ export function ServicesGrid() {
         ref={trackRef}
         data-carousel-track
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onScroll={handleScroll}
         className="relative z-10 w-full flex items-start gap-4 sm:gap-6 lg:gap-7 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-10 sm:pt-14 lg:pt-16 pb-20 sm:pb-24 lg:pb-28 cursor-grab active:cursor-grabbing"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
           WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y pinch-zoom', // Free vertical page scrolling
+          touchAction: 'pan-x pan-y',
           paddingLeft: 'max(1.5rem, calc(50vw - 170px))',
           paddingRight: 'max(1.5rem, calc(50vw - 170px))',
         }}
@@ -436,7 +564,7 @@ export function ServicesGrid() {
             data-service-card
             className="shrink-0 snap-center w-[82vw] min-w-[270px] max-w-[320px] sm:w-[330px] lg:w-[350px] xl:w-[370px]"
             onClickCapture={(e) => {
-              if (hasMovedRef.current) {
+              if (hasMovedRef.current || suppressClickRef.current) {
                 e.stopPropagation();
                 e.preventDefault();
               }

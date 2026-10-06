@@ -215,6 +215,63 @@ export function ContainerCompositeSection({
     setCenterIndex((prev) => (prev - 1 + 3) % 3);
   }, []);
 
+  // Touch swipe support on mobile devices
+  const touchStartRef = useRef({ x: 0, y: 0, time: 0 });
+  const isHorizontalSwipeRef = useRef(false);
+  const swipeSuppressedRef = useRef(false);
+
+  const handleTouchStart = useCallback((e) => {
+    if (e.touches.length !== 1) return;
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      time: performance.now(),
+    };
+    isHorizontalSwipeRef.current = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    if (e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - touchStartRef.current.x;
+    const dy = e.touches[0].clientY - touchStartRef.current.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    if (!isHorizontalSwipeRef.current && (absX > 10 || absY > 10)) {
+      if (absX > absY * 1.2) {
+        isHorizontalSwipeRef.current = true;
+      }
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback((e) => {
+    if (!isHorizontalSwipeRef.current) return;
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = touch.clientY - touchStartRef.current.y;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    // Threshold about 40px and predominantly horizontal gesture
+    if (absX >= 40 && absX > absY) {
+      swipeSuppressedRef.current = true;
+      if (dx < 0) {
+        handleNext();
+      } else {
+        handlePrev();
+      }
+      setTimeout(() => {
+        swipeSuppressedRef.current = false;
+      }, 150);
+    }
+    isHorizontalSwipeRef.current = false;
+  }, [handleNext, handlePrev]);
+
+  const handleTouchCancel = useCallback(() => {
+    isHorizontalSwipeRef.current = false;
+  }, []);
+
   // Keyboard navigation support: only when section >= 40% visible & not in input/textarea/select/contenteditable
   useEffect(() => {
     if (!isVisible) return;
@@ -477,7 +534,20 @@ export function ContainerCompositeSection({
         <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-6 lg:px-12">
 
           {/* ── Container Stage (Exact Height & Baseline Ground Plane) ── */}
-          <div className="composite-stage-clip relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchCancel}
+            onClickCapture={(e) => {
+              if (swipeSuppressedRef.current) {
+                e.stopPropagation();
+                e.preventDefault();
+              }
+            }}
+            style={{ touchAction: 'pan-y' }}
+            className="composite-stage-clip relative w-full h-[260px] sm:h-[290px] md:h-[320px] lg:h-[350px] xl:h-[385px] flex items-end justify-center select-none overflow-visible"
+          >
             
             {/* Subtle Studio Floor Atmosphere */}
             <div
