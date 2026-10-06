@@ -50,6 +50,33 @@ const CONTAINERS = [
 ];
 
 /**
+ * Singleton module-level prefetch for /containers route
+ * Uses the exact same dynamic import as App.jsx so Vite reuses the cached chunk.
+ * Protected against saveData and slow-2g/2g connections.
+ */
+let prefetchContainersPromise = null;
+
+function prefetchContainersRoute() {
+  if (typeof window === 'undefined') return null;
+  if (prefetchContainersPromise) return prefetchContainersPromise;
+
+  // Protect mobile data: do not prefetch if user has Save-Data or slow connection
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn) {
+    if (conn.saveData) return null;
+    const effectiveType = conn.effectiveType;
+    if (effectiveType === 'slow-2g' || effectiveType === '2g') return null;
+  }
+
+  prefetchContainersPromise = import('../../pages/Containers/ContainersPage').catch(() => {
+    prefetchContainersPromise = null;
+    return null;
+  });
+
+  return prefetchContainersPromise;
+}
+
+/**
  * Center Container Shine Overlay Component
  * Cloned look of Book button shine streak, clipped to container silhouette with mask-image.
  * Phase-locked via Web Animations API (offset by P/2 = 1500ms from Book button).
@@ -271,6 +298,38 @@ export function ContainerCompositeSection({
   const handleTouchCancel = useCallback(() => {
     isHorizontalSwipeRef.current = false;
   }, []);
+
+  // Prefetch /containers on browser idle after Home has loaded (unless saveData or slow 2g)
+  useEffect(() => {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && (conn.saveData || conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g')) {
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        const id = window.requestIdleCallback(() => {
+          prefetchContainersRoute();
+        }, { timeout: 2000 });
+        return () => window.cancelIdleCallback(id);
+      } else {
+        const timer = setTimeout(prefetchContainersRoute, 1200);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
+
+  const handleExploreTouchStart = () => {
+    prefetchContainersRoute();
+  };
+
+  const handleExplorePointerEnter = () => {
+    prefetchContainersRoute();
+  };
+
+  const handleExploreFocus = () => {
+    prefetchContainersRoute();
+  };
 
   // Keyboard navigation support: only when section >= 40% visible & not in input/textarea/select/contenteditable
   useEffect(() => {
@@ -740,7 +799,10 @@ export function ContainerCompositeSection({
 
               <Link
                 to={exploreTo}
-                className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-colors shadow-xs"
+                onTouchStart={handleExploreTouchStart}
+                onPointerEnter={handleExplorePointerEnter}
+                onFocus={handleExploreFocus}
+                className="inline-flex items-center justify-center h-[42px] sm:h-[44px] px-[18px] sm:px-5 rounded-full border border-slate-300 dark:border-white/20 text-[#0F172A] dark:text-slate-200 bg-white dark:bg-white/[0.04] hover:bg-white/90 dark:hover:bg-white/10 active:scale-[0.98] active:bg-slate-100 dark:active:bg-white/10 font-semibold text-[13px] sm:text-[14px] transition-all duration-150 motion-reduce:transition-none motion-reduce:active:scale-100 shadow-xs cursor-pointer"
               >
                 <span>Explore All Containers</span>
               </Link>
