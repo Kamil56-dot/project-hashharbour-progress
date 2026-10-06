@@ -77,16 +77,6 @@ export function AboutSection() {
             {/* Dark Mode: Radial Cyan Atmosphere Glow behind 3D Globe */}
             <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-accent-500/10 rounded-full blur-[160px]" />
             <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-[#00C8F5]/5 rounded-full blur-[140px]" />
-
-            {/* Dark Mode: Faint Cyan Grid Lines */}
-            <div
-              className="absolute inset-0 opacity-[0.04]"
-              style={{
-                backgroundImage:
-                  'linear-gradient(to right, #00C8F5 1px, transparent 1px), linear-gradient(to bottom, #00C8F5 1px, transparent 1px)',
-                backgroundSize: '48px 48px',
-              }}
-            />
           </>
         ) : (
           <>
@@ -101,16 +91,6 @@ export function AboutSection() {
               className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-[140px]"
               style={{
                 background: 'radial-gradient(circle, rgba(180, 218, 255, 0.65) 0%, rgba(235, 243, 252, 0) 70%)',
-              }}
-            />
-
-            {/* Light Mode: Faint Blue Grid Lines */}
-            <div
-              className="absolute inset-0 opacity-[0.035]"
-              style={{
-                backgroundImage:
-                  'linear-gradient(to right, #1E88E5 1px, transparent 1px), linear-gradient(to bottom, #1E88E5 1px, transparent 1px)',
-                backgroundSize: '48px 48px',
               }}
             />
           </>
