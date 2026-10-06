@@ -36,10 +36,10 @@ export function HomeHero() {
         }}
       >
         {/* ─── 3-COLUMN HERO GRID ─── */}
-        <div className="hero-card-desktop flex flex-col lg:grid lg:grid-cols-[1fr_2.4fr_1fr] items-stretch gap-6 w-full">
+        <div className="hero-card-desktop w-full">
           {/* ── Left panel ── */}
           <div
-            className={`order-2 lg:order-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card flex flex-col justify-between transition-colors duration-200 ${
+            className={`order-2 lg:order-1 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
               isDark
                 ? 'bg-[var(--glass-bg)] backdrop-blur-md'
                 : 'bg-white/80 backdrop-blur-md'
@@ -54,7 +54,7 @@ export function HomeHero() {
                 className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border whitespace-nowrap ${
                   isDark
                     ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                    : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
+                    : 'bg-brand-500/10 text-brand-700 border-brand-200/60'
                 }`}
                 style={{
                   fontSize: 'clamp(9px, 0.65vw, 12px)',
@@ -91,7 +91,7 @@ export function HomeHero() {
               {/* Description paragraph */}
               <p
                 className={`font-normal leading-relaxed ${
-                  isDark ? 'text-slate-300' : 'text-gray-600'
+                  isDark ? 'text-slate-300' : 'text-slate-600'
                 }`}
                 style={{
                   fontSize: 'clamp(11px, 0.65vw + 0.1vh, 15px)',
@@ -110,10 +110,10 @@ export function HomeHero() {
             <div className="mt-auto pt-1 sm:pt-2">
               <Link
                 to="/container-section"
-                className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 group whitespace-nowrap ${
+                className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 motion-reduce:transition-none motion-reduce:hover:shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 group whitespace-nowrap ${
                   isDark
-                    ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
-                    : 'bg-brand-500 text-white hover:bg-brand-600'
+                    ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400 focus-visible:ring-cyan-400 focus-visible:ring-offset-surface-950'
+                    : 'bg-brand-500 text-white hover:bg-brand-600 focus-visible:ring-brand-500 focus-visible:ring-offset-white'
                 }`}
                 style={{
                   fontSize: 'clamp(11px, 0.8vw + 0.12vh, 16px)',
@@ -126,7 +126,7 @@ export function HomeHero() {
               >
                 Book My Container
                 <ArrowRight
-                  className="transition-transform duration-200 group-hover:translate-x-1"
+                  className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:transform-none"
                   style={{
                     width: 'clamp(14px, 0.9vw, 18px)',
                     height: 'clamp(14px, 0.9vw, 18px)',
@@ -138,7 +138,7 @@ export function HomeHero() {
 
           {/* ── Center video container ── */}
           <div
-            className={`order-1 lg:order-2 min-w-0 relative w-full aspect-[3/2] lg:aspect-[16/9] rounded-hh-card border border-hh-card-border shadow-hh-card overflow-hidden transition-colors duration-200 ${
+            className={`order-1 lg:order-2 col-span-2 lg:col-span-1 min-w-0 relative w-full aspect-[3/2] lg:aspect-[16/9] rounded-hh-card border border-hh-card-border shadow-hh-card overflow-hidden transition-colors duration-200 motion-reduce:transition-none ${
               isDark ? 'bg-surface-950' : 'bg-white'
             }`}
           >
@@ -167,7 +167,7 @@ export function HomeHero() {
 
           {/* ── Right panel ── */}
           <div
-            className={`order-3 lg:order-3 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card hidden lg:flex flex-col justify-between transition-colors duration-200 ${
+            className={`order-3 lg:order-3 col-span-1 min-w-0 rounded-hh-card border border-hh-card-border shadow-hh-card flex flex-col justify-between transition-colors duration-200 motion-reduce:transition-none ${
               isDark
                 ? 'bg-[var(--glass-bg)] backdrop-blur-md'
                 : 'bg-white/80 backdrop-blur-md'
@@ -182,7 +182,7 @@ export function HomeHero() {
                 className={`inline-flex items-center uppercase font-bold tracking-wider rounded-full border whitespace-nowrap ${
                   isDark
                     ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
-                    : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
+                    : 'bg-brand-500/10 text-brand-700 border-brand-200/60'
                 }`}
                 style={{
                   fontSize: 'clamp(9px, 0.65vw, 12px)',
@@ -206,7 +206,7 @@ export function HomeHero() {
               >
                 Your Cargo,
                 <br />
-                <span className={isDark ? 'text-cyan-400' : 'text-brand-500'}>
+                <span className={isDark ? 'text-cyan-400' : 'text-brand-600'}>
                   Our Priority.
                 </span>
               </h2>
@@ -214,7 +214,7 @@ export function HomeHero() {
               {/* Tagline */}
               <p
                 className={`font-normal leading-relaxed ${
-                  isDark ? 'text-slate-300' : 'text-gray-600'
+                  isDark ? 'text-slate-300' : 'text-slate-600'
                 }`}
                 style={{
                   fontSize: 'clamp(11px, 0.65vw + 0.1vh, 15px)',
@@ -242,7 +242,7 @@ export function HomeHero() {
                       className={`shrink-0 flex items-center justify-center rounded-lg border ${
                         isDark
                           ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
-                          : 'bg-brand-500/10 text-brand-600 border-brand-200/60'
+                          : 'bg-brand-500/10 text-brand-700 border-brand-200/60'
                       }`}
                       style={{
                         width: 'clamp(24px, 1.6vw, 32px)',
