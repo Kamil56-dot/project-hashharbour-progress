@@ -2,6 +2,7 @@ import React, { useRef, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { SiteNavbar } from './components/layout/SiteNavbar';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useReducedMotion } from './hooks/useReducedMotion';
 import { HomePage } from './components/home/HomePage';
 import { useTheme } from './context/ThemeContext';
@@ -14,6 +15,7 @@ const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/Contain
 const ContainerCompositePreviewPage = lazy(() => import('./pages/ContainerCompositePreview/ContainerCompositePreviewPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ContainersPage = lazy(() => import('./pages/Containers/ContainersPage'));
+const AccountPlaceholder = lazy(() => import('./pages/account/AccountPlaceholder'));
 
 function PageLoadingFallback() {
   const { isLight } = useTheme();
@@ -142,6 +144,14 @@ export function App() {
             <Route path="/container-composite-preview" element={<ContainerCompositePreviewPage />} />
             <Route path="/home-preview" element={<ArchivedHero navbarRef={navbarRef} />} />
             <Route path="/containers" element={<ContainersPage />} />
+            <Route
+              path="/account/*"
+              element={
+                <ProtectedRoute>
+                  <AccountPlaceholder />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
