@@ -27,12 +27,33 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
+  const isCheckout = location.pathname === '/checkout';
+  const [checkoutQty, setCheckoutQty] = useState(() => {
+    if (typeof window !== 'undefined' && window.__hh_checkout_qty != null) {
+      return window.__hh_checkout_qty;
+    }
+    return 1;
+  });
+
+  // Listen for live cart quantity updates on /checkout
+  useEffect(() => {
+    if (!isCheckout) return;
+    const handleQty = (e) => {
+      if (e.detail?.qty != null) {
+        setCheckoutQty(e.detail.qty);
+      }
+    };
+    window.addEventListener('hh-cart-qty-change', handleQty);
+    return () => window.removeEventListener('hh-cart-qty-change', handleQty);
+  }, [isCheckout]);
+
   // Derive active pill item dynamically from current route
   const getActiveItem = (pathname) => {
     if (pathname === '/about') return 'about';
     if (pathname === '/services' || pathname.startsWith('/container')) return 'services';
     if (pathname === '/routes' || pathname.includes('routes')) return 'routes';
     if (pathname === '/login') return 'login';
+    if (pathname === '/checkout') return '';
     return '';
   };
 
@@ -230,13 +251,21 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
 
             {/* Shopping Cart Icon in Blue (~28px) */}
             <Link
-              to="/container-section"
-              className={`p-1 rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              to="/checkout"
+              className={`p-1 rounded-full relative transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
               }`}
               aria-label="Shopping cart"
             >
               <ShoppingCart className="w-[28px] h-[28px] stroke-[2.2]" />
+              {isCheckout && (
+                <span
+                  id="cart-quantity-badge"
+                  className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#1E88E5] text-white text-[10px] sm:text-[11px] font-bold flex items-center justify-center leading-none shadow-xs pointer-events-none select-none transition-transform scale-100"
+                >
+                  {checkoutQty}
+                </span>
+              )}
             </Link>
 
             {/* Hamburger Icon Button (Opens Dropdown Panel on Mobile Only) */}
@@ -324,23 +353,28 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
                     );
                   })}
 
-                  {/* Divider line before Register */}
-                  <div
-                    className={`my-1.5 border-t ${
-                      isDark ? 'border-white/10' : 'border-slate-100'
-                    }`}
-                  />
+                  {/* Divider line and Register CTA — hidden on /checkout */}
+                {location.pathname !== '/checkout' && (
+                  <>
+                    {/* Divider line before Register */}
+                    <div
+                      className={`my-1.5 border-t ${
+                        isDark ? 'border-white/10' : 'border-slate-100'
+                      }`}
+                    />
 
-                  {/* Register action: prominently reachable */}
-                  <a
-                    href="#register"
-                    role="menuitem"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="mt-0.5 text-[14px] font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-sm hover:shadow active:scale-[0.99]"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    <span>Register</span>
-                  </a>
+                    {/* Register action: prominently reachable */}
+                    <a
+                      href="#register"
+                      role="menuitem"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="mt-0.5 text-[14px] font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-sm hover:shadow active:scale-[0.99]"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      <span>Register</span>
+                    </a>
+                  </>
+                )}
                 </div>
               </div>
             )}
