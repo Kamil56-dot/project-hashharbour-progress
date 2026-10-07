@@ -5,7 +5,9 @@ import { ACCOUNT_NAV_ITEMS } from '../../pages/account/accountNavConfig';
 
 export function AccountSidebar() {
   const location = useLocation();
-  // By default: collapsed on tablet (768-1023px), expanded on desktop (>=1024px)
+
+  // Desktop (>=1024px): always expanded (260px)
+  // Tablet (768px - 1023px): collapsed rail (78px) by default
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth < 1024;
@@ -14,19 +16,48 @@ export function AccountSidebar() {
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+
+    const desktopMql = window.matchMedia('(min-width: 1024px)');
+    const tabletMql = window.matchMedia('(min-width: 768px) and (max-width: 1023.98px)');
+
+    const handleDesktopChange = (e) => {
+      if (e.matches) {
+        // Crossed into desktop: always expanded
         setIsCollapsed(false);
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    const handleTabletChange = (e) => {
+      if (e.matches) {
+        // Crossed into tablet: default collapsed rail
+        setIsCollapsed(true);
+      }
+    };
+
+    if (desktopMql.addEventListener) {
+      desktopMql.addEventListener('change', handleDesktopChange);
+      tabletMql.addEventListener('change', handleTabletChange);
+    } else {
+      desktopMql.addListener(handleDesktopChange);
+      tabletMql.addListener(handleTabletChange);
+    }
+
+    return () => {
+      if (desktopMql.removeEventListener) {
+        desktopMql.removeEventListener('change', handleDesktopChange);
+        tabletMql.removeEventListener('change', handleTabletChange);
+      } else {
+        desktopMql.removeListener(handleDesktopChange);
+        tabletMql.removeListener(handleTabletChange);
+      }
+    };
   }, []);
 
   return (
     <aside
       aria-label="Account sidebar"
-      className={`hidden md:flex flex-col justify-between shrink-0 transition-all duration-300 sticky top-[96px] h-[calc(100vh-120px)] min-h-[580px] bg-white/90 dark:bg-[#0F172A]/85 backdrop-blur-md rounded-3xl p-3.5 sm:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-slate-200/70 dark:border-white/10 ${
+      className={`hidden md:flex flex-col justify-between shrink-0 transition-all duration-300 sticky top-[calc(var(--navbar-height,74px)+1.25rem)] h-[calc(100vh-120px)] min-h-[580px] bg-white/90 dark:bg-[#0F172A]/85 backdrop-blur-md rounded-3xl p-3.5 sm:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-slate-200/70 dark:border-white/10 ${
         isCollapsed ? 'w-[78px]' : 'w-[260px]'
       }`}
     >

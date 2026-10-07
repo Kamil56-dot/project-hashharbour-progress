@@ -3,9 +3,16 @@ import { Outlet } from 'react-router-dom';
 import { AccountSidebar } from '../../components/account/AccountSidebar';
 import { AccountBottomBar } from '../../components/account/AccountBottomBar';
 
+// Real SiteNavbar rendered height is 74px (fixed header)
+// Top offset provides a consistent 20-24px clear margin below navbar
+const NAVBAR_HEIGHT_PX = 74;
+
 export function AccountLayout() {
   return (
-    <div className="min-h-screen pt-[90px] sm:pt-[96px] lg:pt-[104px] pb-28 md:pb-12 px-3 sm:px-6 lg:px-8 max-w-[1440px] mx-auto transition-colors duration-200">
+    <div
+      style={{ '--navbar-height': `${NAVBAR_HEIGHT_PX}px` }}
+      className="min-h-screen pt-[calc(var(--navbar-height)+1.25rem)] lg:pt-[calc(var(--navbar-height)+1.5rem)] pb-28 md:pb-12 px-3 sm:px-6 lg:px-8 max-w-[1440px] mx-auto transition-colors duration-200"
+    >
       <div className="flex gap-5 lg:gap-7 items-start">
         {/* Left Sidebar (Desktop & Tablet) */}
         <AccountSidebar />
