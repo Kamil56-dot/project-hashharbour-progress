@@ -18,6 +18,7 @@
     RewriteRule ^api/containers/?$ api/containers/index.php [L,QSA]
 
     # Clean URL rewrites for Bookings
+    RewriteRule ^api/bookings/([0-9]+)/cancel/?$ api/bookings/index.php?id=$1&action=cancel [L,QSA]
     RewriteRule ^api/bookings/([0-9]+)/?$ api/bookings/index.php?id=$1 [L,QSA]
     RewriteRule ^api/bookings/?$ api/bookings/index.php [L,QSA]
 

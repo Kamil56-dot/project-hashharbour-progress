@@ -2,9 +2,11 @@
 /**
  * Bookings API Endpoint
  * Handles:
- * - POST /api/bookings/     : Authenticated - Create booking with locked price_snapshot
- * - GET /api/bookings/      : Authenticated - Scoped by role (customer: own only; super_admin/admin/manager: all)
- * - GET /api/bookings/{id}  : Authenticated - Booking detail (owner or super_admin/admin/manager only)
+ * - POST /api/bookings/             : Authenticated - Create booking with locked price_snapshot
+ * - GET /api/bookings/              : Authenticated - Scoped by role (customer: own only; staff: all)
+ * - GET /api/bookings/{id}          : Authenticated - Booking detail (owner or staff only)
+ * - POST /api/bookings/{id}/cancel  : Authenticated - Cancel booking (customer: own pending/confirmed only; staff: any)
+ * - PATCH /api/bookings/{id}        : Authenticated - Status update (staff only) or cancel (owner/staff)
  */
 
 declare(strict_types=1);
@@ -24,12 +26,17 @@ if (empty($_GET) && !empty($_SERVER['QUERY_STRING'])) {
     parse_str($_SERVER['QUERY_STRING'], $_GET);
 }
 
-// Extract ID from query param or URL slug
+// Extract ID and action from query param or URL slug
 $id = null;
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $id = (int)$_GET['id'];
+$action = trim((string)($_GET['action'] ?? ''));
+
+if (preg_match('#/bookings/(\d+)/cancel/?$#i', $uri, $matches)) {
+    $id = (int)$matches[1];
+    $action = 'cancel';
 } elseif (preg_match('#/bookings/(\d+)/?$#i', $uri, $matches)) {
     $id = (int)$matches[1];
+} elseif (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = (int)$_GET['id'];
 }
 
 $pdo = get_db();
@@ -106,11 +113,177 @@ if ($method === 'GET') {
 }
 
 // ------------------------------------------------------------------------------
-// 2. POST: Create Booking with locked price_snapshot
+// 2. CANCELLATION HANDLER (POST /cancel or PATCH with cancel action/status)
+// ------------------------------------------------------------------------------
+$input = ($method === 'POST' || $method === 'PATCH') ? get_json_input() : [];
+$isCancelRequest = ($action === 'cancel')
+    || (($input['action'] ?? '') === 'cancel')
+    || (($input['status'] ?? '') === 'cancelled' && $currentUser['role'] === 'customer');
+
+if ($isCancelRequest) {
+    if ($id === null || $id <= 0) {
+        send_error('Booking ID is required for cancellation.', 400);
+    }
+
+    $stmt = $pdo->prepare('
+        SELECT b.*, c.container_code, c.type AS container_type, c.size_ft AS container_size
+        FROM bookings b
+        LEFT JOIN containers c ON b.container_id = c.id
+        WHERE b.id = :id
+        LIMIT 1
+    ');
+    $stmt->execute(['id' => $id]);
+    $booking = $stmt->fetch();
+
+    if (!$booking) {
+        send_error('Booking not found.', 404);
+    }
+
+    $isOwner = (int)$booking['user_id'] === (int)$currentUser['id'];
+    $isStaff = in_array($currentUser['role'], ['super_admin', 'admin', 'manager'], true);
+
+    if ($currentUser['role'] === 'customer') {
+        if (!$isOwner) {
+            send_error('Forbidden: You can only cancel your own bookings.', 403);
+        }
+        if ($booking['status'] === 'cancelled') {
+            send_error('Booking is already cancelled.', 400);
+        }
+        if (!in_array($booking['status'], ['pending', 'confirmed'], true)) {
+            send_error('Only pending or confirmed bookings can be cancelled by customers.', 400);
+        }
+        $cancelReason = trim((string)($input['cancel_reason'] ?? $input['reason'] ?? 'Cancelled by customer'));
+    } else {
+        // Staff can cancel any booking
+        if ($booking['status'] === 'cancelled') {
+            send_error('Booking is already cancelled.', 400);
+        }
+        $cancelReason = trim((string)($input['cancel_reason'] ?? $input['reason'] ?? 'Cancelled by staff'));
+    }
+
+    // Execute cancellation update - PRICE_SNAPSHOT IS NEVER TOUCHED
+    $updateStmt = $pdo->prepare('
+        UPDATE bookings
+        SET status = \'cancelled\',
+            cancelled_at = NOW(),
+            cancel_reason = :reason,
+            cancelled_by = :cancelled_by,
+            updated_at = NOW()
+        WHERE id = :id
+    ');
+    $updateStmt->execute([
+        'reason'       => !empty($cancelReason) ? $cancelReason : 'Cancelled',
+        'cancelled_by' => $currentUser['id'],
+        'id'           => $id,
+    ]);
+
+    // Fetch updated record
+    $fetchStmt = $pdo->prepare('
+        SELECT b.*, c.container_code, c.type AS container_type, c.size_ft AS container_size
+        FROM bookings b
+        LEFT JOIN containers c ON b.container_id = c.id
+        WHERE b.id = :id
+        LIMIT 1
+    ');
+    $fetchStmt->execute(['id' => $id]);
+    $updated = $fetchStmt->fetch();
+
+    $updated['id'] = (int)$updated['id'];
+    $updated['user_id'] = (int)$updated['user_id'];
+    $updated['container_id'] = (int)$updated['container_id'];
+    $updated['price_snapshot'] = (float)$updated['price_snapshot'];
+
+    send_json([
+        'message' => 'Booking cancelled successfully.',
+        'booking' => $updated,
+    ], 200);
+}
+
+// ------------------------------------------------------------------------------
+// 3. STATUS UPDATE (PATCH /api/bookings/{id} - Staff only)
+// ------------------------------------------------------------------------------
+if ($method === 'PATCH') {
+    if ($id === null || $id <= 0) {
+        send_error('Booking ID is required for update.', 400);
+    }
+
+    // Customers cannot update booking statuses (only cancel via cancellation flow)
+    $isStaff = in_array($currentUser['role'], ['super_admin', 'admin', 'manager'], true);
+    if (!$isStaff) {
+        send_error('Forbidden: Only staff members (manager, admin, super_admin) can update booking status.', 403);
+    }
+
+    $stmt = $pdo->prepare('SELECT * FROM bookings WHERE id = :id LIMIT 1');
+    $stmt->execute(['id' => $id]);
+    $booking = $stmt->fetch();
+
+    if (!$booking) {
+        send_error('Booking not found.', 404);
+    }
+
+    $newStatus = trim((string)($input['status'] ?? ''));
+    $allowedStatuses = ['pending', 'confirmed', 'in_transit', 'completed', 'cancelled'];
+
+    if (!in_array($newStatus, $allowedStatuses, true)) {
+        send_error('Invalid status. Allowed values: pending, confirmed, in_transit, completed, cancelled.', 400);
+    }
+
+    if ($newStatus === 'cancelled') {
+        $cancelReason = trim((string)($input['cancel_reason'] ?? $input['reason'] ?? 'Cancelled by staff'));
+        $updateStmt = $pdo->prepare('
+            UPDATE bookings
+            SET status = :status,
+                cancelled_at = IFNULL(cancelled_at, NOW()),
+                cancel_reason = IFNULL(cancel_reason, :reason),
+                cancelled_by = IFNULL(cancelled_by, :cancelled_by),
+                updated_at = NOW()
+            WHERE id = :id
+        ');
+        $updateStmt->execute([
+            'status'       => $newStatus,
+            'reason'       => $cancelReason,
+            'cancelled_by' => $currentUser['id'],
+            'id'           => $id,
+        ]);
+    } else {
+        $updateStmt = $pdo->prepare('
+            UPDATE bookings
+            SET status = :status,
+                updated_at = NOW()
+            WHERE id = :id
+        ');
+        $updateStmt->execute([
+            'status' => $newStatus,
+            'id'     => $id,
+        ]);
+    }
+
+    // Return updated record
+    $fetchStmt = $pdo->prepare('
+        SELECT b.*, c.container_code, c.type AS container_type, c.size_ft AS container_size
+        FROM bookings b
+        LEFT JOIN containers c ON b.container_id = c.id
+        WHERE b.id = :id
+        LIMIT 1
+    ');
+    $fetchStmt->execute(['id' => $id]);
+    $updated = $fetchStmt->fetch();
+
+    $updated['id'] = (int)$updated['id'];
+    $updated['user_id'] = (int)$updated['user_id'];
+    $updated['container_id'] = (int)$updated['container_id'];
+    $updated['price_snapshot'] = (float)$updated['price_snapshot'];
+
+    send_json([
+        'message' => "Booking status updated to '{$newStatus}'.",
+        'booking' => $updated,
+    ], 200);
+}
+
+// ------------------------------------------------------------------------------
+// 4. POST: Create Booking with locked price_snapshot
 // ------------------------------------------------------------------------------
 if ($method === 'POST') {
-    $input = get_json_input();
-
     $containerId = (int)($input['container_id'] ?? 0);
     $originPort = trim((string)($input['origin_port'] ?? ''));
     $destinationPort = trim((string)($input['destination_port'] ?? ''));

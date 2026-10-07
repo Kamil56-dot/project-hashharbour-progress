@@ -2,9 +2,10 @@
 /**
  * Shipments API Endpoint
  * Handles:
- * - GET /api/shipments/track/?tracking_no={id} : Public tracking lookup matching Django track action
- * - GET /api/shipments/                       : Public list of shipments
- * - GET /api/shipments/{id}                   : Public shipment detail
+ * - GET /api/shipments/track/?tracking_no={id} : Public tracking lookup (Unauthenticated)
+ * - GET /api/shipments/?tracking_no={id}       : Public tracking lookup (Unauthenticated)
+ * - GET /api/shipments/{id}                   : Shipment detail by ID
+ * - GET /api/shipments/                       : Authenticated list (Customer: own shipments only; Staff: all shipments)
  */
 
 declare(strict_types=1);
@@ -26,8 +27,12 @@ if ($method !== 'GET') {
 
 $pdo = get_db();
 
-// 1. Tracking query action: /api/shipments/track/?tracking_no=...
-if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
+// ------------------------------------------------------------------------------
+// 1. PUBLIC TRACKING LOOKUP: /api/shipments/track/?tracking_no=... or ?tracking_no=...
+// Never requires authentication; completely public for TrackingModal and clients
+// ------------------------------------------------------------------------------
+$isTrackingRoute = (bool)preg_match('#/shipments/track/?$#i', $uri);
+if (isset($_GET['tracking_no']) || $isTrackingRoute) {
     $trackingNo = trim((string)($_GET['tracking_no'] ?? ''));
 
     if (empty($trackingNo)) {
@@ -44,11 +49,19 @@ if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
 
     $shipment['id'] = (int)$shipment['id'];
     $shipment['progress_percent'] = (int)$shipment['progress_percent'];
+    if (array_key_exists('booking_id', $shipment)) {
+        $shipment['booking_id'] = $shipment['booking_id'] !== null ? (int)$shipment['booking_id'] : null;
+    }
+    if (array_key_exists('user_id', $shipment)) {
+        $shipment['user_id'] = $shipment['user_id'] !== null ? (int)$shipment['user_id'] : null;
+    }
 
     send_json($shipment, 200);
 }
 
-// 2. Detail by ID
+// ------------------------------------------------------------------------------
+// 2. DETAIL BY ID: /api/shipments/{id}
+// ------------------------------------------------------------------------------
 $id = null;
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $id = (int)$_GET['id'];
@@ -67,17 +80,45 @@ if ($id !== null) {
 
     $shipment['id'] = (int)$shipment['id'];
     $shipment['progress_percent'] = (int)$shipment['progress_percent'];
+    if (array_key_exists('booking_id', $shipment)) {
+        $shipment['booking_id'] = $shipment['booking_id'] !== null ? (int)$shipment['booking_id'] : null;
+    }
+    if (array_key_exists('user_id', $shipment)) {
+        $shipment['user_id'] = $shipment['user_id'] !== null ? (int)$shipment['user_id'] : null;
+    }
 
     send_json($shipment, 200);
 }
 
-// 3. List of shipments
-$stmt = $pdo->query('SELECT * FROM shipments ORDER BY id ASC');
+// ------------------------------------------------------------------------------
+// 3. LIST OF SHIPMENTS: /api/shipments/
+// Requires authentication:
+// - Customers may list ONLY their own shipments (user_id = currentUser.id)
+// - Staff (super_admin, admin, manager) may list all shipments
+// - Unauthenticated requests receive 401 Unauthorized
+// ------------------------------------------------------------------------------
+require_once __DIR__ . '/../../includes/auth.php';
+$currentUser = require_auth();
+
+if ($currentUser['role'] === 'customer') {
+    $stmt = $pdo->prepare('SELECT * FROM shipments WHERE user_id = :user_id ORDER BY id DESC');
+    $stmt->execute(['user_id' => $currentUser['id']]);
+} else {
+    // Staff sees all shipments
+    $stmt = $pdo->query('SELECT * FROM shipments ORDER BY id ASC');
+}
+
 $shipments = $stmt->fetchAll();
 
 foreach ($shipments as &$s) {
     $s['id'] = (int)$s['id'];
     $s['progress_percent'] = (int)$s['progress_percent'];
+    if (array_key_exists('booking_id', $s)) {
+        $s['booking_id'] = $s['booking_id'] !== null ? (int)$s['booking_id'] : null;
+    }
+    if (array_key_exists('user_id', $s)) {
+        $s['user_id'] = $s['user_id'] !== null ? (int)$s['user_id'] : null;
+    }
 }
 unset($s);
 
