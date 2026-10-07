@@ -22,6 +22,7 @@ const DocumentsPage = lazy(() => import('./pages/account/AccountPages').then(m =
 const BillingPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.BillingPage })));
 const ProfilePage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.ProfilePage })));
 const NotificationsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.NotificationsPage })));
+const CheckoutPage = lazy(() => import('./pages/Checkout/CheckoutPage'));
 
 function PageLoadingFallback() {
   const { isLight } = useTheme();
@@ -150,6 +151,7 @@ export function App() {
             <Route path="/container-composite-preview" element={<ContainerCompositePreviewPage />} />
             <Route path="/home-preview" element={<ArchivedHero navbarRef={navbarRef} />} />
             <Route path="/containers" element={<ContainersPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route
               path="/account"
               element={
