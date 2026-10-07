@@ -1,6 +1,8 @@
 import standardDryImg from '../../assets/containers/file_0000000078608211a9fcda6d20986d14.png';
+import standardDrySuccessImg from '../../assets/containers/red-standard-dry.png';
 import oilTankImg from '../../assets/containers/oil-tank.png';
 import reeferImg from '../../assets/containers/reefer container.png';
+import reeferSuccessImg from '../../assets/containers/reefer.png';
 
 /**
  * HASHHARBOUR CHECKOUT DATA CONSTANTS
@@ -12,14 +14,22 @@ export const CONTAINER_DB_IDS = {
   'reefer': 5,
 };
 
+export const CONTAINER_SHORT_NAMES = {
+  'standard-dry': '20ft Standard',
+  'oil-tank': '20ft Oil/Tank',
+  'reefer': '20ft Reefer',
+};
+
 export const CONTAINER_CATALOG = {
   'standard-dry': {
     id: 'standard-dry',
     dbId: 1,
     title: '20ft Standard Container',
+    shortName: '20ft Standard',
     pill: 'Dry Container',
     price: 1450,
     image: standardDryImg,
+    successImage: standardDrySuccessImg,
     alt: '20ft Standard Dry Container',
     length: '6.058 m',
     width: '2.438 m',
@@ -30,9 +40,11 @@ export const CONTAINER_CATALOG = {
     id: 'oil-tank',
     dbId: 4,
     title: '20ft Oil/Tank Container',
+    shortName: '20ft Oil/Tank',
     pill: 'Liquid Container',
     price: 3100,
     image: oilTankImg,
+    successImage: oilTankImg,
     alt: '20ft Oil / Tank Container',
     length: '6.058 m',
     width: '2.438 m',
@@ -43,9 +55,11 @@ export const CONTAINER_CATALOG = {
     id: 'reefer',
     dbId: 5,
     title: '20ft Reefer Container',
+    shortName: '20ft Reefer',
     pill: 'Refrigerated Container',
     price: 3200,
     image: reeferImg,
+    successImage: reeferSuccessImg,
     alt: '20ft Reefer Container',
     length: '6.058 m',
     width: '2.438 m',
@@ -60,6 +74,7 @@ export const SHIPPING_DEMO = {
   from: 'Dubai, UAE',
   to: 'Shanghai, China',
   transitTime: '10 - 12 Days',
+  transit: '10 - 12 Days',
   includes: [
     'Port Handling Charges',
     'Documentation Support',

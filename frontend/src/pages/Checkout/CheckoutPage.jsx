@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Lock, ArrowRight, ShieldCheck, AlertTriangle, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { ChevronRight, Lock, ArrowRight, ShieldCheck, AlertTriangle, AlertCircle, Loader2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { CONFIG } from '../../config';
 import {
@@ -17,6 +17,7 @@ import { BillingAddressCard } from './components/BillingAddressCard';
 import { PaymentMethodCard } from './components/PaymentMethodCard';
 import { OrderSummaryCard } from './components/OrderSummaryCard';
 import { TrustBar } from './components/TrustBar';
+import { BookingCompletedCard } from './components/BookingCompletedCard';
 
 /**
  * Checkout Stepper Steps Configuration
@@ -115,13 +116,20 @@ export function CheckoutPage() {
     }
   }, []); // Run once on mount
 
-  // Sync quantity to live cart badge on SiteNavbar
+  // Sync quantity to live cart badge on SiteNavbar (show 0 when booking completed)
   useEffect(() => {
+    if (bookingSuccess) {
+      window.__hh_checkout_qty = 0;
+      window.dispatchEvent(
+        new CustomEvent('hh-cart-qty-change', { detail: { qty: 0 } })
+      );
+      return;
+    }
     window.__hh_checkout_qty = quantity;
     window.dispatchEvent(
       new CustomEvent('hh-cart-qty-change', { detail: { qty: quantity } })
     );
-  }, [quantity]);
+  }, [quantity, bookingSuccess]);
 
   const handleIncrement = () => {
     setQuantity((q) => q + 1);
@@ -219,9 +227,13 @@ export function CheckoutPage() {
       const data = await response.json().catch(() => null);
 
       if (response.status === 201 && data) {
-        // Success: store result in state for future popup, clear draft, stay disabled
+        // Success: store result in state for BookingCompletedCard, clear draft, update cart badge to 0
         setBookingSuccess(data);
         sessionStorage.removeItem(DRAFT_KEY);
+        window.__hh_checkout_qty = 0;
+        window.dispatchEvent(
+          new CustomEvent('hh-cart-qty-change', { detail: { qty: 0 } })
+        );
         return;
       }
 
@@ -274,10 +286,11 @@ export function CheckoutPage() {
     >
       {/* Page Content Container — matches project content left-edge standard */}
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-
-        {/* ─── STEPPER ─── */}
-        <nav
-          aria-label="Checkout progress"
+        {!bookingSuccess ? (
+          <>
+            {/* ─── STEPPER ─── */}
+            <nav
+              aria-label="Checkout progress"
           className="pt-6 pb-4 sm:pt-7 sm:pb-5"
         >
           <ol className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -453,21 +466,6 @@ export function CheckoutPage() {
                 )}
               </button>
 
-              {/* TEMPORARY test message. FUTURE: replace with the Payment Successful popup. */}
-              {bookingSuccess && (
-                <div
-                  id="pay-now-success-message"
-                  className={`mt-3 px-4 py-2.5 rounded-xl text-[13px] sm:text-[14px] font-medium flex items-center gap-2 animate-in fade-in duration-150 ${
-                    isDark
-                      ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'
-                      : 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-                  }`}
-                >
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
-                  <span>Booking confirmed. Reference: {bookingSuccess.booking_reference}</span>
-                </div>
-              )}
-
               {/* Inline validation or server error */}
               {payNowError && (
                 <div
@@ -511,6 +509,17 @@ export function CheckoutPage() {
           </div>
 
         </div>
+          </>
+        ) : (
+          /* ─── BOOKING COMPLETED SUCCESS VIEW (Phase 1) ─── */
+          <div className="pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-12 flex justify-center">
+            <BookingCompletedCard
+              bookingData={bookingSuccess}
+              container={container}
+              isDark={isDark}
+            />
+          </div>
+        )}
 
         {/* ─── TRUST BAR ─── */}
         <TrustBar isDark={isDark} />
