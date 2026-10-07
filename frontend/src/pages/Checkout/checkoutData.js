@@ -6,9 +6,16 @@ import reeferImg from '../../assets/containers/reefer container.png';
  * HASHHARBOUR CHECKOUT DATA CONSTANTS
  * Catalog definitions matching TrackingModal CONTAINER_TYPE_MAP and DB catalog.
  */
+export const CONTAINER_DB_IDS = {
+  'standard-dry': 1,
+  'oil-tank': 4,
+  'reefer': 5,
+};
+
 export const CONTAINER_CATALOG = {
   'standard-dry': {
     id: 'standard-dry',
+    dbId: 1,
     title: '20ft Standard Container',
     pill: 'Dry Container',
     price: 1450,
@@ -21,6 +28,7 @@ export const CONTAINER_CATALOG = {
   },
   'oil-tank': {
     id: 'oil-tank',
+    dbId: 4,
     title: '20ft Oil/Tank Container',
     pill: 'Liquid Container',
     price: 3100,
@@ -33,6 +41,7 @@ export const CONTAINER_CATALOG = {
   },
   'reefer': {
     id: 'reefer',
+    dbId: 5,
     title: '20ft Reefer Container',
     pill: 'Refrigerated Container',
     price: 3200,

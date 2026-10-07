@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Lock, ArrowRight, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { ChevronRight, Lock, ArrowRight, ShieldCheck, AlertTriangle, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import { getContainerData, DEFAULT_BILLING_ADDRESS, FEES_DEMO, formatCurrency } from './checkoutData';
+import { CONFIG } from '../../config';
+import {
+  CONTAINER_DB_IDS,
+  SHIPPING_DEMO,
+  getContainerData,
+  DEFAULT_BILLING_ADDRESS,
+  FEES_DEMO,
+  formatCurrency,
+} from './checkoutData';
 import { BookingSummaryCard } from './components/BookingSummaryCard';
 import { ShippingDetailsCard } from './components/ShippingDetailsCard';
 import { BillingAddressCard } from './components/BillingAddressCard';
@@ -26,7 +34,7 @@ const ACTIVE_STEP = 2;
 const DRAFT_KEY = 'hh_checkout_draft';
 
 /**
- * CheckoutPage — Phase 1, 2 & 3
+ * CheckoutPage — Phase 1, 2, 3 & 4
  * Route: /checkout
  * URL query parameters:
  *  - ?type=standard-dry|oil-tank|reefer (defaults to standard-dry)
@@ -57,13 +65,19 @@ export function CheckoutPage() {
   // Shared quantity state lifted to page level (used by Order Summary)
   const [quantity, setQuantity] = useState(initialQty);
 
-  // Lifted billing address state (to be sent to backend in Phase 4)
+  // Lifted billing address state
   const [billingAddress, setBillingAddress] = useState(DEFAULT_BILLING_ADDRESS);
+  const [isBillingEditing, setIsBillingEditing] = useState(false);
 
-  // Phase 3 state: payment method, insurance, and Pay Now messaging
+  // Payment method and insurance selection
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [insuranceSelected, setInsuranceSelected] = useState(true);
-  const [payNowMessage, setPayNowMessage] = useState('');
+
+  // Phase 4 states: submission loading, success booking result, errors, notices
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(null);
+  const [payNowError, setPayNowError] = useState('');
+  const [payNowWarning, setPayNowWarning] = useState('');
 
   // ─── RESTORE DRAFT FROM SESSION STORAGE (login redirect flow) ───
   useEffect(() => {
@@ -121,21 +135,26 @@ export function CheckoutPage() {
     setInsuranceSelected((prev) => !prev);
   }, []);
 
-  // ─── PAY NOW HANDLER ───
-  const handlePayNow = useCallback(() => {
-    setPayNowMessage('');
-
-    // (a) Reefer container — not available for booking yet
-    if (container.id === 'reefer') {
-      setPayNowMessage('This container type is not available for booking yet.');
+  // ─── PAY NOW HANDLER (Phase 4 Backend Save) ───
+  const handlePayNow = useCallback(async () => {
+    // If already confirmed or currently sending, do nothing
+    if (bookingSuccess || isSubmitting) {
       return;
     }
 
-    // Check login status
-    const hasToken = !!localStorage.getItem('hh_access_token');
+    setPayNowError('');
+    setPayNowWarning('');
 
-    if (!hasToken) {
-      // (b) Not logged in — save draft and redirect to /login
+    // (a) Reefer container — not available for booking yet
+    if (container.id === 'reefer') {
+      setPayNowWarning('This container type is not available for booking yet.');
+      return;
+    }
+
+    // (b) Check login status
+    const token = localStorage.getItem('hh_access_token');
+    if (!token) {
+      // Not logged in — save draft and redirect to /login
       const draft = {
         containerType: container.id,
         quantity,
@@ -151,10 +170,101 @@ export function CheckoutPage() {
       return;
     }
 
-    // (c) Logged in, not reefer — TODO Phase 4: save booking
-    // No-op handler. Nothing visible happens.
-    // TODO Phase 4: save booking to backend, show "Booking Completed" popup.
-  }, [container.id, quantity, insuranceSelected, paymentMethod, billingAddress, navigate]);
+    // (c) Check if billing address is in edit mode (unsaved) or incomplete
+    const isBillingIncomplete =
+      !billingAddress ||
+      !(billingAddress.fullName || billingAddress.name)?.trim() ||
+      !billingAddress.address?.trim() ||
+      !billingAddress.city?.trim() ||
+      !billingAddress.state?.trim() ||
+      !billingAddress.country?.trim() ||
+      !(billingAddress.postalCode || billingAddress.postal_code)?.trim();
+
+    if (isBillingEditing || isBillingIncomplete) {
+      setPayNowError('Please save your billing address before paying.');
+      return;
+    }
+
+    // (d) Build payload and execute booking creation
+    const containerDbId = CONTAINER_DB_IDS[container.id] || container.dbId || 1;
+    const payload = {
+      container_id: containerDbId,
+      quantity,
+      insurance_selected: insuranceSelected,
+      payment_method: paymentMethod,
+      billing: {
+        name: (billingAddress.fullName || billingAddress.name || '').trim(),
+        address: (billingAddress.address || '').trim(),
+        city: (billingAddress.city || '').trim(),
+        state: (billingAddress.state || '').trim(),
+        country: (billingAddress.country || '').trim(),
+        postal_code: (billingAddress.postalCode || billingAddress.postal_code || '').trim(),
+      },
+      origin_port: SHIPPING_DEMO.from,
+      destination_port: SHIPPING_DEMO.to,
+    };
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${CONFIG.apiUrl}/api/bookings/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (response.status === 201 && data) {
+        // Success: store result in state for future popup, clear draft, stay disabled
+        setBookingSuccess(data);
+        sessionStorage.removeItem(DRAFT_KEY);
+        return;
+      }
+
+      if (response.status === 401) {
+        // Auth expired / invalid: save draft and redirect to login like guest flow without clearing tokens
+        const draft = {
+          containerType: container.id,
+          quantity,
+          insuranceSelected,
+          paymentMethod,
+          billingAddress,
+        };
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        const currentUrl = `/checkout${window.location.search}`;
+        navigate(`/login?returnUrl=${encodeURIComponent(currentUrl)}`);
+        return;
+      }
+
+      if (response.status === 400 && data && (data.error || data.message)) {
+        // Server validation error
+        setPayNowError(data.error || data.message);
+      } else {
+        // 403 / 5xx / unexpected response status
+        setPayNowError('Something went wrong. Please try again.');
+      }
+    } catch {
+      // Network failure
+      setPayNowError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    bookingSuccess,
+    isSubmitting,
+    container.id,
+    container.dbId,
+    quantity,
+    insuranceSelected,
+    paymentMethod,
+    billingAddress,
+    isBillingEditing,
+    navigate,
+  ]);
 
   return (
     <div
@@ -284,6 +394,8 @@ export function CheckoutPage() {
               billingAddress={billingAddress}
               onSaveBillingAddress={setBillingAddress}
               isDark={isDark}
+              isEditing={isBillingEditing}
+              onEditChange={setIsBillingEditing}
             />
           </div>
 
@@ -320,15 +432,59 @@ export function CheckoutPage() {
                 id="pay-now-btn"
                 type="button"
                 onClick={handlePayNow}
-                className="group w-full h-[52px] rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 shadow-[0_4px_14px_rgba(30,136,229,0.35)] hover:shadow-[0_6px_20px_rgba(30,136,229,0.45)] transition-all duration-200 cursor-pointer"
+                disabled={isSubmitting || Boolean(bookingSuccess)}
+                className={`group w-full h-[52px] rounded-full text-white font-semibold text-[15px] sm:text-[16px] flex items-center justify-center gap-2.5 transition-all duration-200 select-none ${
+                  isSubmitting || Boolean(bookingSuccess)
+                    ? 'bg-[#1E88E5]/75 cursor-not-allowed shadow-none'
+                    : 'bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] shadow-[0_4px_14px_rgba(30,136,229,0.35)] hover:shadow-[0_6px_20px_rgba(30,136,229,0.45)] cursor-pointer'
+                }`}
               >
-                <Lock className="w-[16px] h-[16px]" />
-                <span>Pay Now</span>
-                <ArrowRight className="w-[16px] h-[16px] transition-transform duration-200 group-hover:translate-x-0.5" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-[18px] h-[18px] animate-spin shrink-0" />
+                    <span>Processing Payment...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-[16px] h-[16px]" />
+                    <span>Pay Now</span>
+                    <ArrowRight className="w-[16px] h-[16px] transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </>
+                )}
               </button>
 
-              {/* Inline Pay Now message (reefer unavailable / etc.) */}
-              {payNowMessage && (
+              {/* TEMPORARY test message. FUTURE: replace with the Payment Successful popup. */}
+              {bookingSuccess && (
+                <div
+                  id="pay-now-success-message"
+                  className={`mt-3 px-4 py-2.5 rounded-xl text-[13px] sm:text-[14px] font-medium flex items-center gap-2 animate-in fade-in duration-150 ${
+                    isDark
+                      ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-300'
+                      : 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                  }`}
+                >
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                  <span>Booking confirmed. Reference: {bookingSuccess.booking_reference}</span>
+                </div>
+              )}
+
+              {/* Inline validation or server error */}
+              {payNowError && (
+                <div
+                  id="pay-now-message"
+                  className={`mt-3 px-4 py-2.5 rounded-xl text-[13px] sm:text-[14px] font-medium flex items-center gap-2 animate-in fade-in duration-150 ${
+                    isDark
+                      ? 'bg-rose-500/10 border border-rose-500/20 text-rose-300'
+                      : 'bg-rose-50 border border-rose-200 text-rose-700'
+                  }`}
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{payNowError}</span>
+                </div>
+              )}
+
+              {/* Inline Pay Now warning notice (reefer unavailable) */}
+              {!payNowError && !bookingSuccess && payNowWarning && (
                 <div
                   id="pay-now-message"
                   className={`mt-3 px-4 py-2.5 rounded-xl text-[13px] sm:text-[14px] font-medium flex items-center gap-2 animate-in fade-in duration-150 ${
@@ -338,7 +494,7 @@ export function CheckoutPage() {
                   }`}
                 >
                   <AlertTriangle className="w-4 h-4 shrink-0" />
-                  <span>{payNowMessage}</span>
+                  <span>{payNowWarning}</span>
                 </div>
               )}
 

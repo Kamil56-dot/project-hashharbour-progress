@@ -5,8 +5,19 @@ export function BillingAddressCard({
   billingAddress,
   onSaveBillingAddress,
   isDark,
+  isEditing: controlledIsEditing,
+  onEditChange,
 }) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [internalIsEditing, setInternalIsEditing] = useState(false);
+  const isEditing = controlledIsEditing !== undefined ? controlledIsEditing : internalIsEditing;
+
+  const setEditingState = (val) => {
+    setInternalIsEditing(val);
+    if (typeof onEditChange === 'function') {
+      onEditChange(val);
+    }
+  };
+
   const [formData, setFormData] = useState({
     fullName: billingAddress.fullName || '',
     address: billingAddress.address || '',
@@ -27,7 +38,7 @@ export function BillingAddressCard({
       postalCode: billingAddress.postalCode || '',
     });
     setErrors({});
-    setIsEditing(true);
+    setEditingState(true);
   };
 
   const handleCancel = () => {
@@ -40,7 +51,7 @@ export function BillingAddressCard({
       postalCode: billingAddress.postalCode || '',
     });
     setErrors({});
-    setIsEditing(false);
+    setEditingState(false);
   };
 
   const handleChange = (field, value) => {
@@ -78,7 +89,7 @@ export function BillingAddressCard({
       country: formData.country.trim(),
       postalCode: formData.postalCode.trim(),
     });
-    setIsEditing(false);
+    setEditingState(false);
   };
 
   // Formatted address line string for display
