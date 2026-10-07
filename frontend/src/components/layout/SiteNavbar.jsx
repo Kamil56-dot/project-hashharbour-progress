@@ -134,22 +134,20 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
         id="preview-header"
         className="fixed top-0 left-0 right-0 w-full h-[74px] z-30 bg-transparent transition-colors duration-200 max-lg:bg-white/80 max-lg:dark:bg-[#080E1A]/85 max-lg:backdrop-blur-md max-lg:border-b max-lg:border-slate-200/50 max-lg:dark:border-white/10"
       >
-        <div className="w-full h-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
+        <div className="w-full h-full max-w-[1440px] mx-auto px-2 min-[380px]:px-4 sm:px-8 lg:px-12 flex items-center justify-between">
           
           {/* ─── LEFT: ANCHOR LOGO + HASHHARBOUR WORDMARK ─── */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 sm:gap-3 group focus-visible:outline-2 focus-visible:outline-blue-500 rounded-lg py-1"
+            className="flex items-center gap-1.5 min-[380px]:gap-2.5 sm:gap-3 group focus-visible:outline-2 focus-visible:outline-blue-500 rounded-lg py-1 shrink-0"
             aria-label="HashHarbour — Return to homepage"
           >
             {/* Authentic Anchor Artwork (~38-40px) */}
             <svg
-              width="36"
-              height="40"
               viewBox="0 0 34 38"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`shrink-0 transition-colors duration-200 ${
+              className={`w-[28px] h-[32px] min-[380px]:w-[36px] min-[380px]:h-[40px] shrink-0 transition-colors duration-200 ${
                 isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
               }`}
             >
@@ -191,7 +189,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
 
             {/* Wordmark */}
             <span
-              className={`font-sans font-bold text-[22px] sm:text-[23.5px] leading-none tracking-tight whitespace-nowrap transition-colors duration-200 ${
+              className={`font-sans font-bold text-[17px] min-[360px]:text-[18.5px] min-[390px]:text-[22px] sm:text-[23.5px] leading-none tracking-tight whitespace-nowrap transition-colors duration-200 ${
                 isDark ? 'text-white' : 'text-[#0F172A]'
               }`}
             >
@@ -239,7 +237,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
           </nav>
 
           {/* ─── RIGHT: AUTH SLOT + THEME TOGGLE + CART (~28px) + HAMBURGER (3 LINES) ─── */}
-          <div className="flex items-center gap-2.5 sm:gap-4 relative">
+          <div className="flex items-center gap-1 min-[380px]:gap-2.5 sm:gap-4 relative shrink-0">
             
             {/* ─── AUTH SLOT: LOGGED-OUT LOGIN LINK / LOGGED-IN USER MENU ─── */}
             {isLoggedIn ? (
@@ -250,8 +248,8 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
                   onClick={() => setIsUserMenuOpen((prev) => !prev)}
                   aria-expanded={isUserMenuOpen}
                   aria-haspopup="true"
-                  aria-label="User account menu"
-                  className="flex items-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 select-none cursor-pointer group"
+                  aria-label="Account menu"
+                  className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none cursor-pointer group"
                 >
                   {/* Solid Blue Round Avatar with Initials */}
                   <span
@@ -330,7 +328,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
               <Link
                 id="nav-auth-login-link"
                 to="/login"
-                className="flex items-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 select-none group"
+                className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none group"
                 aria-label="Login"
               >
                 {/* Solid Blue Round Avatar with White User Icon */}
@@ -352,7 +350,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
             <button
               type="button"
               onClick={toggleTheme}
-              className={`p-2 rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`min-w-[36px] min-h-[36px] p-2 flex items-center justify-center rounded-full shrink-0 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark
                   ? 'text-slate-400 hover:text-white hover:bg-white/[0.08]'
                   : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
@@ -369,12 +367,12 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
             {/* Shopping Cart Icon in Blue (~28px) */}
             <Link
               to="/container-section"
-              className={`p-1 rounded-full transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`min-w-[36px] min-h-[36px] p-1 flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
               }`}
               aria-label="Shopping cart"
             >
-              <ShoppingCart className="w-[28px] h-[28px] stroke-[2.2]" />
+              <ShoppingCart className="w-[24px] h-[24px] min-[380px]:w-[28px] min-[380px]:h-[28px] stroke-[2.2]" />
             </Link>
 
             {/* Hamburger Icon Button (Opens Dropdown Panel on Mobile Only) */}
@@ -387,7 +385,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
               aria-expanded={isMenuOpen}
               aria-haspopup="true"
               aria-controls="nav-dropdown-panel"
-              className={`lg:hidden p-1.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`lg:hidden min-w-[36px] min-h-[36px] p-1.5 flex items-center justify-center rounded-lg shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark
                   ? 'text-slate-200 hover:bg-white/[0.08]'
                   : 'text-slate-700 hover:bg-slate-200/50'
