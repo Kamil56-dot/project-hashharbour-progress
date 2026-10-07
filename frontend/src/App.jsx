@@ -15,7 +15,13 @@ const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/Contain
 const ContainerCompositePreviewPage = lazy(() => import('./pages/ContainerCompositePreview/ContainerCompositePreviewPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ContainersPage = lazy(() => import('./pages/Containers/ContainersPage'));
-const AccountPlaceholder = lazy(() => import('./pages/account/AccountPlaceholder'));
+const AccountLayout = lazy(() => import('./pages/account/AccountLayout'));
+const MyBookingsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.MyBookingsPage })));
+const TrackShipmentPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.TrackShipmentPage })));
+const DocumentsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.DocumentsPage })));
+const BillingPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.BillingPage })));
+const ProfilePage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.ProfilePage })));
+const NotificationsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.NotificationsPage })));
 
 function PageLoadingFallback() {
   const { isLight } = useTheme();
@@ -145,13 +151,22 @@ export function App() {
             <Route path="/home-preview" element={<ArchivedHero navbarRef={navbarRef} />} />
             <Route path="/containers" element={<ContainersPage />} />
             <Route
-              path="/account/*"
+              path="/account"
               element={
                 <ProtectedRoute>
-                  <AccountPlaceholder />
+                  <AccountLayout />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="bookings" replace />} />
+              <Route path="bookings" element={<MyBookingsPage />} />
+              <Route path="track" element={<TrackShipmentPage />} />
+              <Route path="documents" element={<DocumentsPage />} />
+              <Route path="billing" element={<BillingPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="*" element={<Navigate to="bookings" replace />} />
+            </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
