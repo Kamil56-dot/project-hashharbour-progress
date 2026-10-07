@@ -4,19 +4,15 @@
 -- Charset: utf8mb4 | Collation: utf8mb4_unicode_ci
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS `hashharbour`
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE `hashharbour`;
-
 -- Disable foreign key checks during table setup
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ------------------------------------------------------------------------------
 -- 1. USERS TABLE
 -- Drop 'username' column entirely: email is the sole login identifier.
--- Role enum supports RBAC: customer, operator, admin.
+-- Role enum supports RBAC: customer, manager, admin, super_admin.
+-- Includes super_admin_flag persistent generated column with unique index
+-- enforcing strictly ONE singleton super_admin at database level.
 -- ------------------------------------------------------------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -25,12 +21,71 @@ CREATE TABLE `users` (
   `password_hash` VARCHAR(255) NOT NULL,
   `first_name` VARCHAR(100) DEFAULT NULL,
   `last_name` VARCHAR(100) DEFAULT NULL,
-  `role` ENUM('customer', 'operator', 'admin') NOT NULL DEFAULT 'customer',
+  `role` ENUM('customer', 'manager', 'admin', 'super_admin') NOT NULL DEFAULT 'customer',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `super_admin_flag` TINYINT(1) GENERATED ALWAYS AS (IF(`role` = 'super_admin', 1, NULL)) STORED,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_users_email` (`email`),
-  INDEX `idx_users_role` (`role`)
+  INDEX `idx_users_role` (`role`),
+  UNIQUE KEY `idx_unique_super_admin` (`super_admin_flag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 1a. USERS TRIGGERS (SINGLETON SUPER ADMIN IMMUTABILITY)
+-- Defense-in-depth preventing demoting super_admin, promoting via UPDATE, or deletion.
+-- ------------------------------------------------------------------------------
+DROP TRIGGER IF EXISTS `trg_users_before_update_super_admin`;
+DELIMITER //
+CREATE TRIGGER `trg_users_before_update_super_admin`
+BEFORE UPDATE ON `users`
+FOR EACH ROW
+BEGIN
+    -- Prohibit demoting or changing super_admin role
+    IF OLD.role = 'super_admin' AND NEW.role <> 'super_admin' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Operation prohibited: The super_admin role cannot be changed or demoted.';
+    END IF;
+
+    -- Prohibit promoting any existing user to super_admin via UPDATE
+    IF NEW.role = 'super_admin' AND OLD.role <> 'super_admin' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Operation prohibited: Existing users cannot be promoted to super_admin via UPDATE.';
+    END IF;
+END//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_users_before_delete_super_admin`;
+DELIMITER //
+CREATE TRIGGER `trg_users_before_delete_super_admin`
+BEFORE DELETE ON `users`
+FOR EACH ROW
+BEGIN
+    IF OLD.role = 'super_admin' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Operation prohibited: The super_admin account cannot be deleted.';
+    END IF;
+END//
+DELIMITER ;
+
+-- ------------------------------------------------------------------------------
+-- 1b. ROLE AUDIT LOG TABLE
+-- Immutable record of user provisioning and role alterations.
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `role_audit_log`;
+CREATE TABLE `role_audit_log` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `actor_id` INT NULL COMMENT 'NULL indicates system/seed',
+  `target_id` INT NOT NULL COMMENT 'User whose role was assigned or changed',
+  `action` ENUM('create_user', 'role_change') NOT NULL,
+  `old_role` VARCHAR(20) DEFAULT NULL,
+  `new_role` VARCHAR(20) NOT NULL,
+  `ip_address` VARCHAR(45) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_role_audit_target` (`target_id`),
+  INDEX `idx_role_audit_created` (`created_at`),
+  CONSTRAINT `fk_role_audit_actor` FOREIGN KEY (`actor_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_role_audit_target` FOREIGN KEY (`target_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------

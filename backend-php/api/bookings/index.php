@@ -3,8 +3,8 @@
  * Bookings API Endpoint
  * Handles:
  * - POST /api/bookings/     : Authenticated - Create booking with locked price_snapshot
- * - GET /api/bookings/      : Authenticated - Scoped by role (customer: own only; admin/operator: all)
- * - GET /api/bookings/{id}  : Authenticated - Booking detail (owner or admin/operator only)
+ * - GET /api/bookings/      : Authenticated - Scoped by role (customer: own only; super_admin/admin/manager: all)
+ * - GET /api/bookings/{id}  : Authenticated - Booking detail (owner or super_admin/admin/manager only)
  */
 
 declare(strict_types=1);
@@ -57,9 +57,9 @@ if ($method === 'GET') {
 
         // Ownership and permission check
         $isOwner = (int)$booking['user_id'] === (int)$currentUser['id'];
-        $isAdminOrOperator = in_array($currentUser['role'], ['admin', 'operator'], true);
+        $isAdminOrStaff = in_array($currentUser['role'], ['super_admin', 'admin', 'manager'], true);
 
-        if (!$isOwner && !$isAdminOrOperator) {
+        if (!$isOwner && !$isAdminOrStaff) {
             send_error('You do not have permission to view this booking.', 403);
         }
 
@@ -82,7 +82,7 @@ if ($method === 'GET') {
         ');
         $stmt->execute(['user_id' => $currentUser['id']]);
     } else {
-        // Admin / Operator sees all bookings
+        // Staff (super_admin, admin, manager) sees all bookings
         $stmt = $pdo->query('
             SELECT b.*, c.container_code, c.type AS container_type, c.size_ft AS container_size,
                    u.email AS customer_email, u.first_name AS customer_first_name, u.last_name AS customer_last_name
