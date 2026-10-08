@@ -495,3 +495,479 @@ html.light .nav-signal-link:focus-visible .signal-base {
 html.light .nav-signal-link .chevron-tick svg path {
   stroke: #1E88E5;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   SINGLE-SCREEN CHECKOUT & BOOKING COMPLETED COMPACT RULES
+   Scope: Desktop viewports >=1024px with viewport height >=720px.
+   Below this (tablet, mobile, short laptop height <720px),
+   layout falls back to default spacing and scrolling.
+   ───────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) and (min-height: 720px) {
+  /* Checkout Page Layout & Outer Container */
+  .hh-checkout-page {
+    padding-top: clamp(74px, 7.8vh, 76px) !important;
+  }
+
+  .hh-checkout-page-form {
+    padding-bottom: clamp(24px, 2.8vh, 32px) !important;
+  }
+
+  .hh-checkout-page-completed {
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+
+  .hh-checkout-stepper {
+    padding-top: clamp(2px, 0.4vh, 6px) !important;
+    padding-bottom: clamp(1px, 0.3vh, 4px) !important;
+  }
+
+  .hh-checkout-header {
+    padding-bottom: clamp(4px, 0.7vh, 8px) !important;
+  }
+
+  .hh-checkout-title {
+    font-size: clamp(26px, 3vh, 32px) !important;
+    line-height: 1.15 !important;
+  }
+
+  .hh-checkout-subtitle {
+    font-size: 13.5px !important;
+    margin-top: clamp(1px, 0.3vh, 3px) !important;
+  }
+
+  /* Two-column grid with TrustBar in left column bottom */
+  .hh-checkout-grid {
+    display: grid !important;
+    grid-template-columns: 1.25fr 1fr !important;
+    grid-template-rows: auto 1fr !important;
+    gap: clamp(12px, 1.5vh, 18px) !important;
+    align-items: stretch !important;
+  }
+
+  @media (min-width: 1280px) {
+    .hh-checkout-grid {
+      grid-template-columns: 1.51fr 1fr !important;
+    }
+  }
+
+  #checkout-left-column {
+    grid-column: 1 / 2 !important;
+    grid-row: 1 / 2 !important;
+  }
+
+  #checkout-right-column {
+    grid-column: 2 / 3 !important;
+    grid-row: 1 / 3 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  #checkout-right-column > div:first-child {
+    flex: 1 1 auto !important;
+  }
+
+  .hh-checkout-card {
+    padding: clamp(10px, 1.4vh, 16px) !important;
+  }
+
+  .hh-checkout-card-heading {
+    margin-bottom: clamp(6px, 0.9vh, 10px) !important;
+    font-size: 17.5px !important;
+  }
+
+  /* Booking Summary Card */
+  .hh-booking-summary-inner {
+    padding: clamp(8px, 1.1vh, 12px) !important;
+  }
+
+  .hh-booking-summary-flex {
+    gap: clamp(8px, 1.2vh, 14px) !important;
+  }
+
+  .hh-container-img-box {
+    width: clamp(115px, 10vw, 135px) !important;
+    padding: 4px !important;
+  }
+
+  .hh-booking-details-col {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    row-gap: clamp(4px, 0.7vh, 8px) !important;
+    column-gap: clamp(4px, 0.6vw, 8px) !important;
+    align-items: center !important;
+  }
+
+  .hh-booking-details-col > :first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hh-specs-row {
+    display: contents !important;
+  }
+
+  .hh-qty-control-wrapper {
+    grid-column: 4 / 5 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .hh-qty-control-wrapper span:first-child {
+    margin-bottom: 2px !important;
+  }
+
+  .hh-qty-control-wrapper .flex {
+    gap: 6px !important;
+  }
+
+  .hh-qty-control-wrapper #checkout-quantity-val {
+    min-width: 14px !important;
+  }
+
+  .hh-qty-control-wrapper button {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* Shipping Details Card */
+  .hh-shipping-container {
+    margin-top: clamp(6px, 0.9vh, 10px) !important;
+  }
+
+  .hh-shipping-heading {
+    margin-bottom: clamp(4px, 0.6vh, 6px) !important;
+    font-size: 15px !important;
+  }
+
+  .hh-shipping-grid {
+    gap: clamp(6px, 0.8vh, 10px) !important;
+  }
+
+  .hh-shipping-panel {
+    padding: clamp(6px, 0.9vh, 10px) !important;
+  }
+
+  .hh-shipping-panel-gap {
+    gap: clamp(4px, 0.6vh, 6px) !important;
+  }
+
+  .hh-shipping-includes-gap {
+    margin-bottom: clamp(4px, 0.6vh, 6px) !important;
+  }
+
+  .hh-shipping-includes-list > :not([hidden]) ~ :not([hidden]) {
+    margin-top: clamp(3px, 0.5vh, 5px) !important;
+  }
+
+  /* Billing Address Card */
+  .hh-billing-container {
+    margin-top: clamp(6px, 0.9vh, 10px) !important;
+  }
+
+  .hh-billing-card {
+    padding: clamp(5px, 0.8vh, 8px) clamp(10px, 1.2vw, 14px) !important;
+  }
+
+  .hh-billing-full-view {
+    display: none !important;
+  }
+
+  .hh-billing-view-row {
+    align-items: center !important;
+  }
+
+  .hh-billing-view-row > div:first-child {
+    align-items: center !important;
+    flex: 1 1 0% !important;
+  }
+
+  .hh-billing-text-block {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 1 0% !important;
+  }
+
+  .hh-billing-text-block #billing-display-name {
+    white-space: nowrap !important;
+    font-size: 13px !important;
+  }
+
+  .hh-billing-text-block #billing-display-name::after {
+    content: "•";
+    margin-left: 8px;
+    color: #94A3B8;
+  }
+
+  .hh-billing-text-block #billing-display-address {
+    margin-top: 0 !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Payment Method Card */
+  .hh-payment-container {
+    margin-bottom: clamp(6px, 0.8vh, 10px) !important;
+  }
+
+  .hh-payment-heading {
+    margin-bottom: clamp(4px, 0.5vh, 6px) !important;
+    font-size: 15px !important;
+  }
+
+  .hh-payment-list {
+    gap: clamp(3px, 0.5vh, 5px) !important;
+  }
+
+  .hh-payment-option {
+    height: clamp(46px, 5.2vh, 52px) !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: clamp(10px, 1vw, 14px) !important;
+    padding-right: clamp(10px, 1vw, 14px) !important;
+  }
+
+  /* Order Summary Card */
+  .hh-order-summary-container {
+    margin-bottom: clamp(6px, 0.8vh, 10px) !important;
+  }
+
+  .hh-order-summary-heading {
+    margin-bottom: clamp(4px, 0.5vh, 6px) !important;
+    font-size: 15px !important;
+  }
+
+  .hh-order-summary-list {
+    gap: clamp(3px, 0.4vh, 5px) !important;
+  }
+
+  .hh-order-summary-divider {
+    margin-top: clamp(4px, 0.5vh, 6px) !important;
+    margin-bottom: clamp(4px, 0.5vh, 6px) !important;
+  }
+
+  /* SSL Security Note */
+  .hh-ssl-note {
+    margin-top: clamp(4px, 0.5vh, 6px) !important;
+  }
+
+  /* Trust Bar (Form view in left column) */
+  .hh-trust-bar-form {
+    grid-column: 1 / 2 !important;
+    grid-row: 2 / 3 !important;
+    align-self: end !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: clamp(8px, 1.2vh, 16px) !important;
+    width: 100% !important;
+  }
+
+  .hh-trust-bar-form .hh-trust-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: clamp(6px, 0.8vw, 12px) !important;
+    width: 100% !important;
+  }
+
+  @media (max-width: 1279px) {
+    .hh-trust-bar-form .hh-trust-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px 12px !important;
+    }
+  }
+
+  .hh-trust-bar-form .hh-trust-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: clamp(6px, 0.6vw, 8px) !important;
+    flex-shrink: 0 !important;
+  }
+
+  @media (max-width: 1279px) {
+    .hh-trust-bar-form .hh-trust-item {
+      flex-shrink: 1 !important;
+      min-width: 0 !important;
+    }
+  }
+
+  .hh-trust-bar-form .hh-trust-badge {
+    width: 36px !important;
+    height: 36px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .hh-trust-bar-form .hh-trust-badge svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .hh-trust-bar-form .hh-trust-item span:first-child {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+
+  .hh-trust-bar-form .hh-trust-item span:last-child {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Booking Completed State (B) - Flex Layout & Footer Band */
+  .hh-completed-page-layout {
+    height: calc(100vh - clamp(74px, 7.8vh, 76px)) !important;
+    max-height: calc(100vh - clamp(74px, 7.8vh, 76px)) !important;
+    min-height: calc(100vh - clamp(74px, 7.8vh, 76px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+
+  .hh-completed-wrapper {
+    padding-top: clamp(4px, 0.8vh, 8px) !important;
+    padding-bottom: clamp(6px, 1.2vh, 12px) !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+  }
+
+  .hh-completed-card {
+    padding: clamp(14px, 2vh, 20px) clamp(20px, 3vw, 36px) !important;
+  }
+
+  .hh-completed-poppers-row {
+    margin-bottom: clamp(4px, 0.8vh, 8px) !important;
+  }
+
+  .hh-completed-popper-box {
+    width: clamp(62px, 7.5vh, 74px) !important;
+    height: clamp(62px, 7.5vh, 74px) !important;
+  }
+
+  .hh-completed-ring {
+    width: clamp(72px, 8.5vh, 84px) !important;
+    height: clamp(72px, 8.5vh, 84px) !important;
+  }
+
+  .hh-completed-check-pop {
+    width: clamp(50px, 6vh, 58px) !important;
+    height: clamp(50px, 6vh, 58px) !important;
+  }
+
+  .hh-completed-check-pop svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .hh-completed-heading {
+    font-size: clamp(22px, 2.7vh, 26px) !important;
+    line-height: 1.15 !important;
+  }
+
+  .hh-completed-subtitle {
+    margin-top: clamp(2px, 0.4vh, 4px) !important;
+    font-size: 13px !important;
+  }
+
+  .hh-completed-pill {
+    margin-top: clamp(4px, 0.6vh, 6px) !important;
+  }
+
+  .hh-completed-img-wrapper {
+    margin-top: clamp(4px, 0.8vh, 8px) !important;
+  }
+
+  .hh-completed-img {
+    max-height: clamp(125px, 15vh, 155px) !important;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  .hh-completed-shadow {
+    width: clamp(180px, 20vw, 220px) !important;
+    height: 10px !important;
+    margin-top: -4px !important;
+  }
+
+  .hh-completed-blobs-svg {
+    width: clamp(320px, 34vw, 380px) !important;
+    height: clamp(130px, 15vh, 160px) !important;
+  }
+
+  .hh-completed-info-strip {
+    margin-top: clamp(6px, 1vh, 10px) !important;
+    padding: clamp(6px, 0.8vh, 8px) clamp(10px, 1.2vw, 14px) !important;
+  }
+
+  .hh-completed-btn-wrapper {
+    margin-top: clamp(6px, 1vh, 10px) !important;
+  }
+
+  .hh-completed-btn {
+    height: clamp(42px, 5vh, 46px) !important;
+  }
+
+  /* Booking Completed Footer Band */
+  .hh-completed-footer-band {
+    width: 100% !important;
+    height: clamp(80px, 9.5vh, 96px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(180deg, #EAF3FD 0%, #D6E9FB 100%) !important;
+    border-top: 1px solid rgba(30, 136, 229, 0.12) !important;
+    margin-top: 24px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .dark .hh-completed-footer-band {
+    background: linear-gradient(180deg, rgba(30, 136, 229, 0.06) 0%, rgba(30, 136, 229, 0.14) 100%) !important;
+    border-top: 1px solid rgba(30, 136, 229, 0.12) !important;
+  }
+
+  .hh-trust-bar-completed {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    width: 100% !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: clamp(16px, 2vw, 32px) !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-item {
+    gap: clamp(10px, 1vw, 14px) !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-badge {
+    width: clamp(38px, 4.5vh, 44px) !important;
+    height: clamp(38px, 4.5vh, 44px) !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-badge svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-item span:first-child {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+
+  .hh-trust-bar-completed .hh-trust-item span:last-child {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+}
+

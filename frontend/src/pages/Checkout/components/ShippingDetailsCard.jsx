@@ -4,10 +4,10 @@ import { SHIPPING_DEMO } from '../checkoutData';
 
 export function ShippingDetailsCard({ container, isDark }) {
   return (
-    <div className="w-full mt-6 sm:mt-7 lg:mt-8">
+    <div className="w-full mt-6 sm:mt-7 lg:mt-8 hh-shipping-container">
       {/* Section Heading */}
       <h3
-        className={`text-[17px] sm:text-[18px] lg:text-[19px] font-bold tracking-tight mb-3.5 sm:mb-4 ${
+        className={`text-[17px] sm:text-[18px] lg:text-[19px] font-bold tracking-tight mb-3.5 sm:mb-4 hh-shipping-heading ${
           isDark ? 'text-white' : 'text-[#0F172A]'
         }`}
       >
@@ -15,10 +15,10 @@ export function ShippingDetailsCard({ container, isDark }) {
       </h3>
 
       {/* Two-Panel Layout (stacks below 768px md breakpoint) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 lg:gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 lg:gap-5 hh-shipping-grid">
         {/* Left Panel: From, To, Transit Time */}
         <div
-          className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-between gap-3.5 transition-colors duration-200 ${
+          className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-between gap-3.5 hh-shipping-panel hh-shipping-panel-gap transition-colors duration-200 ${
             isDark
               ? 'bg-white/[0.02] border-white/10'
               : 'bg-white border-blue-100/70 shadow-xs'
@@ -114,21 +114,21 @@ export function ShippingDetailsCard({ container, isDark }) {
 
         {/* Right Tinted Panel: Your Container Includes */}
         <div
-          className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-center transition-colors duration-200 ${
+          className={`rounded-2xl border p-4 sm:p-5 flex flex-col justify-center hh-shipping-panel transition-colors duration-200 ${
             isDark
               ? 'bg-[#1E88E5]/[0.08] border-[#1E88E5]/20'
               : 'bg-[#F0F6FC] border-blue-100/60'
           }`}
         >
           <h4
-            className={`text-[13px] sm:text-[14px] font-bold tracking-tight mb-3.5 sm:mb-4 ${
+            className={`text-[13px] sm:text-[14px] font-bold tracking-tight mb-3.5 sm:mb-4 hh-shipping-includes-gap ${
               isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
             }`}
           >
             Your Container Includes
           </h4>
 
-          <ul className="space-y-2.5 sm:space-y-3">
+          <ul className="space-y-2.5 sm:space-y-3 hh-shipping-includes-list">
             {/* Line 1: Container-specific line */}
             <li className="flex items-center gap-2.5">
               <Check

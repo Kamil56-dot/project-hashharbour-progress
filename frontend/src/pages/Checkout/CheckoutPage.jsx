@@ -280,19 +280,17 @@ export function CheckoutPage() {
 
   return (
     <div
-      className={`min-h-screen w-full overflow-x-hidden pt-[78px] lg:pt-[82px] transition-colors duration-300 ${
+      className={`min-h-screen w-full overflow-x-hidden pt-[78px] lg:pt-[82px] hh-checkout-page ${bookingSuccess ? 'hh-checkout-page-completed' : 'hh-checkout-page-form'} transition-colors duration-300 ${
         isDark ? 'bg-transparent text-white' : 'bg-transparent text-[#0F172A]'
       }`}
     >
-      {/* Page Content Container — matches project content left-edge standard */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
-        {!bookingSuccess ? (
-          <>
-            {/* ─── STEPPER ─── */}
+      {!bookingSuccess ? (
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+          {/* ─── STEPPER ─── */}
             <nav
               aria-label="Checkout progress"
-          className="pt-6 pb-4 sm:pt-7 sm:pb-5"
-        >
+              className="pt-6 pb-4 sm:pt-7 sm:pb-5 hh-checkout-stepper"
+            >
           <ol className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {STEPS.map((step, idx) => {
               const isActive = step.number === ACTIVE_STEP;
@@ -356,23 +354,23 @@ export function CheckoutPage() {
         </nav>
 
         {/* ─── HEADING ─── */}
-        <div className="pb-6 sm:pb-8">
-          <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-extrabold tracking-tight leading-tight text-hh-heading transition-colors duration-200">
+        <div className="pb-6 sm:pb-8 hh-checkout-header">
+          <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-extrabold tracking-tight leading-tight text-hh-heading hh-checkout-title transition-colors duration-200">
             Checkout &amp; Payment
           </h1>
-          <p className="mt-1.5 sm:mt-2 text-[14px] sm:text-[15px] lg:text-[16px] font-normal leading-relaxed text-hh-body transition-colors duration-200">
+          <p className="mt-1.5 sm:mt-2 text-[14px] sm:text-[15px] lg:text-[16px] font-normal leading-relaxed text-hh-body hh-checkout-subtitle transition-colors duration-200">
             Complete your booking and make the secure payment.
           </p>
         </div>
 
            <div
           id="checkout-columns-container"
-          className="grid grid-cols-1 lg:grid-cols-[1.25fr_1fr] xl:grid-cols-[1.51fr_1fr] gap-6 lg:gap-7 xl:gap-8 items-start"
+          className="grid grid-cols-1 lg:grid-cols-[1.25fr_1fr] xl:grid-cols-[1.51fr_1fr] gap-6 lg:gap-7 xl:gap-8 items-start hh-checkout-grid"
         >
           {/* ─── LEFT COLUMN: Booking Summary Outer Card ─── */}
           <div
             id="checkout-left-column"
-            className={`rounded-hh-card border p-5 sm:p-6 xl:p-8 transition-colors duration-200 ${
+            className={`rounded-hh-card border p-5 sm:p-6 xl:p-8 hh-checkout-card transition-colors duration-200 ${
               isDark
                 ? 'bg-[#0A101D] border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.4)]'
                 : 'bg-white border-blue-100/70 shadow-[0_8px_30px_rgba(15,40,80,0.04)]'
@@ -380,7 +378,7 @@ export function CheckoutPage() {
           >
             {/* Card Heading: Booking Summary */}
             <h2
-              className={`text-[19px] sm:text-[21px] lg:text-[22px] font-bold tracking-tight mb-4 sm:mb-5 ${
+              className={`text-[19px] sm:text-[21px] lg:text-[22px] font-bold tracking-tight mb-4 sm:mb-5 hh-checkout-card-heading ${
                 isDark ? 'text-white' : 'text-[#0F172A]'
               }`}
             >
@@ -418,7 +416,7 @@ export function CheckoutPage() {
             aria-label="Payment and order summary"
           >
             <div
-              className={`rounded-hh-card border p-5 sm:p-6 xl:p-8 transition-colors duration-200 ${
+              className={`rounded-hh-card border p-5 sm:p-6 xl:p-8 hh-checkout-card transition-colors duration-200 ${
                 isDark
                   ? 'bg-[#0A101D] border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.4)]'
                   : 'bg-white border-blue-100/70 shadow-[0_8px_30px_rgba(15,40,80,0.04)]'
@@ -498,7 +496,7 @@ export function CheckoutPage() {
 
               {/* SSL Encryption Note */}
               <p
-                className={`mt-4 flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] font-normal ${
+                className={`mt-4 flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] font-normal hh-ssl-note ${
                   isDark ? 'text-slate-500' : 'text-[#94A3B8]'
                 }`}
               >
@@ -508,23 +506,31 @@ export function CheckoutPage() {
             </div>
           </div>
 
+          {/* ─── TRUST BAR (Form View) ─── */}
+          <TrustBar isDark={isDark} variant="form" />
         </div>
-          </>
-        ) : (
-          /* ─── BOOKING COMPLETED SUCCESS VIEW (Phase 1) ─── */
-          <div className="pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-12 flex justify-center">
-            <BookingCompletedCard
-              bookingData={bookingSuccess}
-              container={container}
-              isDark={isDark}
-            />
-          </div>
-        )}
-
-        {/* ─── TRUST BAR ─── */}
-        <TrustBar isDark={isDark} />
-
       </div>
+      ) : (
+        /* ─── BOOKING COMPLETED SUCCESS VIEW (Phase 1) ─── */
+        <div className="hh-completed-page-layout flex flex-col justify-between">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex-1 flex flex-col justify-center">
+            <div className="pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-12 hh-completed-wrapper flex justify-center">
+              <BookingCompletedCard
+                bookingData={bookingSuccess}
+                container={container}
+                isDark={isDark}
+              />
+            </div>
+          </div>
+
+          {/* ─── TRUST BAR FOOTER BAND (Completed View) ─── */}
+          <div className="w-full hh-completed-footer-band">
+            <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-center">
+              <TrustBar isDark={isDark} variant="completed" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

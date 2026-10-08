@@ -33,23 +33,23 @@ const TRUST_ITEMS = [
   },
 ];
 
-export function TrustBar({ isDark }) {
+export function TrustBar({ isDark, variant = 'form' }) {
   return (
     <div
       id="checkout-trust-bar"
-      className="w-full pt-8 sm:pt-10 pb-10 sm:pb-14 transition-colors duration-200"
+      className={`w-full pt-8 sm:pt-10 pb-10 sm:pb-14 hh-trust-bar hh-trust-bar-${variant} transition-colors duration-200`}
     >
-      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 hh-trust-grid">
         {TRUST_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.title}
-              className="flex items-center gap-3.5 text-left"
+              className="flex items-center gap-3.5 text-left hh-trust-item"
             >
               {/* Circular light-blue icon badge */}
               <div
-                className={`w-[44px] h-[44px] sm:w-[46px] sm:h-[46px] rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${
+                className={`w-[44px] h-[44px] sm:w-[46px] sm:h-[46px] rounded-full flex items-center justify-center shrink-0 hh-trust-badge transition-colors duration-200 ${
                   isDark
                     ? 'bg-[#1E88E5]/15 text-[#5BB5F5]'
                     : 'bg-[#DBEAFE] text-[#1E88E5]'

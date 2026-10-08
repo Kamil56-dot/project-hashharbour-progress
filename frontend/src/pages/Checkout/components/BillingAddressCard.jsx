@@ -105,17 +105,17 @@ export function BillingAddressCard({
     .join(', ');
 
   return (
-    <div className="w-full mt-6 sm:mt-7 lg:mt-8">
+    <div className="w-full mt-6 sm:mt-7 lg:mt-8 hh-billing-container">
       {/* Bordered Card */}
       <div
-        className={`rounded-2xl border p-4 sm:p-5 transition-colors duration-200 ${
+        className={`rounded-2xl border p-4 sm:p-5 hh-billing-card transition-colors duration-200 ${
           isDark
             ? 'bg-white/[0.02] border-white/10'
             : 'bg-white border-blue-100/70 shadow-xs'
         }`}
       >
         {/* Section Header: Icon + Billing Address */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 hh-billing-full-view">
           <div
             className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors ${
               isDark
@@ -136,14 +136,14 @@ export function BillingAddressCard({
 
         {/* Thin Divider Line */}
         <div
-          className={`border-t my-3 sm:my-3.5 transition-colors ${
+          className={`border-t my-3 sm:my-3.5 hh-billing-full-view transition-colors ${
             isDark ? 'border-white/10' : 'border-slate-100'
           }`}
         />
 
         {/* View Mode vs Edit Mode */}
         {!isEditing ? (
-          <div className="flex items-start sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center justify-between gap-3 hh-billing-view-row">
             {/* User Icon + Info */}
             <div className="flex items-start gap-3 min-w-0">
               <div
@@ -155,7 +155,7 @@ export function BillingAddressCard({
               >
                 <User className="w-3.5 h-3.5" />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 hh-billing-text-block">
                 <span
                   id="billing-display-name"
                   className={`block text-[13px] sm:text-[14px] font-semibold leading-tight truncate ${
