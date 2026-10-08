@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 // loginBg removed — global background image provides the wavy background
 
 /**
@@ -82,7 +83,9 @@ function AnchorIcon({ className = 'w-12 h-[54px] text-brand-500' }) {
  */
 export function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -90,58 +93,52 @@ export function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  const returnUrl = searchParams.get('returnUrl');
+  const isSafeReturn =
+    returnUrl &&
+    returnUrl.startsWith('/') &&
+    !returnUrl.startsWith('//') &&
+    !returnUrl.includes('://');
+
+  const targetDestination = isSafeReturn
+    ? returnUrl
+    : (location.state?.from?.pathname || location.state?.from || '/');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(targetDestination, { replace: true });
+    }
+  }, [isAuthenticated, navigate, targetDestination]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!email.trim() || !password.trim()) {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail || !trimmedPassword) {
       setErrorMsg('Please enter both email address and password.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setErrorMsg('Please enter a valid email address.');
       return;
     }
 
     setLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost/hashharbour-api';
-      const response = await fetch(`${apiUrl}/api/auth/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-          password: password.trim(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to authenticate. Please check your credentials.');
-      }
-
-      // Store JWT tokens in localStorage
-      if (data.access) {
-        localStorage.setItem('hh_access_token', data.access);
-        if (data.refresh) {
-          localStorage.setItem('hh_refresh_token', data.refresh);
-        }
-        if (data.user) {
-          localStorage.setItem('hh_user', JSON.stringify(data.user));
-        }
-      }
-
+      await login(trimmedEmail, trimmedPassword);
       setSuccessMsg('Login successful! Redirecting...');
       setTimeout(() => {
-        // Phase 3: If a safe returnUrl query param exists, redirect there after login.
-        const returnUrl = searchParams.get('returnUrl');
-        const isSafeReturn =
-          returnUrl &&
-          returnUrl.startsWith('/') &&
-          !returnUrl.startsWith('//') &&
-          !returnUrl.includes('://');
-        navigate(isSafeReturn ? returnUrl : '/');
+        navigate(targetDestination, { replace: true });
       }, 700);
     } catch (err) {
       setErrorMsg(err.message || 'Unable to connect to the authentication server.');

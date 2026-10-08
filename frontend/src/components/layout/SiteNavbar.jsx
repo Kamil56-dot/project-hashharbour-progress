@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { Sun, Moon, ShoppingCart, X, UserPlus, LogIn, ArrowRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Sun, Moon, ShoppingCart, X, UserPlus, LogIn, ArrowRight, User, LogOut, ChevronDown } from 'lucide-react';
 
 /**
  * PREVIEW-ONLY NAVBAR COMPONENT
@@ -22,10 +23,34 @@ import { Sun, Moon, ShoppingCart, X, UserPlus, LogIn, ArrowRight } from 'lucide-
  */
 export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
   const { isDark, toggleTheme } = useTheme();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const userMenuRef = useRef(null);
+
+  // While isLoading, show logged-out state to prevent UI flicker
+  const isLoggedIn = !isLoading && isAuthenticated;
+
+  const userName = user?.first_name
+    ? `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`.trim()
+    : (user?.name || user?.email?.split('@')[0] || 'Account');
+
+  const userInitial = (user?.first_name?.[0] || user?.email?.[0] || 'U').toUpperCase();
+
+  const handleLogout = async () => {
+    setIsUserMenuOpen(false);
+    setIsMenuOpen(false);
+    try {
+      await logout();
+    } catch (err) {
+      console.warn('Logout error:', err);
+    }
+    navigate('/');
+  };
 
   const isCheckout = location.pathname === '/checkout';
   const [checkoutQty, setCheckoutQty] = useState(() => {
@@ -51,7 +76,6 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
   const getActiveItem = (pathname) => {
     if (pathname === '/about') return 'about';
     if (pathname === '/services' || pathname.startsWith('/container')) return 'services';
-    if (pathname === '/routes' || pathname.includes('routes')) return 'routes';
     if (pathname === '/login') return 'login';
     if (pathname === '/checkout') return '';
     return '';
@@ -63,17 +87,17 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
     { id: 'about', label: 'About', href: '/about' },
     { id: 'services', label: 'Services', href: '/services' },
     { id: 'routes', label: 'Routes', href: '#routes' },
-    { id: 'login', label: 'Login', href: '/login' },
   ];
 
-  // Close dropdown on route change
+  // Close dropdowns on route change
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsUserMenuOpen(false);
   }, [location.pathname, location.hash]);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
-    if (!isMenuOpen) return;
+    if (!isMenuOpen && !isUserMenuOpen) return;
 
     const handleOutsideClick = (event) => {
       if (
@@ -84,26 +108,33 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
       ) {
         setIsMenuOpen(false);
       }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target)
+      ) {
+        setIsUserMenuOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isUserMenuOpen]);
 
-  // Close dropdown on Esc key press
+  // Close dropdowns on Esc key press
   useEffect(() => {
-    if (!isMenuOpen) return;
+    if (!isMenuOpen && !isUserMenuOpen) return;
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setIsMenuOpen(false);
+        setIsUserMenuOpen(false);
         buttonRef.current?.focus();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isUserMenuOpen]);
 
   // Close dropdown on window resize past mobile breakpoint (>= 1024px)
   useEffect(() => {
@@ -124,22 +155,20 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
         id="preview-header"
         className="fixed top-0 left-0 right-0 w-full h-[74px] z-30 bg-transparent transition-colors duration-200 max-lg:bg-white/80 max-lg:dark:bg-[#080E1A]/85 max-lg:backdrop-blur-md max-lg:border-b max-lg:border-slate-200/50 max-lg:dark:border-white/10"
       >
-        <div className="w-full h-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
+        <div className="w-full h-full max-w-[1440px] mx-auto px-2 min-[380px]:px-4 sm:px-8 lg:px-12 flex items-center justify-between">
           
           {/* ─── LEFT: ANCHOR LOGO + HASHHARBOUR WORDMARK ─── */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 sm:gap-3 group focus-visible:outline-2 focus-visible:outline-blue-500 rounded-lg py-1"
+            className="flex items-center gap-1.5 min-[380px]:gap-2.5 sm:gap-3 group focus-visible:outline-2 focus-visible:outline-blue-500 rounded-lg py-1 shrink-0"
             aria-label="HashHarbour — Return to homepage"
           >
             {/* Authentic Anchor Artwork (~38-40px) */}
             <svg
-              width="36"
-              height="40"
               viewBox="0 0 34 38"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`shrink-0 transition-colors duration-200 ${
+              className={`w-[28px] h-[32px] min-[380px]:w-[36px] min-[380px]:h-[40px] shrink-0 transition-colors duration-200 ${
                 isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
               }`}
             >
@@ -181,7 +210,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
 
             {/* Wordmark */}
             <span
-              className={`font-sans font-bold text-[22px] sm:text-[23.5px] leading-none tracking-tight whitespace-nowrap transition-colors duration-200 ${
+              className={`font-sans font-bold text-[17px] min-[360px]:text-[18.5px] min-[390px]:text-[22px] sm:text-[23.5px] leading-none tracking-tight whitespace-nowrap transition-colors duration-200 ${
                 isDark ? 'text-white' : 'text-[#0F172A]'
               }`}
             >
@@ -228,14 +257,121 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
             </div>
           </nav>
 
-          {/* ─── RIGHT: THEME TOGGLE + CART (~28px) + HAMBURGER (3 LINES) ─── */}
-          <div className="flex items-center gap-3 sm:gap-4 relative">
+          {/* ─── RIGHT: AUTH SLOT + THEME TOGGLE + CART (~28px) + HAMBURGER (3 LINES) ─── */}
+          <div className="flex items-center gap-1 min-[380px]:gap-2.5 sm:gap-4 relative shrink-0">
             
+            {/* ─── AUTH SLOT: LOGGED-OUT LOGIN LINK / LOGGED-IN USER MENU ─── */}
+            {isLoggedIn ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  id="nav-user-menu-btn"
+                  type="button"
+                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  aria-expanded={isUserMenuOpen}
+                  aria-haspopup="true"
+                  aria-label="Account menu"
+                  className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none cursor-pointer group"
+                >
+                  {/* Solid Blue Round Avatar with Initials */}
+                  <span
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1E88E5] flex items-center justify-center text-[12px] sm:text-[13px] font-bold text-white shadow-xs shrink-0"
+                  >
+                    {userInitial}
+                  </span>
+                  {/* Display Name (hidden on mobile < sm) */}
+                  <span
+                    className="hidden sm:inline font-bold text-[14px] text-slate-800 dark:text-white truncate max-w-[110px]"
+                  >
+                    {userName}
+                  </span>
+                  {/* Small Chevron Down (hidden on mobile < sm) */}
+                  <ChevronDown
+                    className={`hidden sm:inline w-3.5 h-3.5 text-slate-600 dark:text-slate-300 transition-transform duration-200 ${
+                      isUserMenuOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown Panel */}
+                {isUserMenuOpen && (
+                  <div
+                    id="nav-user-dropdown"
+                    role="menu"
+                    aria-label="User account menu"
+                    className={`absolute top-[calc(100%+8px)] right-0 w-48 rounded-2xl p-1.5 shadow-2xl backdrop-blur-xl border transition-all duration-150 z-50 animate-in fade-in slide-in-from-top-2 ${
+                      isDark
+                        ? 'bg-[#080E1A]/95 border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.7)]'
+                        : 'bg-white/95 border-slate-200 text-slate-800 shadow-[0_20px_50px_rgba(15,23,42,0.15)]'
+                    }`}
+                  >
+                    <div className="px-3 py-2 border-b border-slate-100 dark:border-white/10 mb-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        Signed in as
+                      </p>
+                      <p className="text-[13px] font-semibold text-slate-800 dark:text-white truncate">
+                        {user?.email || userName}
+                      </p>
+                    </div>
+
+                    <Link
+                      id="nav-user-account-link"
+                      to="/account"
+                      role="menuitem"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className={`w-full text-[14px] font-medium py-2 px-3 rounded-xl transition-colors flex items-center gap-2.5 ${
+                        location.pathname === '/account'
+                          ? isDark
+                            ? 'bg-[#0284C7]/25 text-[#38BDF8] font-semibold'
+                            : 'bg-[#D6E6FB] text-[#1E88E5] font-semibold'
+                          : isDark
+                            ? 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
+                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      }`}
+                    >
+                      <User className="w-4 h-4" />
+                      <span>Account</span>
+                    </Link>
+
+                    <button
+                      id="nav-user-logout-btn"
+                      type="button"
+                      role="menuitem"
+                      onClick={handleLogout}
+                      className="w-full text-[14px] font-medium py-2 px-3 rounded-xl transition-colors flex items-center gap-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 cursor-pointer text-left"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                id="nav-auth-login-link"
+                to="/login"
+                className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none group"
+                aria-label="Login"
+              >
+                {/* Solid Blue Round Avatar with White User Icon */}
+                <span
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1E88E5] flex items-center justify-center text-white shadow-xs shrink-0"
+                >
+                  <User className="w-4 h-4 text-white stroke-[2.2]" />
+                </span>
+                {/* Bold Login Text Beside Avatar (hidden on mobile < sm) */}
+                <span
+                  className="hidden sm:inline font-bold text-[14px] text-slate-800 dark:text-white whitespace-nowrap"
+                >
+                  Login
+                </span>
+              </Link>
+            )}
+
             {/* Small Borderless Theme Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
-              className={`p-2 rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`min-w-[36px] min-h-[36px] p-2 flex items-center justify-center rounded-full shrink-0 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark
                   ? 'text-slate-400 hover:text-white hover:bg-white/[0.08]'
                   : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
@@ -252,12 +388,12 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
             {/* Shopping Cart Icon in Blue (~28px) */}
             <Link
               to="/checkout"
-              className={`p-1 rounded-full relative transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`min-w-[36px] min-h-[36px] p-1 relative flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
               }`}
               aria-label="Shopping cart"
             >
-              <ShoppingCart className="w-[28px] h-[28px] stroke-[2.2]" />
+              <ShoppingCart className="w-[24px] h-[24px] min-[380px]:w-[28px] min-[380px]:h-[28px] stroke-[2.2]" />
               {isCheckout && (
                 <span
                   id="cart-quantity-badge"
@@ -278,7 +414,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
               aria-expanded={isMenuOpen}
               aria-haspopup="true"
               aria-controls="nav-dropdown-panel"
-              className={`lg:hidden p-1.5 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
+              className={`lg:hidden min-w-[36px] min-h-[36px] p-1.5 flex items-center justify-center rounded-lg shrink-0 transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 ${
                 isDark
                   ? 'text-slate-200 hover:bg-white/[0.08]'
                   : 'text-slate-700 hover:bg-slate-200/50'
@@ -353,28 +489,84 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
                     );
                   })}
 
-                  {/* Divider line and Register CTA — hidden on /checkout */}
-                {location.pathname !== '/checkout' && (
-                  <>
-                    {/* Divider line before Register */}
+                  {/* Divider line before Register / User Actions */}
+                  {(!isCheckout || isLoggedIn) && (
                     <div
                       className={`my-1.5 border-t ${
                         isDark ? 'border-white/10' : 'border-slate-100'
                       }`}
                     />
+                  )}
 
-                    {/* Register action: prominently reachable */}
-                    <a
-                      href="#register"
-                      role="menuitem"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="mt-0.5 text-[14px] font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-sm hover:shadow active:scale-[0.99]"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      <span>Register</span>
-                    </a>
-                  </>
-                )}
+                  {isLoggedIn ? (
+                    <>
+                      {/* User Profile Header in Mobile Menu */}
+                      <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-100/70 dark:bg-white/[0.05]">
+                        <span
+                          className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold text-white shadow-xs shrink-0 ${
+                            isDark
+                              ? 'bg-gradient-to-tr from-[#0284C7] to-[#38BDF8]'
+                              : 'bg-gradient-to-tr from-[#1E88E5] to-[#42A5F5]'
+                          }`}
+                        >
+                          {userInitial}
+                        </span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[13px] font-semibold text-slate-800 dark:text-white truncate">
+                            {userName}
+                          </span>
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            {user?.email}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Account Link */}
+                      <Link
+                        id="nav-mobile-account-link"
+                        to="/account"
+                        role="menuitem"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`text-[14px] font-medium py-2 px-3.5 rounded-xl transition-colors flex items-center gap-2.5 ${
+                          location.pathname === '/account'
+                            ? isDark
+                              ? 'bg-[#0284C7]/25 text-[#38BDF8] font-semibold'
+                              : 'bg-[#D6E6FB] text-[#1E88E5] font-semibold'
+                            : isDark
+                              ? 'text-slate-300 hover:bg-white/[0.08] hover:text-white'
+                              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                        }`}
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Account</span>
+                      </Link>
+
+                      {/* Logout Button */}
+                      <button
+                        id="nav-mobile-logout-btn"
+                        type="button"
+                        role="menuitem"
+                        onClick={handleLogout}
+                        className="text-[14px] font-medium py-2 px-3.5 rounded-xl transition-colors flex items-center gap-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 cursor-pointer text-left w-full"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </button>
+                    </>
+                  ) : (
+                    /* Register action: prominently reachable — hidden on /checkout */
+                    !isCheckout && (
+                      <a
+                        href="#register"
+                        role="menuitem"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="mt-0.5 text-[14px] font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-sm hover:shadow active:scale-[0.99]"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Register</span>
+                      </a>
+                    )
+                  )}
                 </div>
               </div>
             )}
