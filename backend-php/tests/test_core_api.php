@@ -25,9 +25,37 @@ function run_request(string $scriptPath, string $method, array $headers = [], ar
         2 => ['pipe', 'w']
     ];
 
-    $phpExe = is_file('C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe')
-        ? '"C:\\xampp\\htdocs\\HashHarbour\\php\\php.exe" -c "C:\\xampp\\htdocs\\HashHarbour\\php\\php.ini"'
-        : '"C:\\xampp\\php\\php.exe"';
+    $phpBin = PHP_BINARY;
+    $phpDrive = preg_match('/^([a-zA-Z]:)/', $phpBin, $m) ? $m[1] : '';
+
+    $extDir = ini_get('extension_dir');
+    if ($extDir && preg_match('/^[\\/][^\\/]/', $extDir) && $phpDrive !== '') {
+        $extDir = $phpDrive . $extDir;
+    } elseif (!$extDir || !is_dir($extDir)) {
+        $candidate = dirname($phpBin) . DIRECTORY_SEPARATOR . 'ext';
+        if (is_dir($candidate)) {
+            $extDir = $candidate;
+        }
+    }
+
+    $browscapCandidate = dirname($phpBin) . DIRECTORY_SEPARATOR . 'extras' . DIRECTORY_SEPARATOR . 'browscap.ini';
+    $browscap = file_exists($browscapCandidate) ? $browscapCandidate : ini_get('browscap');
+    if ($browscap && preg_match('/^[\\/][^\\/]/', $browscap) && $phpDrive !== '') {
+        $browscap = $phpDrive . $browscap;
+    }
+
+    $cmdParts = [escapeshellarg($phpBin)];
+    $iniFile = php_ini_loaded_file();
+    if ($iniFile) {
+        $cmdParts[] = '-c ' . escapeshellarg($iniFile);
+    }
+    if ($extDir && is_dir($extDir)) {
+        $cmdParts[] = '-d extension_dir=' . escapeshellarg($extDir);
+    }
+    if ($browscap && file_exists($browscap)) {
+        $cmdParts[] = '-d browscap=' . escapeshellarg($browscap);
+    }
+    $phpExe = implode(' ', $cmdParts);
 
     $env = [];
     foreach (array_merge($_SERVER, $_ENV) as $k => $v) {
