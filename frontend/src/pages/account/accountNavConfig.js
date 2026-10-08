@@ -1,13 +1,6 @@
-import { Home, Package, Compass, FileText, CreditCard, User, Bell } from 'lucide-react';
+import { Package, CreditCard, User, Bell } from 'lucide-react';
 
 export const ACCOUNT_NAV_ITEMS = [
-  {
-    id: 'home',
-    label: 'Home',
-    href: '/',
-    isHome: true,
-    icon: Home,
-  },
   {
     id: 'bookings',
     label: 'My Bookings',
@@ -17,24 +10,7 @@ export const ACCOUNT_NAV_ITEMS = [
     subtitle: 'View and manage your booked containers, track shipments, and access all related documents.',
     icon: Package,
   },
-  {
-    id: 'track',
-    label: 'Track Shipment',
-    href: '/account/track',
-    path: 'track',
-    title: 'Track Shipment',
-    subtitle: 'Track your shipments in real time.',
-    icon: Compass,
-  },
-  {
-    id: 'documents',
-    label: 'Documents',
-    href: '/account/documents',
-    path: 'documents',
-    title: 'Documents',
-    subtitle: 'Access and manage documents for your bookings.',
-    icon: FileText,
-  },
+
   {
     id: 'billing',
     label: 'Billing & Payments',

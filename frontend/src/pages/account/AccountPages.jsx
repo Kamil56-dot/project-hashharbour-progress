@@ -34,7 +34,7 @@ function createPlaceholderPage(itemKey) {
   return PageComponent;
 }
 
-export const MyBookingsPage = createPlaceholderPage('bookings');
+export { MyBookingsPage } from './MyBookingsPage';
 export const TrackShipmentPage = createPlaceholderPage('track');
 export const DocumentsPage = createPlaceholderPage('documents');
 export const BillingPage = createPlaceholderPage('billing');
