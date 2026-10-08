@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { authFetch } from '../../lib/authFetch';
 import { useAuth } from '../../context/AuthContext';
+import { isStaff as isStaffRole } from '../../lib/roles';
 
 // Container images from assets
 import redStandardDryImg from '../../assets/containers/red-standard-dry.png';
@@ -90,6 +91,34 @@ const STATUS_CONFIG = {
   },
 };
 
+/**
+ * Helper to determine next valid status transition for staff:
+ * pending -> confirmed ("Confirm Booking")
+ * confirmed -> in_transit ("Mark In Transit")
+ * in_transit -> completed ("Mark Completed")
+ */
+function getNextStaffStatusAction(status) {
+  switch (status) {
+    case 'pending':
+      return {
+        nextStatus: 'confirmed',
+        label: 'Confirm Booking',
+      };
+    case 'confirmed':
+      return {
+        nextStatus: 'in_transit',
+        label: 'Mark In Transit',
+      };
+    case 'in_transit':
+      return {
+        nextStatus: 'completed',
+        label: 'Mark Completed',
+      };
+    default:
+      return null;
+  }
+}
+
 export function MyBookingsPage() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -110,9 +139,11 @@ export function MyBookingsPage() {
   const [isCancelling, setIsCancelling] = useState(false);
   const [actionError, setActionError] = useState(null);
 
-  const isStaff = useMemo(() => {
-    return ['super_admin', 'admin', 'manager'].includes(user?.role);
-  }, [user?.role]);
+  // Staff status transition state & error toast
+  const [updatingBookingId, setUpdatingBookingId] = useState(null);
+  const [statusErrorToast, setStatusErrorToast] = useState(null);
+
+  const isStaff = useMemo(() => isStaffRole(user), [user]);
 
   // Fetch bookings list
   const fetchBookings = async () => {
@@ -126,7 +157,16 @@ export function MyBookingsPage() {
         throw new Error(data?.error || `Failed to fetch bookings (${response.status})`);
       }
 
-      setBookings(Array.isArray(data) ? data : []);
+      const list = Array.isArray(data) ? data : [];
+      setBookings(list);
+
+      // Keep detail modal synced with updated booking data if modal is open
+      if (detailModalBooking) {
+        const fresh = list.find((b) => b.id === detailModalBooking.id);
+        if (fresh) {
+          setDetailModalBooking((prev) => (prev ? { ...prev, ...fresh } : null));
+        }
+      }
     } catch (err) {
       console.error('Fetch bookings error:', err);
       setError(err.message || 'Unable to load bookings.');
@@ -194,7 +234,7 @@ export function MyBookingsPage() {
     }
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const estimatedMenuHeight = 90;
+    const estimatedMenuHeight = 140;
     const margin = 8;
     const right = Math.max(margin, window.innerWidth - rect.right);
 
@@ -251,6 +291,53 @@ export function MyBookingsPage() {
       setActionError(err.message || 'Error occurred while cancelling booking.');
     } finally {
       setIsCancelling(false);
+    }
+  };
+
+  // Auto-dismiss status error toast after 6 seconds
+  useEffect(() => {
+    if (statusErrorToast) {
+      const timer = setTimeout(() => {
+        setStatusErrorToast(null);
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusErrorToast]);
+
+  // Advance booking status handler (Staff only)
+  const handleAdvanceStatus = async (booking, targetStatus) => {
+    if (!booking || !targetStatus || updatingBookingId !== null) return;
+    setUpdatingBookingId(booking.id);
+    setStatusErrorToast(null);
+
+    try {
+      const response = await authFetch(`/api/bookings/${booking.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: targetStatus }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.error || `Failed to update booking status (${response.status})`);
+      }
+
+      // Close menu on success
+      setMenuState(null);
+
+      // If details modal is open for this booking, update it immediately with returned booking data
+      if (detailModalBooking?.id === booking.id && data) {
+        setDetailModalBooking(data);
+      }
+
+      // Refresh list to update status badges and stats strip
+      await fetchBookings();
+    } catch (err) {
+      console.error('Status transition error:', err);
+      setStatusErrorToast(err.message || 'Unable to update status.');
+    } finally {
+      setUpdatingBookingId(null);
     }
   };
 
@@ -1013,8 +1100,9 @@ export function MyBookingsPage() {
           <div
             style={menuState.style}
             onClick={(e) => e.stopPropagation()}
-            className="w-44 rounded-2xl p-1.5 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-100 select-none z-[110]"
+            className="w-48 rounded-2xl p-1.5 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-white/10 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-100 select-none z-[110]"
           >
+            {/* View Details */}
             <button
               type="button"
               onClick={() => {
@@ -1028,6 +1116,31 @@ export function MyBookingsPage() {
               <span>View Details</span>
             </button>
 
+            {/* Staff Status Advance Action */}
+            {(() => {
+              if (!isStaff) return null;
+              const nextAction = getNextStaffStatusAction(menuState.booking.status);
+              if (!nextAction) return null;
+              const isCurrentUpdating = updatingBookingId === menuState.booking.id;
+
+              return (
+                <button
+                  type="button"
+                  disabled={updatingBookingId !== null}
+                  onClick={() => handleAdvanceStatus(menuState.booking, nextAction.nextStatus)}
+                  className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 flex items-center gap-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isCurrentUpdating ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500 shrink-0" />
+                  ) : (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  )}
+                  <span className="truncate">{nextAction.label}</span>
+                </button>
+              );
+            })()}
+
+            {/* Cancel Booking */}
             {canCancelBooking(menuState.booking) && (
               <button
                 type="button"
@@ -1044,6 +1157,27 @@ export function MyBookingsPage() {
                 <span>Cancel Booking</span>
               </button>
             )}
+          </div>,
+          document.body
+        )}
+
+      {/* ─── STATUS ACTION ERROR TOAST (PORTAL) ─── */}
+      {statusErrorToast &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed top-20 right-4 sm:right-6 z-[120] max-w-sm sm:max-w-md animate-in slide-in-from-top-2 duration-200">
+            <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 shadow-xl backdrop-blur-md text-xs sm:text-sm font-medium">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="flex-1 pr-2 leading-relaxed">{statusErrorToast}</div>
+              <button
+                type="button"
+                onClick={() => setStatusErrorToast(null)}
+                className="p-1 rounded-lg text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors cursor-pointer"
+                aria-label="Dismiss error"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>,
           document.body
         )}
