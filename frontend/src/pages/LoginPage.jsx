@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 // loginBg removed — global background image provides the wavy background
@@ -84,8 +84,8 @@ function AnchorIcon({ className = 'w-12 h-[54px] text-brand-500' }) {
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { login, isAuthenticated } = useAuth();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -93,7 +93,16 @@ export function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  const targetDestination = location.state?.from?.pathname || location.state?.from || '/';
+  const returnUrl = searchParams.get('returnUrl');
+  const isSafeReturn =
+    returnUrl &&
+    returnUrl.startsWith('/') &&
+    !returnUrl.startsWith('//') &&
+    !returnUrl.includes('://');
+
+  const targetDestination = isSafeReturn
+    ? returnUrl
+    : (location.state?.from?.pathname || location.state?.from || '/');
 
   // Redirect if already authenticated
   useEffect(() => {
