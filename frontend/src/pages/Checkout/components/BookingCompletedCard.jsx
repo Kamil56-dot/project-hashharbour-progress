@@ -356,7 +356,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
             isDark ? 'text-slate-400' : 'text-[#64748B]'
           }`}
         >
-          Your container booking has been confirmed successfully.
+          Your container booking has been placed successfully.
         </p>
 
         {/* Booking ID Pill with Copy Button */}
