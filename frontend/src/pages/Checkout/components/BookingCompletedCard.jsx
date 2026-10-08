@@ -269,7 +269,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
             setAnimationEnded(true);
           }
         }}
-        className={`hh-entrance-card relative z-0 w-full max-w-[790px] mx-auto rounded-[24px] p-6 sm:p-8 md:p-10 lg:p-12 transition-colors duration-200 ${
+        className={`hh-entrance-card hh-completed-card relative z-0 w-full max-w-[790px] mx-auto rounded-[24px] p-6 sm:p-8 md:p-10 lg:p-12 transition-colors duration-200 ${
           isDark
             ? 'bg-[#0A101D] border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)]'
             : 'bg-white border border-blue-100/70 shadow-[0_12px_45px_rgba(15,40,80,0.06)]'
@@ -281,10 +281,10 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
         }
       >
         {/* Top 3-Column Slot Row: Party Poppers (Item 1) + Sharp Check Circle (Item 2) */}
-        <div className="flex items-center justify-between w-full max-w-[440px] mx-auto mb-4 sm:mb-6">
+        <div className="flex items-center justify-between w-full max-w-[440px] mx-auto mb-4 sm:mb-6 hh-completed-poppers-row">
           {/* Left Slot: Party Popper (One-time burst on mount, then static) */}
           <div
-            className="w-[72px] sm:w-[90px] h-[72px] sm:h-[90px] shrink-0 pointer-events-none select-none flex items-center justify-center"
+            className="w-[72px] sm:w-[90px] h-[72px] sm:h-[90px] shrink-0 pointer-events-none select-none flex items-center justify-center hh-completed-popper-box"
             aria-hidden="true"
           >
             <PartyPopper idSuffix="left" prefersReducedMotion={prefersReducedMotion} />
@@ -293,7 +293,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
           {/* Center Check Circle in Soft Ring */}
           <div className="relative flex items-center justify-center shrink-0">
             <div
-              className={`hh-ring-pop w-[96px] h-[96px] sm:w-[104px] sm:h-[104px] rounded-full flex items-center justify-center transition-colors ${
+              className={`hh-ring-pop hh-completed-ring w-[96px] h-[96px] sm:w-[104px] sm:h-[104px] rounded-full flex items-center justify-center transition-colors ${
                 isDark ? 'bg-[#1E88E5]/20' : 'bg-[#E1F0FE]'
               }`}
               style={
@@ -303,7 +303,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
               }
             >
               <div
-                className="hh-check-pop w-[66px] h-[66px] sm:w-[72px] sm:h-[72px] rounded-full bg-[#1E88E5] flex items-center justify-center text-white shadow-md"
+                className="hh-check-pop hh-completed-check-pop w-[66px] h-[66px] sm:w-[72px] sm:h-[72px] rounded-full bg-[#1E88E5] flex items-center justify-center text-white shadow-md"
                 style={
                   !(prefersReducedMotion || animationEnded)
                     ? { animation: 'hhCheckPop 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 150ms both' }
@@ -330,7 +330,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
 
           {/* Right Slot: Mirrored Party Popper */}
           <div
-            className="w-[72px] sm:w-[90px] h-[72px] sm:h-[90px] shrink-0 pointer-events-none select-none flex items-center justify-center"
+            className="w-[72px] sm:w-[90px] h-[72px] sm:h-[90px] shrink-0 pointer-events-none select-none flex items-center justify-center hh-completed-popper-box"
             style={{ transform: 'scaleX(-1)' }}
             aria-hidden="true"
           >
@@ -343,7 +343,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
           id="booking-completed-heading"
           ref={headingRef}
           tabIndex={-1}
-          className={`text-[26px] sm:text-[32px] md:text-[34px] font-extrabold tracking-tight text-center leading-tight outline-none ${
+          className={`text-[26px] sm:text-[32px] md:text-[34px] font-extrabold tracking-tight text-center leading-tight outline-none hh-completed-heading ${
             isDark ? 'text-white' : 'text-[#0F172A]'
           }`}
         >
@@ -352,7 +352,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
 
         {/* Subtitle */}
         <p
-          className={`text-[13px] sm:text-[14px] md:text-[15px] font-normal text-center mt-1.5 sm:mt-2 leading-relaxed ${
+          className={`text-[13px] sm:text-[14px] md:text-[15px] font-normal text-center mt-1.5 sm:mt-2 leading-relaxed hh-completed-subtitle ${
             isDark ? 'text-slate-400' : 'text-[#64748B]'
           }`}
         >
@@ -361,7 +361,7 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
 
         {/* Booking ID Pill with Copy Button */}
         {bookingReference && (
-          <div className="flex justify-center mt-3 sm:mt-4">
+          <div className="flex justify-center mt-3 sm:mt-4 hh-completed-pill">
             <div
               className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full border transition-colors ${
                 isDark
@@ -394,14 +394,14 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
         )}
 
         {/* Booked Container Image + Elliptical Ground Shadow + Backdrop Blobs (Item 3) */}
-        <div className="relative w-full max-w-[360px] mx-auto mt-5 sm:mt-6 flex flex-col items-center">
+        <div className="relative w-full max-w-[360px] mx-auto mt-5 sm:mt-6 flex flex-col items-center hh-completed-img-wrapper">
           {/* Soft Decorative Blobs BEHIND the container image only (Item 3) */}
           <div
             className="absolute inset-0 -z-0 flex items-center justify-center pointer-events-none select-none"
             aria-hidden="true"
           >
             <svg
-              className="w-[480px] sm:w-[500px] max-w-none h-[210px] sm:h-[220px]"
+              className="w-[480px] sm:w-[500px] max-w-none h-[210px] sm:h-[220px] hh-completed-blobs-svg"
               viewBox="0 0 500 220"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -439,19 +439,19 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
           <img
             src={container?.successImage || container?.image}
             alt={container?.alt || container?.title || 'Booked Container'}
-            className="w-[280px] sm:w-[320px] md:w-[340px] max-w-full h-auto object-contain select-none pointer-events-none drop-shadow-sm relative z-10"
+            className="w-[280px] sm:w-[320px] md:w-[340px] max-w-full h-auto object-contain select-none pointer-events-none drop-shadow-sm relative z-10 hh-completed-img"
             draggable={false}
           />
           {/* Soft Elliptical Ground Shadow */}
           <div
-            className="w-[240px] sm:w-[280px] md:w-[300px] h-[14px] sm:h-[16px] bg-black/10 dark:bg-black/50 blur-[8px] rounded-[100%] mx-auto mt-[-6px] sm:mt-[-8px] relative z-10"
+            className="w-[240px] sm:w-[280px] md:w-[300px] h-[14px] sm:h-[16px] bg-black/10 dark:bg-black/50 blur-[8px] rounded-[100%] mx-auto mt-[-6px] sm:mt-[-8px] relative z-10 hh-completed-shadow"
             aria-hidden="true"
           />
         </div>
 
         {/* Info Strip (4 Cells: Responsive 2x2 grid < 768px; 4 cells in 1 row >= 768px) */}
         <div
-          className={`w-full max-w-[690px] mx-auto mt-6 sm:mt-7 p-3.5 sm:p-4 rounded-2xl border transition-colors ${
+          className={`w-full max-w-[690px] mx-auto mt-6 sm:mt-7 p-3.5 sm:p-4 rounded-2xl border hh-completed-info-strip transition-colors ${
             isDark
               ? 'bg-white/[0.03] border-white/10'
               : 'bg-[#F8FAFC] border-slate-100 shadow-xs'
@@ -513,12 +513,12 @@ export function BookingCompletedCard({ bookingData, container, isDark }) {
         </div>
 
         {/* Action Button: Single "Back to Home" Full-Pill Button */}
-        <div className="flex justify-center mt-6 sm:mt-7">
+        <div className="flex justify-center mt-6 sm:mt-7 hh-completed-btn-wrapper">
           <button
             id="booking-back-home-btn"
             type="button"
             onClick={() => navigate('/')}
-            className="w-full max-w-[310px] h-[52px] rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[15px] sm:text-[16px] shadow-[0_4px_14px_rgba(30,136,229,0.35)] hover:shadow-[0_6px_20px_rgba(30,136,229,0.45)] transition-all duration-200 flex items-center justify-center cursor-pointer select-none"
+            className="w-full max-w-[310px] h-[52px] rounded-full bg-[#1E88E5] hover:bg-[#1976D2] active:scale-[0.99] text-white font-semibold text-[15px] sm:text-[16px] shadow-[0_4px_14px_rgba(30,136,229,0.35)] hover:shadow-[0_6px_20px_rgba(30,136,229,0.45)] transition-all duration-200 flex items-center justify-center cursor-pointer select-none hh-completed-btn"
           >
             Back to Home
           </button>

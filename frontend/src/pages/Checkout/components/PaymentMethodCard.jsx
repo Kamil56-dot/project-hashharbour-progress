@@ -121,10 +121,10 @@ export function PaymentMethodCard({ paymentMethod, onChangePaymentMethod, isDark
   );
 
   return (
-    <div className="mb-6 sm:mb-7">
+    <div className="mb-6 sm:mb-7 hh-payment-container">
       {/* Section Heading */}
       <h3
-        className={`text-[17px] sm:text-[18px] font-bold tracking-tight mb-4 ${
+        className={`text-[17px] sm:text-[18px] font-bold tracking-tight mb-4 hh-payment-heading ${
           isDark ? 'text-white' : 'text-[#0F172A]'
         }`}
       >
@@ -136,7 +136,7 @@ export function PaymentMethodCard({ paymentMethod, onChangePaymentMethod, isDark
         role="radiogroup"
         aria-label="Payment method"
         onKeyDown={handleKeyDown}
-        className="flex flex-col gap-2.5"
+        className="flex flex-col gap-2.5 hh-payment-list"
       >
         {PAYMENT_METHODS.map((method) => {
           const isSelected = paymentMethod === method.id;
@@ -150,7 +150,7 @@ export function PaymentMethodCard({ paymentMethod, onChangePaymentMethod, isDark
               aria-checked={isSelected}
               tabIndex={isSelected ? 0 : -1}
               onClick={() => onChangePaymentMethod(method.id)}
-              className={`flex items-center gap-3 sm:gap-3.5 px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-xl cursor-pointer transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#1E88E5] focus-visible:ring-offset-1 select-none ${
+              className={`flex items-center gap-3 sm:gap-3.5 px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-xl cursor-pointer transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#1E88E5] focus-visible:ring-offset-1 select-none hh-payment-option ${
                 isSelected
                   ? isDark
                     ? 'bg-[#1E88E5]/10 border border-[#1E88E5]/25'

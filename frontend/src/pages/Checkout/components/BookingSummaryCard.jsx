@@ -69,16 +69,16 @@ export function BookingSummaryCard({
     <div className="w-full">
       {/* Inner Bordered Card */}
       <div
-        className={`rounded-2xl border p-4 sm:p-5 lg:p-6 transition-colors duration-200 ${
+        className={`rounded-2xl border p-4 sm:p-5 lg:p-6 hh-booking-summary-inner transition-colors duration-200 ${
           isDark
             ? 'bg-white/[0.02] border-white/10'
             : 'bg-white border-blue-100/70 shadow-xs'
         }`}
       >
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 items-start">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:gap-6 hh-booking-summary-flex items-start">
           {/* Left: Soft rounded container image box */}
           <div
-            className={`w-full sm:w-[160px] lg:w-[185px] aspect-[4/3] rounded-xl flex items-center justify-center p-2.5 shrink-0 overflow-hidden transition-colors duration-200 ${
+            className={`w-full sm:w-[160px] lg:w-[185px] aspect-[4/3] rounded-xl flex items-center justify-center p-2.5 shrink-0 overflow-hidden hh-container-img-box transition-colors duration-200 ${
               isDark
                 ? 'bg-white/[0.04] border border-white/5'
                 : 'bg-[#F4F8FC] border border-blue-50'
@@ -93,7 +93,7 @@ export function BookingSummaryCard({
           </div>
 
           {/* Right: Details & specs */}
-          <div className="flex-1 w-full min-w-0">
+          <div className="flex-1 w-full min-w-0 hh-booking-details-col">
             {/* Top row: Title + Pill on left, Price on right */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 min-w-0">
@@ -135,7 +135,7 @@ export function BookingSummaryCard({
             </div>
 
             {/* Specs row: Length, Width, Height */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3.5 mt-3.5 sm:mt-4 pt-1">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3.5 mt-3.5 sm:mt-4 pt-1 hh-specs-row">
               {/* Length */}
               <div className="flex items-center gap-2">
                 <div
@@ -225,7 +225,7 @@ export function BookingSummaryCard({
             </div>
 
             {/* Quantity row */}
-            <div className="mt-3.5 sm:mt-4 pt-1">
+            <div className="mt-3.5 sm:mt-4 pt-1 hh-qty-control-wrapper">
               <span
                 className={`block text-[11px] sm:text-[12px] font-medium mb-1.5 ${
                   isDark ? 'text-slate-400' : 'text-[#8FA0B5]'

@@ -39,10 +39,10 @@ export function OrderSummaryCard({
   ];
 
   return (
-    <div className="mb-6 sm:mb-7">
+    <div className="mb-6 sm:mb-7 hh-order-summary-container">
       {/* Section Heading */}
       <h3
-        className={`text-[17px] sm:text-[18px] font-bold tracking-tight mb-4 ${
+        className={`text-[17px] sm:text-[18px] font-bold tracking-tight mb-4 hh-order-summary-heading ${
           isDark ? 'text-white' : 'text-[#0F172A]'
         }`}
       >
@@ -50,7 +50,7 @@ export function OrderSummaryCard({
       </h3>
 
       {/* Line Items */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 hh-order-summary-list">
         {lineItems.map((item) => (
           <div key={item.label} className="flex items-center justify-between gap-3">
             <span
@@ -117,7 +117,7 @@ export function OrderSummaryCard({
 
       {/* Divider */}
       <div
-        className={`border-t my-4 sm:my-5 ${
+        className={`border-t my-4 sm:my-5 hh-order-summary-divider ${
           isDark ? 'border-white/10' : 'border-slate-200'
         }`}
       />
