@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, Compass, MoreHorizontal, X, FileText, CreditCard, User, Bell } from 'lucide-react';
+import { Home, Package, MoreHorizontal, X, CreditCard, User, Bell } from 'lucide-react';
 
 export function AccountBottomBar() {
   const location = useLocation();
@@ -26,7 +26,6 @@ export function AccountBottomBar() {
 
   // More sheet items
   const moreItems = [
-    { id: 'documents', label: 'Documents', href: '/account/documents', icon: FileText },
     { id: 'billing', label: 'Billing & Payments', href: '/account/billing', icon: CreditCard },
     { id: 'profile', label: 'Profile Settings', href: '/account/profile', icon: User },
     { id: 'notifications', label: 'Notifications', href: '/account/notifications', icon: Bell },
@@ -34,7 +33,6 @@ export function AccountBottomBar() {
 
   const isMoreActive = moreItems.some((item) => location.pathname.startsWith(item.href));
   const isBookingsActive = location.pathname.startsWith('/account/bookings');
-  const isTrackActive = location.pathname.startsWith('/account/track');
 
   return (
     <>
@@ -66,20 +64,6 @@ export function AccountBottomBar() {
           >
             <Package className="w-5 h-5" aria-hidden="true" />
             <span className="text-[11px] font-medium leading-none">Bookings</span>
-          </Link>
-
-          {/* Tab 3: Tracking */}
-          <Link
-            to="/account/track"
-            id="tab-tracking"
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors ${
-              isTrackActive
-                ? 'text-[#1E88E5] dark:text-[#38BDF8] font-semibold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
-            }`}
-          >
-            <Compass className="w-5 h-5" aria-hidden="true" />
-            <span className="text-[11px] font-medium leading-none">Tracking</span>
           </Link>
 
           {/* Tab 4: More */}

@@ -74,6 +74,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
 
   // Derive active pill item dynamically from current route
   const getActiveItem = (pathname) => {
+    if (pathname === '/') return 'home';
     if (pathname === '/about') return 'about';
     if (pathname === '/services' || pathname.startsWith('/container')) return 'services';
     if (pathname === '/login') return 'login';
@@ -84,6 +85,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
   const activeItem = getActiveItem(location.pathname);
 
   const navItems = [
+    { id: 'home', label: 'Home', href: '/' },
     { id: 'about', label: 'About', href: '/about' },
     { id: 'services', label: 'Services', href: '/services' },
     { id: 'routes', label: 'Routes', href: '#routes' },
