@@ -1,4 +1,4 @@
-import { Package, CreditCard, User, Bell } from 'lucide-react';
+import { Package, User, Bell } from 'lucide-react';
 
 export const ACCOUNT_NAV_ITEMS = [
   {
@@ -9,16 +9,6 @@ export const ACCOUNT_NAV_ITEMS = [
     title: 'My Bookings',
     subtitle: 'View and manage your booked containers, track shipments, and access all related documents.',
     icon: Package,
-  },
-
-  {
-    id: 'billing',
-    label: 'Billing & Payments',
-    href: '/account/billing',
-    path: 'billing',
-    title: 'Billing & Payments',
-    subtitle: 'View invoices and payment history.',
-    icon: CreditCard,
   },
   {
     id: 'profile',

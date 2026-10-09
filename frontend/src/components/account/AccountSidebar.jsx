@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { HelpCircle, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ACCOUNT_NAV_ITEMS } from '../../pages/account/accountNavConfig';
+import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationsContext';
+import { isStaff } from '../../lib/roles';
 
 export function AccountSidebar() {
   const location = useLocation();
+  const { user } = useAuth();
+  const { unreadCount } = useNotifications();
+  const userIsStaff = isStaff(user);
 
   // Desktop (>=1024px): always expanded (260px)
   // Tablet (768px - 1023px): collapsed rail (78px) by default
@@ -88,13 +94,14 @@ export function AccountSidebar() {
               location.pathname === item.href ||
               (item.path && location.pathname.startsWith(`/account/${item.path}`))
             );
+            const label = item.id === 'bookings' && userIsStaff ? 'All Bookings' : item.label;
 
             return (
               <Link
                 key={item.id}
                 to={item.href}
-                title={isCollapsed ? item.label : undefined}
-                aria-label={item.label}
+                title={isCollapsed ? label : undefined}
+                aria-label={label}
                 aria-current={isActive ? 'page' : undefined}
                 className={`relative flex items-center gap-3 py-2.5 px-3.5 rounded-2xl text-[14px] font-medium transition-all duration-200 select-none focus-visible:outline-2 focus-visible:outline-blue-500 ${
                   isActive
@@ -102,14 +109,26 @@ export function AccountSidebar() {
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/[0.05]'
                 } ${isCollapsed ? 'justify-center px-0' : ''}`}
               >
-                <Icon
-                  className={`w-[18px] h-[18px] shrink-0 transition-colors ${
-                    isActive ? 'text-[#1E88E5] dark:text-[#38BDF8]' : 'text-slate-500 dark:text-slate-400'
-                  }`}
-                  aria-hidden="true"
-                />
+                <div className="relative shrink-0 flex items-center justify-center">
+                  <Icon
+                    className={`w-[18px] h-[18px] transition-colors ${
+                      isActive ? 'text-[#1E88E5] dark:text-[#38BDF8]' : 'text-slate-500 dark:text-slate-400'
+                    }`}
+                    aria-hidden="true"
+                  />
+                  {item.id === 'notifications' && unreadCount > 0 && isCollapsed && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#1E88E5] dark:bg-[#38BDF8]" />
+                  )}
+                </div>
                 {!isCollapsed && (
-                  <span className="truncate">{item.label}</span>
+                  <>
+                    <span className="truncate">{label}</span>
+                    {item.id === 'notifications' && unreadCount > 0 && (
+                      <span className="ml-auto px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-[#1E88E5] text-white dark:bg-[#38BDF8] dark:text-[#0F172A] leading-none">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </>
                 )}
               </Link>
             );

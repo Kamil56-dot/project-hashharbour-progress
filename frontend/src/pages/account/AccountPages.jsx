@@ -1,6 +1,7 @@
 import React from 'react';
 import { AccountPageHeader } from '../../components/account/AccountPageHeader';
 import { ACCOUNT_NAV_ITEMS } from './accountNavConfig';
+import { NotificationsPage } from './NotificationsPage';
 
 function createPlaceholderPage(itemKey) {
   const config = ACCOUNT_NAV_ITEMS.find((item) => item.id === itemKey) || {
@@ -37,6 +38,5 @@ function createPlaceholderPage(itemKey) {
 export { MyBookingsPage } from './MyBookingsPage';
 export const TrackShipmentPage = createPlaceholderPage('track');
 export const DocumentsPage = createPlaceholderPage('documents');
-export const BillingPage = createPlaceholderPage('billing');
 export const ProfilePage = createPlaceholderPage('profile');
-export const NotificationsPage = createPlaceholderPage('notifications');
+export { NotificationsPage };
