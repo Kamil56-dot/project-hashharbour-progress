@@ -13,6 +13,11 @@ if (preg_match('#/login/?$#i', $uri)) {
     exit;
 }
 
+if (preg_match('#/register/?$#i', $uri)) {
+    require __DIR__ . '/register.php';
+    exit;
+}
+
 if (preg_match('#/(token/)?refresh/?$#i', $uri)) {
     require __DIR__ . '/refresh.php';
     exit;

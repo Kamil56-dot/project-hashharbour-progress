@@ -348,25 +348,36 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
                 )}
               </div>
             ) : (
-              <Link
-                id="nav-auth-login-link"
-                to="/login"
-                className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none group"
-                aria-label="Login"
-              >
-                {/* Solid Blue Round Avatar with White User Icon */}
-                <span
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1E88E5] flex items-center justify-center text-white shadow-xs shrink-0"
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                <Link
+                  id="nav-auth-login-link"
+                  to="/login"
+                  className="min-w-[36px] min-h-[36px] flex items-center justify-center gap-1.5 sm:gap-2 focus-visible:outline-2 focus-visible:outline-blue-500 rounded-full py-1 shrink-0 select-none group"
+                  aria-label="Login"
                 >
-                  <User className="w-4 h-4 text-white stroke-[2.2]" />
-                </span>
-                {/* Bold Login Text Beside Avatar (hidden on mobile < sm) */}
-                <span
-                  className="hidden sm:inline font-bold text-[14px] text-slate-800 dark:text-white whitespace-nowrap"
+                  {/* Solid Blue Round Avatar with White User Icon */}
+                  <span
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1E88E5] flex items-center justify-center text-white shadow-xs shrink-0"
+                  >
+                    <User className="w-4 h-4 text-white stroke-[2.2]" />
+                  </span>
+                  {/* Bold Login Text Beside Avatar (hidden on mobile < sm) */}
+                  <span
+                    className="hidden sm:inline font-bold text-[14px] text-slate-800 dark:text-white whitespace-nowrap"
+                  >
+                    Login
+                  </span>
+                </Link>
+
+                <Link
+                  id="nav-auth-register-link"
+                  to="/register"
+                  className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-semibold bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-xs hover:shadow transition-all shrink-0 select-none active:scale-95"
+                  aria-label="Register"
                 >
-                  Login
-                </span>
-              </Link>
+                  Register
+                </Link>
+              </div>
             )}
 
             {/* Small Borderless Theme Toggle Button */}
@@ -558,15 +569,16 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
                   ) : (
                     /* Register action: prominently reachable — hidden on /checkout */
                     !isCheckout && (
-                      <a
-                        href="#register"
+                      <Link
+                        id="nav-mobile-register-link"
+                        to="/register"
                         role="menuitem"
                         onClick={() => setIsMenuOpen(false)}
                         className="mt-0.5 text-[14px] font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-gradient-to-r from-[#1E88E5] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white shadow-sm hover:shadow active:scale-[0.99]"
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Register</span>
-                      </a>
+                      </Link>
                     )
                   )}
                 </div>
