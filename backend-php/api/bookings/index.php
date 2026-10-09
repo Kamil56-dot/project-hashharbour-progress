@@ -14,6 +14,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../includes/cors.php';
 require_once __DIR__ . '/../../includes/response.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/notifications.php';
 require_once __DIR__ . '/../../config/db.php';
 if (file_exists(__DIR__ . '/../../config/constants.php')) {
     require_once __DIR__ . '/../../config/constants.php';
@@ -172,22 +173,47 @@ if ($method === 'POST') {
             }
         }
 
-        // On success: status = 'cancelled', cancelled_at = NOW(), cancelled_by = current user id,
-        // cancel_reason = reason or NULL, refund_status unchanged ('none')
-        $updateStmt = $pdo->prepare('
-            UPDATE bookings
-            SET status = "cancelled",
-                cancelled_at = NOW(),
-                cancelled_by = :cancelled_by,
-                cancel_reason = :cancel_reason,
-                updated_at = NOW()
-            WHERE id = :id
-        ');
-        $updateStmt->execute([
-            'cancelled_by'  => $currentUser['id'],
-            'cancel_reason' => $reason,
-            'id'            => $id,
-        ]);
+        try {
+            $pdo->beginTransaction();
+
+            // On success: status = 'cancelled', cancelled_at = NOW(), cancelled_by = current user id,
+            // cancel_reason = reason or NULL, refund_status unchanged ('none')
+            $updateStmt = $pdo->prepare('
+                UPDATE bookings
+                SET status = "cancelled",
+                    cancelled_at = NOW(),
+                    cancelled_by = :cancelled_by,
+                    cancel_reason = :cancel_reason,
+                    updated_at = NOW()
+                WHERE id = :id
+            ');
+            $updateStmt->execute([
+                'cancelled_by'  => $currentUser['id'],
+                'cancel_reason' => $reason,
+                'id'            => $id,
+            ]);
+
+            $ownerId = (int)$booking['user_id'];
+            $actingUserId = (int)$currentUser['id'];
+            if ($ownerId !== $actingUserId) {
+                $ref = (string)$booking['booking_reference'];
+                notify_user(
+                    $pdo,
+                    $ownerId,
+                    $id,
+                    'booking_cancelled',
+                    'Booking Cancelled',
+                    "Your booking {$ref} has been cancelled. Refund will Credited Under 7-9 Busssiness Days."
+                );
+            }
+
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            send_error('Failed to cancel booking: ' . $e->getMessage(), 500);
+        }
 
         $updatedBooking = fetch_booking_with_meta($pdo, $id);
         send_json($updatedBooking, 200);
@@ -314,38 +340,61 @@ if ($method === 'POST') {
             $checkRef->execute(['ref' => $bookingReference]);
         } while ($checkRef->fetch());
 
-        // Insert new booking record
-        $insertStmt = $pdo->prepare('
-            INSERT INTO bookings (
-                booking_reference, user_id, container_id, quantity, insurance_selected,
-                price_snapshot, status, payment_method, total_amount, billing_name, billing_address,
-                origin_port, destination_port, start_date, end_date, created_at, updated_at
-            ) VALUES (
-                :ref, :user_id, :container_id, :quantity, :insurance_selected,
-                :price_snapshot, :status, :payment_method, :total_amount, :billing_name, :billing_address,
-                :origin, :dest, :start_date, :end_date, NOW(), NOW()
-            )
-        ');
+        $customerName = '';
+        if (!empty($billingName)) {
+            $customerName = trim((string)$billingName);
+        } else {
+            $userFullName = trim(($currentUser['first_name'] ?? '') . ' ' . ($currentUser['last_name'] ?? ''));
+            if ($userFullName !== '') {
+                $customerName = $userFullName;
+            }
+        }
 
-        $insertStmt->execute([
-            'ref'                => $bookingReference,
-            'user_id'            => $currentUser['id'],
-            'container_id'       => $container['id'],
-            'quantity'           => $quantity,
-            'insurance_selected' => $insuranceSelected,
-            'price_snapshot'     => $priceSnapshot,
-            'status'             => $status,
-            'payment_method'     => $paymentMethod,
-            'total_amount'       => $totalAmount !== null ? number_format($totalAmount, 2, '.', '') : null,
-            'billing_name'       => $billingName,
-            'billing_address'    => $billingAddress,
-            'origin'             => !empty($originPort) ? $originPort : null,
-            'dest'               => !empty($destinationPort) ? $destinationPort : null,
-            'start_date'         => $startDate,
-            'end_date'           => $endDate,
-        ]);
+        try {
+            $pdo->beginTransaction();
 
-        $newBookingId = (int)$pdo->lastInsertId();
+            // Insert new booking record
+            $insertStmt = $pdo->prepare('
+                INSERT INTO bookings (
+                    booking_reference, user_id, container_id, quantity, insurance_selected,
+                    price_snapshot, status, payment_method, total_amount, billing_name, billing_address,
+                    origin_port, destination_port, start_date, end_date, created_at, updated_at
+                ) VALUES (
+                    :ref, :user_id, :container_id, :quantity, :insurance_selected,
+                    :price_snapshot, :status, :payment_method, :total_amount, :billing_name, :billing_address,
+                    :origin, :dest, :start_date, :end_date, NOW(), NOW()
+                )
+            ');
+
+            $insertStmt->execute([
+                'ref'                => $bookingReference,
+                'user_id'            => $currentUser['id'],
+                'container_id'       => $container['id'],
+                'quantity'           => $quantity,
+                'insurance_selected' => $insuranceSelected,
+                'price_snapshot'     => $priceSnapshot,
+                'status'             => $status,
+                'payment_method'     => $paymentMethod,
+                'total_amount'       => $totalAmount !== null ? number_format($totalAmount, 2, '.', '') : null,
+                'billing_name'       => $billingName,
+                'billing_address'    => $billingAddress,
+                'origin'             => !empty($originPort) ? $originPort : null,
+                'dest'               => !empty($destinationPort) ? $destinationPort : null,
+                'start_date'         => $startDate,
+                'end_date'           => $endDate,
+            ]);
+
+            $newBookingId = (int)$pdo->lastInsertId();
+
+            notify_staff_booking_created($pdo, $newBookingId, $bookingReference, $customerName, (int)$currentUser['id']);
+
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            send_error('Failed to create booking: ' . $e->getMessage(), 500);
+        }
 
         $createdBooking = fetch_booking_with_meta($pdo, $newBookingId);
         send_json($createdBooking, 201);
@@ -393,16 +442,42 @@ if ($method === 'PATCH' && $action === 'status') {
         send_error("Invalid status transition from '{$booking['status']}' to '{$newStatus}'. Status must follow: pending -> confirmed -> in_transit -> completed.", 422);
     }
 
-    $updateStmt = $pdo->prepare('
-        UPDATE bookings
-        SET status = :status,
-            updated_at = NOW()
-        WHERE id = :id
-    ');
-    $updateStmt->execute([
-        'status' => $newStatus,
-        'id'     => $id,
-    ]);
+    try {
+        $pdo->beginTransaction();
+
+        $updateStmt = $pdo->prepare('
+            UPDATE bookings
+            SET status = :status,
+                updated_at = NOW()
+            WHERE id = :id
+        ');
+        $updateStmt->execute([
+            'status' => $newStatus,
+            'id'     => $id,
+        ]);
+
+        $ownerId = (int)$booking['user_id'];
+        $actingUserId = (int)$currentUser['id'];
+        if ($ownerId !== $actingUserId) {
+            $ref = (string)$booking['booking_reference'];
+            $statusLabel = notification_status_label($newStatus);
+            notify_user(
+                $pdo,
+                $ownerId,
+                $id,
+                'booking_status_' . $newStatus,
+                'Booking Status Updated',
+                "Your booking {$ref} is now {$statusLabel}."
+            );
+        }
+
+        $pdo->commit();
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        send_error('Failed to update booking status: ' . $e->getMessage(), 500);
+    }
 
     $updatedBooking = fetch_booking_with_meta($pdo, $id);
     send_json($updatedBooking, 200);

@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Package, MoreHorizontal, X, CreditCard, User, Bell } from 'lucide-react';
+import { Home, Package, MoreHorizontal, X, User, Bell } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationsContext';
+import { isStaff } from '../../lib/roles';
 
 export function AccountBottomBar() {
   const location = useLocation();
+  const { user } = useAuth();
+  const { unreadCount } = useNotifications();
+  const userIsStaff = isStaff(user);
+
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const sheetRef = useRef(null);
 
@@ -26,7 +33,6 @@ export function AccountBottomBar() {
 
   // More sheet items
   const moreItems = [
-    { id: 'billing', label: 'Billing & Payments', href: '/account/billing', icon: CreditCard },
     { id: 'profile', label: 'Profile Settings', href: '/account/profile', icon: User },
     { id: 'notifications', label: 'Notifications', href: '/account/notifications', icon: Bell },
   ];
@@ -63,7 +69,7 @@ export function AccountBottomBar() {
             }`}
           >
             <Package className="w-5 h-5" aria-hidden="true" />
-            <span className="text-[11px] font-medium leading-none">Bookings</span>
+            <span className="text-[11px] font-medium leading-none">{userIsStaff ? 'All Bookings' : 'Bookings'}</span>
           </Link>
 
           {/* Tab 4: More */}
@@ -80,7 +86,12 @@ export function AccountBottomBar() {
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
             }`}
           >
-            <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
+            <div className="relative">
+              <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#1E88E5] dark:bg-[#38BDF8]" />
+              )}
+            </div>
             <span className="text-[11px] font-medium leading-none">More</span>
           </button>
         </div>
@@ -147,9 +158,16 @@ export function AccountBottomBar() {
                       <Icon className="w-5 h-5 text-slate-500 dark:text-slate-400" aria-hidden="true" />
                       <span>{item.label}</span>
                     </div>
-                    {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-[#1E88E5] dark:bg-[#38BDF8]" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      {item.id === 'notifications' && unreadCount > 0 && (
+                        <span className="px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-[#1E88E5] text-white dark:bg-[#38BDF8] dark:text-[#0F172A] leading-none">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      )}
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-[#1E88E5] dark:bg-[#38BDF8]" />
+                      )}
+                    </div>
                   </Link>
                 );
               })}

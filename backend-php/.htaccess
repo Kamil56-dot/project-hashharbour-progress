@@ -24,6 +24,13 @@
     RewriteRule ^api/bookings/([0-9]+)/?$ api/bookings/index.php?id=$1 [L,QSA]
     RewriteRule ^api/bookings/?$ api/bookings/index.php [L,QSA]
 
+    # Clean URL rewrites for Notifications
+    RewriteRule ^api/notifications/unread-count/?$ api/notifications/index.php?action=unread-count [L,QSA]
+    RewriteRule ^api/notifications/mark-all-read/?$ api/notifications/index.php?action=mark-all-read [L,QSA]
+    RewriteRule ^api/notifications/([0-9]+)/read/?$ api/notifications/index.php?id=$1&action=read [L,QSA]
+    RewriteRule ^api/notifications/([0-9]+)/?$ api/notifications/index.php?id=$1 [L,QSA]
+    RewriteRule ^api/notifications/?$ api/notifications/index.php [L,QSA]
+
     # Clean URL rewrites for Shipments
     RewriteRule ^api/shipments/track/?$ api/shipments/index.php [L,QSA]
     RewriteRule ^api/shipments/([0-9]+)/?$ api/shipments/index.php?id=$1 [L,QSA]
