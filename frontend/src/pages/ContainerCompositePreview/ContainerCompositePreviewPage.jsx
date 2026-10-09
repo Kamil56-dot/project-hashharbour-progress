@@ -20,7 +20,7 @@ export function ContainerCompositePreviewPage() {
         {/* Clean Back Button */}
         <div className="w-full flex items-center justify-start mb-2 lg:mb-2.5">
           <Link
-            to="/container-section"
+            to="/containers"
             className="group inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-[#475569] hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors py-1 px-2.5 -ml-2.5 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/[0.06]"
           >
             <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
