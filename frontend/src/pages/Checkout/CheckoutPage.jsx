@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ChevronRight, Lock, ArrowRight, ShieldCheck, AlertTriangle, AlertCircle, Loader2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { CONFIG } from '../../config';
+import { getAccessToken } from '../../lib/authStorage';
 import {
   CONTAINER_DB_IDS,
   SHIPPING_DEMO,
@@ -160,7 +161,7 @@ export function CheckoutPage() {
     }
 
     // (b) Check login status
-    const token = localStorage.getItem('hh_access_token');
+    const token = getAccessToken();
     if (!token) {
       // Not logged in — save draft and redirect to /login
       const draft = {

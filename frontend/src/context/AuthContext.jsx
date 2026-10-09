@@ -1,32 +1,32 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { CONFIG } from '../config';
 import { authFetch, clearAuthStorage, setOnAuthFailure } from '../lib/authFetch';
-
-const ACCESS_TOKEN_KEY = 'hh_access_token';
-const REFRESH_TOKEN_KEY = 'hh_refresh_token';
-const USER_KEY = 'hh_user';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  USER_KEY,
+  getAccessToken,
+  getRefreshToken,
+  getStoredUser,
+  setAccessToken,
+  setRefreshToken,
+  setStoredUser,
+} from '../lib/authStorage';
 
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem(USER_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState(() => getStoredUser());
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return Boolean(localStorage.getItem(ACCESS_TOKEN_KEY));
+    return Boolean(getAccessToken());
   });
 
   const [isLoading, setIsLoading] = useState(true);
 
   // Logout handler: clears local storage and revokes refresh token on backend
   const logout = useCallback(async () => {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    const refreshToken = getRefreshToken();
     clearAuthStorage();
     setUser(null);
     setIsAuthenticated(false);
@@ -80,13 +80,54 @@ export function AuthProvider({ children }) {
       throw new Error('Authentication response did not contain an access token.');
     }
 
-    // Save tokens and user info in localStorage
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access);
+    // Save tokens and user info in session storage
+    setAccessToken(data.access);
     if (data.refresh) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh);
+      setRefreshToken(data.refresh);
     }
     if (data.user) {
-      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+      setStoredUser(data.user);
+    }
+
+    setUser(data.user || null);
+    setIsAuthenticated(true);
+
+    return data.user;
+  }, []);
+
+  // Register handler: calls /api/auth/register.php and updates local state & storage
+  const register = useCallback(async (formData) => {
+    let response;
+    const baseUrl = CONFIG.apiUrl.endsWith('/') ? CONFIG.apiUrl.slice(0, -1) : CONFIG.apiUrl;
+    try {
+      response = await fetch(`${baseUrl}/api/auth/register.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+    } catch {
+      throw new Error('Authentication server unreachable. Please check your network connection.');
+    }
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.error || `Registration failed with status ${response.status}.`);
+    }
+
+    if (!data?.access) {
+      throw new Error('Authentication response did not contain an access token.');
+    }
+
+    // Save tokens and user info in session storage
+    setAccessToken(data.access);
+    if (data.refresh) {
+      setRefreshToken(data.refresh);
+    }
+    if (data.user) {
+      setStoredUser(data.user);
     }
 
     setUser(data.user || null);
@@ -108,8 +149,8 @@ export function AuthProvider({ children }) {
     let isMounted = true;
 
     async function restoreSession() {
-      const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
-      const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+      const accessToken = getAccessToken();
+      const refreshToken = getRefreshToken();
 
       // If no token exists at all, stay logged out
       if (!accessToken && !refreshToken) {
@@ -132,7 +173,7 @@ export function AuthProvider({ children }) {
         const data = await response.json();
         if (isMounted) {
           if (data?.user) {
-            localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+            setStoredUser(data.user);
             setUser(data.user);
           }
           setIsAuthenticated(true);
@@ -163,6 +204,7 @@ export function AuthProvider({ children }) {
     isAuthenticated,
     isLoading,
     login,
+    register,
     logout,
   };
 
