@@ -4,6 +4,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Block direct HTTP access to internal directories
+    RewriteRule ^(config|includes|migrations|scripts|tests|backups)(/|$) - [F,L]
+
     # Pass Authorization header to PHP
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -48,6 +51,10 @@
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "DENY"
 </IfModule>
+
+<FilesMatch "\.(sql|md|env|log|bak|ps1|sh|ini)$">
+    Require all denied
+</FilesMatch>
 
 # Disable directory listing
 Options -Indexes

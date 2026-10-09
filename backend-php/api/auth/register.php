@@ -18,6 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = get_json_input();
+foreach (['email', 'password', 'first_name', 'firstName', 'last_name', 'lastName'] as $hhField) {
+    if (isset($input[$hhField]) && !is_string($input[$hhField])) {
+        send_error('Invalid value for ' . $hhField . '.', 400);
+    }
+}
+
 $email = trim((string)($input['email'] ?? ''));
 $password = (string)($input['password'] ?? '');
 $firstName = trim((string)($input['first_name'] ?? ($input['firstName'] ?? '')));
@@ -28,12 +34,24 @@ if (empty($email) || empty($password)) {
     send_error('Both email and password are required.', 400);
 }
 
+if (strlen($email) > 255) {
+    send_error('Email address cannot exceed 255 characters.', 400);
+}
+
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     send_error('Please provide a valid email address.', 400);
 }
 
 if (strlen($password) < 6) {
     send_error('Password must be at least 6 characters long.', 400);
+}
+
+if (strlen($password) > 72) {
+    send_error('Password cannot exceed 72 bytes.', 400);
+}
+
+if (mb_strlen($firstName) > 100 || mb_strlen($lastName) > 100) {
+    send_error('First and last name cannot exceed 100 characters each.', 400);
 }
 
 $pdo = get_db();

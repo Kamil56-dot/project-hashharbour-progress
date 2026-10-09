@@ -11,6 +11,8 @@ function handle_cors(): void
     $allowed_origins = [
         'http://localhost:5173',
         'http://127.0.0.1:5173',
+        'http://localhost:4173',
+        'http://127.0.0.1:4173',
         'http://localhost:5174',
         'http://127.0.0.1:5174',
         'http://localhost:3000',
@@ -20,13 +22,12 @@ function handle_cors(): void
 
     if (in_array($origin, $allowed_origins, true)) {
         header("Access-Control-Allow-Origin: {$origin}");
-    } else {
-        header("Access-Control-Allow-Origin: *");
+        header('Vary: Origin');
+        header('Access-Control-Allow-Credentials: true');
     }
 
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-    header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 86400');
 
     // Handle preflight OPTIONS request

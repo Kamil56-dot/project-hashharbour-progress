@@ -28,10 +28,18 @@ $pdo = get_db();
 
 // 1. Tracking query action: /api/shipments/track/?tracking_no=... (PUBLIC)
 if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
+    if (isset($_GET['tracking_no']) && !is_string($_GET['tracking_no'])) {
+        send_error('Tracking number parameter is required.', 400);
+    }
+
     $trackingNo = trim((string)($_GET['tracking_no'] ?? ''));
 
     if (empty($trackingNo)) {
         send_error('Tracking number parameter is required.', 400);
+    }
+
+    if (mb_strlen($trackingNo) > 50) {
+        send_error('Tracking number cannot exceed 50 characters.', 400);
     }
 
     $stmt = $pdo->prepare('
