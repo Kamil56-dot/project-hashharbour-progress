@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import { Sun, Moon, ShoppingCart, X, UserPlus, LogIn, ArrowRight, User, LogOut, ChevronDown } from 'lucide-react';
+import { isStaff } from '../../lib/roles';
+import { Sun, Moon, X, UserPlus, LogIn, ArrowRight, User, LogOut, ChevronDown } from 'lucide-react';
 
 /**
  * PREVIEW-ONLY NAVBAR COMPONENT
@@ -34,6 +35,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
 
   // While isLoading, show logged-out state to prevent UI flicker
   const isLoggedIn = !isLoading && isAuthenticated;
+  const userIsStaff = isStaff(user);
 
   const userName = user?.first_name
     ? `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`.trim()
@@ -77,6 +79,7 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
     if (pathname === '/') return 'home';
     if (pathname === '/about') return 'about';
     if (pathname === '/services' || pathname.startsWith('/container')) return 'services';
+    if (pathname.startsWith('/account/bookings')) return 'bookings';
     if (pathname === '/login') return 'login';
     if (pathname === '/checkout') return '';
     return '';
@@ -88,7 +91,11 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
     { id: 'home', label: 'Home', href: '/' },
     { id: 'about', label: 'About', href: '/about' },
     { id: 'services', label: 'Services', href: '/services' },
-    { id: 'routes', label: 'Routes', href: '#routes' },
+    {
+      id: 'bookings',
+      label: userIsStaff ? 'All Bookings' : 'My Bookings',
+      href: isLoading || isLoggedIn ? '/account/bookings' : '/login?returnUrl=%2Faccount%2Fbookings',
+    },
   ];
 
   // Close dropdowns on route change
@@ -398,24 +405,6 @@ export const SiteNavbar = React.forwardRef(function SiteNavbar(props, ref) {
               )}
             </button>
 
-            {/* Shopping Cart Icon in Blue (~28px) */}
-            <Link
-              to="/checkout"
-              className={`min-w-[36px] min-h-[36px] p-1 relative flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-500 ${
-                isDark ? 'text-[#38BDF8]' : 'text-[#1E88E5]'
-              }`}
-              aria-label="Shopping cart"
-            >
-              <ShoppingCart className="w-[24px] h-[24px] min-[380px]:w-[28px] min-[380px]:h-[28px] stroke-[2.2]" />
-              {isCheckout && (
-                <span
-                  id="cart-quantity-badge"
-                  className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#1E88E5] text-white text-[10px] sm:text-[11px] font-bold flex items-center justify-center leading-none shadow-xs pointer-events-none select-none transition-transform scale-100"
-                >
-                  {checkoutQty}
-                </span>
-              )}
-            </Link>
 
             {/* Hamburger Icon Button (Opens Dropdown Panel on Mobile Only) */}
             <button

@@ -187,8 +187,8 @@ function CenterContainerShine({ container, isSlide }) {
 
 export function ContainerCompositeSection({
   className = '',
-  exploreTo = '/container-section',
-  bookBasePath = '/container-section',
+  exploreTo = '/containers',
+  bookBasePath = '/checkout',
 }) {
   const { isDark } = useTheme();
   const navigate = useNavigate();

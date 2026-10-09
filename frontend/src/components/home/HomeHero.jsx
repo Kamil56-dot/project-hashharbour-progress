@@ -109,7 +109,7 @@ export function HomeHero() {
             {/* CTA button */}
             <div className="mt-auto pt-1 sm:pt-2">
               <Link
-                to="/container-section"
+                to="/containers"
                 className={`inline-flex items-center justify-center font-semibold rounded-full hover:shadow-lg transition-all duration-200 motion-reduce:transition-none motion-reduce:hover:shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 group whitespace-nowrap ${
                   isDark
                     ? 'bg-cyan-500 text-slate-950 hover:bg-cyan-400 focus-visible:ring-cyan-400 focus-visible:ring-offset-surface-950'
@@ -124,7 +124,7 @@ export function HomeHero() {
                     : '0 4px 14px rgba(30, 136, 229, 0.35)',
                 }}
               >
-                Book My Container
+                Explore in 3D
                 <ArrowRight
                   className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:transform-none"
                   style={{

@@ -10,7 +10,6 @@ import { useTheme } from './context/ThemeContext';
 const AboutSection = lazy(() => import('./components/about/AboutSection').then(m => ({ default: m.AboutSection })));
 const ServicesSection = lazy(() => import('./components/services/ServicesSection').then(m => ({ default: m.ServicesSection })));
 const ArchivedHero = lazy(() => import('./components/archived-hero/ArchivedHero').then(m => ({ default: m.ArchivedHero })));
-const ContainerPage = lazy(() => import('./pages/ContainerSection/ContainerPage'));
 const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/ContainerPreviewPage'));
 const ContainerCompositePreviewPage = lazy(() => import('./pages/ContainerCompositePreview/ContainerCompositePreviewPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -146,8 +145,8 @@ export function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/about" element={<AboutSection />} />
             <Route path="/services" element={<ServicesSection />} />
-            <Route path="/container-section" element={<ContainerPage />} />
-            <Route path="/container_section" element={<ContainerPage />} />
+            <Route path="/container-section" element={<Navigate to="/containers" replace />} />
+            <Route path="/container_section" element={<Navigate to="/containers" replace />} />
             <Route path="/container-preview" element={<ContainerPreviewPage />} />
             <Route path="/container-composite-preview" element={<ContainerCompositePreviewPage />} />
             <Route path="/home-preview" element={<ArchivedHero navbarRef={navbarRef} />} />

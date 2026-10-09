@@ -43,7 +43,7 @@ export const HeroActions = React.forwardRef(function HeroActions(
       {/* New Integrated Container Section CTA: "View Container Tracking" */}
       <Button
         variant="ghost"
-        href="/container-section"
+        href="/containers"
         icon={Box}
         iconPosition="left"
         className="w-full sm:w-auto px-5 h-[48px] text-[15px] font-medium border-accent-500/40 text-accent-400 bg-accent-500/10 hover:border-accent-500 hover:bg-accent-500/20 shadow-[0_0_15px_rgba(0,212,255,0.2)]"
