@@ -97,7 +97,7 @@ function require_auth(): array
 /**
  * Enforce Role-Based Access Control (RBAC)
  *
- * @param array|string $allowedRoles (e.g. 'admin' or ['super_admin', 'admin', 'manager'])
+ * @param array|string $allowedRoles (e.g. 'admin' or ['super_admin', 'admin'])
  * @return array Authenticated user data
  */
 function require_role(array|string $allowedRoles): array

@@ -5,7 +5,7 @@
  * - POST  /api/bookings/            : Authenticated - Create booking (standard or checkout mode) with locked price_snapshot
  * - GET   /api/bookings/            : Authenticated - Scoped by role (customer: own only; staff: all)
  * - GET   /api/bookings/{id}        : Authenticated - Booking detail (owner or staff only)
- * - POST  /api/bookings/{id}/cancel : Authenticated - Cancel booking (customer: own pending only; staff: non-completed/non-cancelled)
+ * - POST  /api/bookings/{id}/cancel : Authenticated - Staff only cancel booking (non-completed/non-cancelled)
  * - PATCH /api/bookings/{id}/status : Authenticated - Staff only status transition (pending -> confirmed -> in_transit -> completed)
  */
 
@@ -21,7 +21,7 @@ if (file_exists(__DIR__ . '/../../config/constants.php')) {
 
 // Authentication required for all booking endpoints
 $currentUser = require_auth();
-$isStaff = in_array($currentUser['role'], ['super_admin', 'admin', 'manager'], true);
+$isStaff = in_array($currentUser['role'], ['super_admin', 'admin'], true);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
@@ -110,7 +110,7 @@ if ($method === 'GET' && $action === null) {
         ');
         $stmt->execute(['user_id' => $currentUser['id']]);
     } else {
-        // Staff (super_admin, admin, manager) sees all bookings
+        // Staff (super_admin, admin) sees all bookings
         $stmt = $pdo->query('
             SELECT b.*, c.container_code, c.type AS container_type, c.size_ft AS container_size,
                    u.email AS customer_email, u.first_name AS customer_first_name, u.last_name AS customer_last_name
@@ -151,20 +151,14 @@ if ($method === 'POST') {
             send_error('Booking not found.', 404);
         }
 
+        // Only staff can cancel bookings
         if (!$isStaff) {
-            // Customer can only cancel their own booking
-            if ((int)$booking['user_id'] !== (int)$currentUser['id']) {
-                send_error('You do not have permission to cancel this booking.', 403);
-            }
-            // Customer can only cancel while status = 'pending'
-            if ($booking['status'] !== 'pending') {
-                send_error("Cannot cancel booking with status '{$booking['status']}'. Only pending bookings can be cancelled by customer.", 409);
-            }
-        } else {
-            // Staff can cancel any booking whose status is not completed and not cancelled
-            if (in_array($booking['status'], ['completed', 'cancelled'], true)) {
-                send_error("Cannot cancel booking with status '{$booking['status']}'.", 409);
-            }
+            send_error('Only staff can cancel bookings.', 403);
+        }
+
+        // Staff can cancel any booking whose status is not completed and not cancelled
+        if (in_array($booking['status'], ['completed', 'cancelled'], true)) {
+            send_error("Cannot cancel booking with status '{$booking['status']}'.", 409);
         }
 
         $input = get_json_input();

@@ -10,7 +10,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ------------------------------------------------------------------------------
 -- 1. USERS TABLE
 -- Drop 'username' column entirely: email is the sole login identifier.
--- Role enum supports RBAC: customer, manager, admin, super_admin.
+-- Role enum supports RBAC: customer, admin, super_admin.
 -- Includes super_admin_flag persistent generated column with unique index
 -- enforcing strictly ONE singleton super_admin at database level.
 -- ------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ CREATE TABLE `users` (
   `password_hash` VARCHAR(255) NOT NULL,
   `first_name` VARCHAR(100) DEFAULT NULL,
   `last_name` VARCHAR(100) DEFAULT NULL,
-  `role` ENUM('customer', 'manager', 'admin', 'super_admin') NOT NULL DEFAULT 'customer',
+  `role` ENUM('customer', 'admin', 'super_admin') NOT NULL DEFAULT 'customer',
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `super_admin_flag` TINYINT(1) GENERATED ALWAYS AS (IF(`role` = 'super_admin', 1, NULL)) STORED,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

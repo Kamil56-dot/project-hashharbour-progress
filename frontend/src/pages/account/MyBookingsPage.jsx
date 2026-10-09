@@ -341,14 +341,10 @@ export function MyBookingsPage() {
     }
   };
 
-  // Determine if a booking can be cancelled by current user
+  // Determine if a booking can be cancelled by current user (staff only)
   const canCancelBooking = (booking) => {
-    if (!booking) return false;
-    if (isStaff) {
-      return booking.status !== 'completed' && booking.status !== 'cancelled';
-    }
-    // Customer can only cancel their own pending bookings
-    return booking.status === 'pending';
+    if (!booking || !isStaff) return false;
+    return booking.status !== 'completed' && booking.status !== 'cancelled';
   };
 
   // Computed stats from real data

@@ -1,20 +1,18 @@
 /**
  * Role definitions and authorization helpers
- * Roles: super_admin > admin > manager > customer
+ * Roles: super_admin > admin > customer
  */
 
 export const ROLES = Object.freeze({
   CUSTOMER: 'customer',
-  MANAGER: 'manager',
   ADMIN: 'admin',
   SUPER_ADMIN: 'super_admin',
 });
 
 export const ROLE_HIERARCHY = Object.freeze({
   [ROLES.CUSTOMER]: 1,
-  [ROLES.MANAGER]: 2,
-  [ROLES.ADMIN]: 3,
-  [ROLES.SUPER_ADMIN]: 4,
+  [ROLES.ADMIN]: 2,
+  [ROLES.SUPER_ADMIN]: 3,
 });
 
 /**
@@ -54,12 +52,12 @@ export function hasRole(userOrRole, allowedRoles = []) {
 }
 
 /**
- * Check if role is staff (manager, admin, or super_admin).
+ * Check if role is staff (admin or super_admin).
  */
 export function isStaff(userOrRole) {
   const role = getRole(userOrRole);
   if (!role) return false;
-  return [ROLES.MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(role);
+  return [ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(role);
 }
 
 /**
