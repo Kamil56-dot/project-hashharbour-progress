@@ -10,6 +10,7 @@
 
     # Clean URL rewrites for Auth endpoints
     RewriteRule ^api/auth/login/?$ api/auth/login.php [L,QSA]
+    RewriteRule ^api/auth/register/?$ api/auth/register.php [L,QSA]
     RewriteRule ^api/auth/(token/)?refresh/?$ api/auth/refresh.php [L,QSA]
     RewriteRule ^api/auth/me/?$ api/auth/me.php [L,QSA]
 

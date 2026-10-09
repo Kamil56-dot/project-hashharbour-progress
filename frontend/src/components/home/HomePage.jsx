@@ -64,6 +64,7 @@ export function HomePage() {
           <ContainerCompositeSection
             className="py-10 lg:py-14 px-4 sm:px-6 lg:px-8 xl:px-12"
             exploreTo="/containers"
+            bookBasePath="/checkout"
           />
         </Suspense>
       </div>

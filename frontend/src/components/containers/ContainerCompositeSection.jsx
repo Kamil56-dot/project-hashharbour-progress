@@ -356,7 +356,11 @@ export function ContainerCompositeSection({
   // Navigate to container booking flow
   const handleBookContainer = () => {
     const active = CONTAINERS[centerIndex];
-    navigate(`${bookBasePath}?type=${active.id}&action=book`);
+    if (bookBasePath === '/checkout' || bookBasePath.startsWith('/checkout')) {
+      navigate(`${bookBasePath}?type=${active.id}`);
+    } else {
+      navigate(`${bookBasePath}?type=${active.id}&action=book`);
+    }
   };
 
   const activeContainer = CONTAINERS[centerIndex];

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-// loginBg removed — global background image provides the wavy background
 
 /**
  * Google SVG Icon
@@ -77,17 +76,21 @@ function AnchorIcon({ className = 'w-12 h-[54px] text-brand-500' }) {
 }
 
 /**
- * Login Page Component
- * Route: /login
- * Matches the reference design with centered white card on soft light-blue wavy gradient background.
+ * Register Page Component
+ * Route: /register
+ * Matches the reference design with centered white card on soft wavy gradient background.
  */
-export function LoginPage() {
+export function RegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { login, isAuthenticated } = useAuth();
+  const { register, isAuthenticated } = useAuth();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -100,9 +103,7 @@ export function LoginPage() {
     !returnUrl.startsWith('//') &&
     !returnUrl.includes('://');
 
-  const targetDestination = isSafeReturn
-    ? returnUrl
-    : (location.state?.from?.pathname || location.state?.from || '/');
+  const targetDestination = isSafeReturn ? returnUrl : '/';
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -119,10 +120,11 @@ export function LoginPage() {
     setSuccessMsg('');
 
     const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
+    const trimmedFirst = firstName.trim();
+    const trimmedLast = lastName.trim();
 
-    if (!trimmedEmail || !trimmedPassword) {
-      setErrorMsg('Please enter both email address and password.');
+    if (!trimmedEmail || !password) {
+      setErrorMsg('Email address and password are required.');
       return;
     }
 
@@ -132,16 +134,32 @@ export function LoginPage() {
       return;
     }
 
+    if (password.length < 6) {
+      setErrorMsg('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMsg('Passwords do not match.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(trimmedEmail, trimmedPassword);
-      setSuccessMsg('Login successful! Redirecting...');
+      await register({
+        email: trimmedEmail,
+        password,
+        first_name: trimmedFirst,
+        last_name: trimmedLast,
+      });
+
+      setSuccessMsg('Account created successfully! Redirecting...');
       setTimeout(() => {
         navigate(targetDestination, { replace: true });
       }, 700);
     } catch (err) {
-      setErrorMsg(err.message || 'Unable to connect to the authentication server.');
+      setErrorMsg(err.message || 'Unable to register. Please check your details and try again.');
     } finally {
       setLoading(false);
     }
@@ -151,86 +169,110 @@ export function LoginPage() {
     setErrorMsg('Google Sign-In integration is currently in preview mode.');
   };
 
-  return (
-    <div
-      className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-transparent"
-    >
-      {/* Global body::before provides the wavy background image */}
+  const loginUrl = returnUrl ? `/login?returnUrl=${encodeURIComponent(returnUrl)}` : '/login';
 
+  return (
+    <div className="relative min-h-screen w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-transparent">
       {/* ── Centered White Card ── */}
-      <div className="relative z-10 w-full max-w-[420px] sm:max-w-[440px] bg-white rounded-[28px] sm:rounded-[32px] shadow-[0_20px_60px_-15px_rgba(15,40,80,0.1),0_0_1px_1px_rgba(0,0,0,0.03)] px-7 py-9 sm:px-10 sm:py-11 border border-blue-50/80 transition-all">
-        {/* Brand Header: Vertical stack of Anchor Logo, Wordmark, and Subtitle */}
+      <div className="relative z-10 w-full max-w-[460px] bg-white rounded-[28px] sm:rounded-[32px] shadow-[0_20px_60px_-15px_rgba(15,40,80,0.1),0_0_1px_1px_rgba(0,0,0,0.03)] px-7 py-9 sm:px-10 sm:py-10 border border-blue-50/80 transition-all">
+        {/* Brand Header */}
         <div className="flex flex-col items-center text-center">
           <Link
             to="/"
             className="flex flex-col items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-lg p-1"
             title="HashHarbour Homepage"
           >
-            {/* 1. Anchor logo icon — centered, on its own line, larger size (roughly 48-56px) */}
             <AnchorIcon className="w-12 h-[54px] sm:w-[50px] sm:h-[56px] text-brand-500 transition-transform duration-200 group-hover:scale-105" />
-
-            {/* 2. "HashHarbour" wordmark text — centered, directly below the logo on the next line */}
             <span className="font-sans font-bold text-[26px] sm:text-[28px] tracking-tight text-[#0F172A] leading-tight mt-3">
               HashHarbour
             </span>
           </Link>
 
-          {/* 3. "Welcome back" subtitle — centered, below the wordmark */}
           <p className="text-[#64748B] text-[15px] font-normal mt-1.5">
-            Welcome back
+            Create your account
           </p>
         </div>
 
         {/* Feedback Alerts */}
         {errorMsg && (
-          <div className="mt-6 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="mt-5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" />
             <span className="flex-1 leading-snug">{errorMsg}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="mt-6 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="mt-5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
             <span className="flex-1 leading-snug">{successMsg}</span>
           </div>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="mt-7 space-y-4">
-          {/* Email Address Input (Envelope icon, rounded pill shape) */}
+        {/* Registration Form */}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-3.5">
+          {/* First Name & Last Name (Side by side on >= sm) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="relative flex items-center">
+              <div className="absolute left-4 pointer-events-none text-gray-400">
+                <User className="w-4 h-4" />
+              </div>
+              <input
+                id="register-firstname"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-11 pr-4 py-3 text-sm transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
+                autoComplete="given-name"
+              />
+            </div>
+            <div className="relative flex items-center">
+              <div className="absolute left-4 pointer-events-none text-gray-400">
+                <User className="w-4 h-4" />
+              </div>
+              <input
+                id="register-lastname"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-11 pr-4 py-3 text-sm transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
+                autoComplete="family-name"
+              />
+            </div>
+          </div>
+
+          {/* Email Address */}
           <div className="relative flex items-center">
             <div className="absolute left-4 sm:left-5 pointer-events-none text-gray-400">
               <Mail className="w-5 h-5" />
             </div>
             <input
-              id="login-email"
+              id="register-email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address"
-              aria-label="Email address"
-              title="Please enter your email address"
               className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-12 sm:pl-13 pr-5 py-3 sm:py-3.5 text-sm sm:text-[15px] transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
               autoComplete="email"
             />
           </div>
 
-          {/* Password Input (Lock icon, rounded pill shape, eye toggle) */}
+          {/* Password */}
           <div className="relative flex items-center">
             <div className="absolute left-4 sm:left-5 pointer-events-none text-gray-400">
               <Lock className="w-5 h-5" />
             </div>
             <input
-              id="login-password"
+              id="register-password"
               type={showPassword ? 'text' : 'password'}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder="Password (min 6 characters)"
               className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-12 sm:pl-13 pr-12 py-3 sm:py-3.5 text-sm sm:text-[15px] transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
             <button
               type="button"
@@ -246,10 +288,27 @@ export function LoginPage() {
             </button>
           </div>
 
-          {/* Blue Gradient "Login" Button (Rounded pill, arrow icon) */}
+          {/* Confirm Password */}
+          <div className="relative flex items-center">
+            <div className="absolute left-4 sm:left-5 pointer-events-none text-gray-400">
+              <Lock className="w-5 h-5" />
+            </div>
+            <input
+              id="register-confirm-password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm password"
+              className="w-full bg-[#F8FAFC] border border-gray-200 hover:border-gray-300 focus:border-brand-500 focus:bg-white text-gray-800 placeholder-gray-400 rounded-full pl-12 sm:pl-13 pr-5 py-3 sm:py-3.5 text-sm sm:text-[15px] transition-all duration-150 outline-none focus:ring-4 focus:ring-brand-500/10"
+              autoComplete="new-password"
+            />
+          </div>
+
+          {/* Submit Register Button */}
           <div className="pt-2">
             <button
-              id="login-submit-btn"
+              id="register-submit-btn"
               type="submit"
               disabled={loading}
               className="group w-full rounded-full py-3.5 px-6 bg-gradient-to-r from-[#1E88E5] via-[#1976D2] to-[#1565C0] hover:from-[#1976D2] hover:to-[#0D47A1] text-white font-medium text-sm sm:text-base flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(30,136,229,0.35)] hover:shadow-[0_6px_20px_rgba(30,136,229,0.45)] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer active:scale-[0.99]"
@@ -257,11 +316,11 @@ export function LoginPage() {
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Logging in...</span>
+                  <span>Creating account...</span>
                 </>
               ) : (
                 <>
-                  <span>Login</span>
+                  <span>Create Account</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </>
               )}
@@ -269,15 +328,15 @@ export function LoginPage() {
           </div>
         </form>
 
-        {/* Link to Register */}
+        {/* Link to Login */}
         <div className="mt-5 text-center">
           <p className="text-sm text-gray-500">
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link
-              to={returnUrl ? `/register?returnUrl=${encodeURIComponent(returnUrl)}` : '/register'}
+              to={loginUrl}
               className="font-semibold text-brand-600 hover:text-brand-700 hover:underline"
             >
-              Register
+              Log in
             </Link>
           </p>
         </div>
@@ -291,9 +350,9 @@ export function LoginPage() {
           <div className="flex-1 border-t border-gray-200/90" />
         </div>
 
-        {/* "Continue with Google" Button (White, Google logo, rounded pill) */}
+        {/* "Continue with Google" Button */}
         <button
-          id="login-google-btn"
+          id="register-google-btn"
           type="button"
           onClick={handleGoogleSignIn}
           className="w-full py-3 sm:py-3.5 px-5 rounded-full border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50/90 active:bg-gray-100 flex items-center justify-center gap-3 text-sm sm:text-[15px] font-medium text-gray-700 shadow-sm hover:shadow transition-all duration-150 cursor-pointer"
@@ -306,4 +365,4 @@ export function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;

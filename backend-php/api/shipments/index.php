@@ -34,7 +34,12 @@ if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
         send_error('Tracking number parameter is required.', 400);
     }
 
-    $stmt = $pdo->prepare('SELECT * FROM shipments WHERE UPPER(tracking_number) = UPPER(:no) LIMIT 1');
+    $stmt = $pdo->prepare('
+        SELECT id, tracking_number, status, origin, destination, vessel, eta, progress_percent, last_update, created_at, updated_at
+        FROM shipments
+        WHERE UPPER(tracking_number) = UPPER(:no)
+        LIMIT 1
+    ');
     $stmt->execute(['no' => $trackingNo]);
     $shipment = $stmt->fetch();
 
@@ -44,6 +49,7 @@ if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
 
     $shipment['id'] = (int)$shipment['id'];
     $shipment['progress_percent'] = (int)$shipment['progress_percent'];
+    unset($shipment['user_id'], $shipment['booking_id']);
 
     send_json($shipment, 200);
 }
@@ -51,7 +57,7 @@ if (isset($_GET['tracking_no']) || preg_match('#/shipments/track/?$#i', $uri)) {
 // All subsequent shipment endpoints require authentication
 require_once __DIR__ . '/../../includes/auth.php';
 $currentUser = require_auth();
-$isStaff = in_array($currentUser['role'], ['super_admin', 'admin', 'manager'], true);
+$isStaff = in_array($currentUser['role'], ['super_admin', 'admin'], true);
 
 // 2. Detail by ID
 $id = null;

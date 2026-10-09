@@ -14,6 +14,7 @@ const ContainerPage = lazy(() => import('./pages/ContainerSection/ContainerPage'
 const ContainerPreviewPage = lazy(() => import('./pages/ContainerPreview/ContainerPreviewPage'));
 const ContainerCompositePreviewPage = lazy(() => import('./pages/ContainerCompositePreview/ContainerCompositePreviewPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const ContainersPage = lazy(() => import('./pages/Containers/ContainersPage'));
 const AccountLayout = lazy(() => import('./pages/account/AccountLayout'));
 const MyBookingsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.MyBookingsPage })));
@@ -73,13 +74,13 @@ export function App() {
 
   const { isLight, isDark } = useTheme();
 
-  // Login page is the ONLY unconditionally light page (no dark variant).
-  // Home page now participates in the theme system (dark default, light toggle).
-  const isLoginPage = pathname === '/login';
+  // Auth pages (/login, /register) are unconditionally light surfaces (no dark variant).
+  // Home page participates in the theme system (dark default, light toggle).
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
-  // Force light global background on login page (no dark overlay)
+  // Force light global background on auth pages (no dark overlay)
   useEffect(() => {
-    if (isLoginPage) {
+    if (isAuthPage) {
       document.body.setAttribute('data-route', 'login');
     } else {
       document.body.removeAttribute('data-route');
@@ -87,10 +88,10 @@ export function App() {
     return () => {
       document.body.removeAttribute('data-route');
     };
-  }, [isLoginPage]);
+  }, [isAuthPage]);
 
-  // SiteNavbar is shown on all routes except /login.
-  const hideSharedNavbar = isLoginPage;
+  // SiteNavbar is shown on all routes except auth pages.
+  const hideSharedNavbar = isAuthPage;
 
   useEffect(() => {
     if (!navbarRef.current) return;
@@ -111,12 +112,12 @@ export function App() {
   /**
    * Universal wrapper class logic:
    * Driven strictly by the global ThemeContext:
-   * - Login page: always white bg (dedicated auth surface)
+   * - Auth pages: always clean bg (dedicated auth surface)
    * - Light theme: theme background (--theme-bg) & theme primary text
    * - Dark theme: dark surface background & primary text
    */
   const getWrapperClass = () => {
-    if (isLoginPage) {
+    if (isAuthPage) {
       return 'min-h-screen bg-transparent antialiased';
     }
     if (isLight) {
@@ -134,7 +135,7 @@ export function App() {
         Skip to main content
       </a>
 
-      {/* Unified SiteNavbar — shown on all routes except /login */}
+      {/* Unified SiteNavbar — shown on all routes except auth pages */}
       {!hideSharedNavbar && <SiteNavbar ref={navbarRef} />}
 
       {/* Main Content Routes */}
@@ -143,6 +144,7 @@ export function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/about" element={<AboutSection />} />
             <Route path="/services" element={<ServicesSection />} />
             <Route path="/container-section" element={<ContainerPage />} />

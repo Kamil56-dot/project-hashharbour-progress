@@ -1,8 +1,16 @@
 import { CONFIG } from '../config';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  USER_KEY,
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+  setRefreshToken,
+  clearAuth,
+} from './authStorage';
 
-const ACCESS_TOKEN_KEY = 'hh_access_token';
-const REFRESH_TOKEN_KEY = 'hh_refresh_token';
-const USER_KEY = 'hh_user';
+export { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY };
 
 let onAuthFailureCallback = null;
 
@@ -11,9 +19,7 @@ export function setOnAuthFailure(callback) {
 }
 
 export function clearAuthStorage() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  clearAuth();
 }
 
 // Single in-flight refresh promise for deduplicating concurrent refresh attempts
@@ -24,7 +30,7 @@ export async function refreshTokens() {
     return inFlightRefreshPromise;
   }
 
-  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+  const refreshToken = getRefreshToken();
   if (!refreshToken) {
     clearAuthStorage();
     if (onAuthFailureCallback) onAuthFailureCallback();
@@ -51,10 +57,10 @@ export async function refreshTokens() {
       }
 
       if (data.access) {
-        localStorage.setItem(ACCESS_TOKEN_KEY, data.access);
+        setAccessToken(data.access);
       }
       if (data.refresh) {
-        localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh);
+        setRefreshToken(data.refresh);
       }
 
       return data.access;
@@ -86,7 +92,7 @@ export async function authFetch(endpoint, options = {}) {
 
   const headers = new Headers(options.headers || {});
 
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = getAccessToken();
   if (token && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);
   }

@@ -21,6 +21,7 @@ import {
   Fuel
 } from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
+import { getAccessToken, getStoredUser, removeAccessToken } from '../../../lib/authStorage';
 
 /**
  * Standard Database Container Catalog Mapping
@@ -129,15 +130,8 @@ export default function TrackingModal({ isOpen, onClose, containerType = '', act
   const [copiedRef, setCopiedRef] = useState(false);
 
   // Auth User check
-  const [authToken, setAuthToken] = useState(() => localStorage.getItem('hh_access_token'));
-  const [currentUser, setCurrentUser] = useState(() => {
-    try {
-      const u = localStorage.getItem('hh_user');
-      return u ? JSON.parse(u) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [authToken, setAuthToken] = useState(() => getAccessToken());
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
 
   // Tracking tab state
   const [trackingNo, setTrackingNo] = useState('HH-100293');
@@ -148,13 +142,8 @@ export default function TrackingModal({ isOpen, onClose, containerType = '', act
   // Re-sync auth token when modal opens
   useEffect(() => {
     if (isOpen) {
-      setAuthToken(localStorage.getItem('hh_access_token'));
-      try {
-        const u = localStorage.getItem('hh_user');
-        setCurrentUser(u ? JSON.parse(u) : null);
-      } catch {
-        setCurrentUser(null);
-      }
+      setAuthToken(getAccessToken());
+      setCurrentUser(getStoredUser());
       setBookingError('');
       setBookingSuccess(null);
       if (isBookingFlow) {
@@ -177,7 +166,7 @@ export default function TrackingModal({ isOpen, onClose, containerType = '', act
     }
 
     // Check Authentication
-    const token = localStorage.getItem('hh_access_token');
+    const token = getAccessToken();
     if (!token) {
       setBookingError('Authentication Required: You are not currently logged in. Please sign in to finalize your container booking.');
       return;
@@ -226,7 +215,7 @@ export default function TrackingModal({ isOpen, onClose, containerType = '', act
         setBookingSuccess(data);
       } else if (response.status === 401) {
         setBookingError('Session expired or unauthorized. Please sign in again to continue.');
-        localStorage.removeItem('hh_access_token');
+        removeAccessToken();
         setAuthToken(null);
       } else {
         // 400 or other errors
@@ -268,7 +257,7 @@ export default function TrackingModal({ isOpen, onClose, containerType = '', act
           last_update: 'Crossed Malacca Strait (14:30 UTC)'
         });
       } else {
-        setTrackingError('Shipment tracking number not found. Try demo code HH-100293 or HH-849201');
+        setTrackingError('Shipment tracking number not found. Please check your tracking number and try again.');
       }
     } finally {
       setTrackingLoading(false);
