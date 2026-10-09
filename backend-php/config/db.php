@@ -39,11 +39,15 @@ function get_db(): PDO
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
         ];
 
-        $passwordsToTry = array_unique(array_filter([
-            getenv('DB_PASS') !== false ? getenv('DB_PASS') : null,
-            '',
-            'root'
-        ], function($v) { return $v !== null; }));
+        if (getenv('APP_ENV') === 'production') {
+            $passwordsToTry = [getenv('DB_PASS') !== false ? getenv('DB_PASS') : ''];
+        } else {
+            $passwordsToTry = array_unique(array_filter([
+                getenv('DB_PASS') !== false ? getenv('DB_PASS') : null,
+                '',
+                'root'
+            ], function($v) { return $v !== null; }));
+        }
 
         $lastException = null;
         foreach ($passwordsToTry as $pass) {

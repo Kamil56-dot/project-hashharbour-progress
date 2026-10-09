@@ -71,10 +71,45 @@ if ($method === 'GET') {
 // ------------------------------------------------------------------------------
 // 2. Write Endpoints: Role-protected (super_admin, admin)
 // ------------------------------------------------------------------------------
+function validate_container_input($input): void
+{
+    if (!is_array($input)) {
+        send_error('Invalid JSON body.', 400);
+    }
+
+    $limits = ['container_code' => 50, 'type' => 100, 'category' => 100, 'capacity' => 100];
+    foreach ($limits as $field => $max) {
+        if (!array_key_exists($field, $input) || $input[$field] === null) {
+            continue;
+        }
+        if (!is_string($input[$field])) {
+            send_error($field . ' must be a string.', 400);
+        }
+        if (mb_strlen(trim($input[$field])) > $max) {
+            send_error($field . ' cannot exceed ' . $max . ' characters.', 400);
+        }
+    }
+
+    if (array_key_exists('price', $input)) {
+        $p = $input['price'];
+        if (is_bool($p) || !is_numeric($p) || (float)$p < 0 || (float)$p > 9999999.99) {
+            send_error('Price must be a number between 0 and 9999999.99.', 400);
+        }
+    }
+
+    if (array_key_exists('size_ft', $input)) {
+        $s = $input['size_ft'];
+        if (is_bool($s) || !is_numeric($s) || (int)$s != $s || (int)$s < 1 || (int)$s > 100) {
+            send_error('size_ft must be an integer between 1 and 100.', 400);
+        }
+    }
+}
+
 $currentUser = require_role(['super_admin', 'admin']);
 
 if ($method === 'POST') {
     $input = get_json_input();
+    validate_container_input($input);
 
     $code = trim((string)($input['container_code'] ?? ''));
     $type = trim((string)($input['type'] ?? ''));
@@ -136,6 +171,7 @@ if ($method === 'PUT') {
     }
 
     $input = get_json_input();
+    validate_container_input($input);
 
     $code = isset($input['container_code']) ? trim((string)$input['container_code']) : $existing['container_code'];
     $type = isset($input['type']) ? trim((string)$input['type']) : $existing['type'];

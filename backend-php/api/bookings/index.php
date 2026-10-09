@@ -212,7 +212,8 @@ if ($method === 'POST') {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            send_error('Failed to cancel booking: ' . $e->getMessage(), 500);
+            error_log('Failed to cancel booking: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            send_error('Failed to cancel booking.', 500);
         }
 
         $updatedBooking = fetch_booking_with_meta($pdo, $id);
@@ -224,6 +225,23 @@ if ($method === 'POST') {
         $input = get_json_input();
 
         $containerId = (int)($input['container_id'] ?? 0);
+        foreach (['origin_port', 'destination_port'] as $hhField) {
+            if (isset($input[$hhField]) && (!is_string($input[$hhField]) || mb_strlen(trim($input[$hhField])) > 150)) {
+                send_error($hhField . ' must be text of at most 150 characters.', 400);
+            }
+        }
+        foreach (['start_date', 'end_date'] as $hhField) {
+            if (isset($input[$hhField]) && $input[$hhField] !== '') {
+                $hhDate = is_string($input[$hhField]) ? DateTime::createFromFormat('!Y-m-d', $input[$hhField]) : false;
+                if (!$hhDate || $hhDate->format('Y-m-d') !== $input[$hhField]) {
+                    send_error($hhField . ' must be a valid date in Y-m-d format.', 400);
+                }
+            }
+        }
+        if (!empty($input['start_date']) && !empty($input['end_date']) && $input['end_date'] < $input['start_date']) {
+            send_error('end_date must not be before start_date.', 400);
+        }
+
         $originPort = trim((string)($input['origin_port'] ?? ''));
         $destinationPort = trim((string)($input['destination_port'] ?? ''));
         $startDate = !empty($input['start_date']) ? (string)$input['start_date'] : null;
@@ -393,7 +411,8 @@ if ($method === 'POST') {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            send_error('Failed to create booking: ' . $e->getMessage(), 500);
+            error_log('Failed to create booking: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            send_error('Failed to create booking.', 500);
         }
 
         $createdBooking = fetch_booking_with_meta($pdo, $newBookingId);
@@ -476,7 +495,8 @@ if ($method === 'PATCH' && $action === 'status') {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
-        send_error('Failed to update booking status: ' . $e->getMessage(), 500);
+        error_log('Failed to update booking status: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+        send_error('Failed to update booking status.', 500);
     }
 
     $updatedBooking = fetch_booking_with_meta($pdo, $id);

@@ -6,6 +6,34 @@
 
 declare(strict_types=1);
 
+if (php_sapi_name() !== 'cli') {
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
+    error_reporting(E_ALL);
+
+    set_exception_handler(function (Throwable $e): void {
+        error_log(sprintf('Uncaught %s: %s in %s:%d', get_class($e), $e->getMessage(), $e->getFile(), $e->getLine()));
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=UTF-8');
+            echo json_encode(['error' => 'Internal server error.'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+        exit;
+    });
+
+    register_shutdown_function(function (): void {
+        $error = error_get_last();
+        if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+            error_log(sprintf('Fatal error: %s in %s on line %d', $error['message'], $error['file'], $error['line']));
+            if (!headers_sent()) {
+                http_response_code(500);
+                header('Content-Type: application/json; charset=UTF-8');
+                echo json_encode(['error' => 'Internal server error.'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
+        }
+    });
+}
+
 /**
  * Output JSON payload with HTTP status code and terminate execution
  *

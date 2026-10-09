@@ -7,7 +7,21 @@
 
 declare(strict_types=1);
 
-define('JWT_SECRET', getenv('JWT_SECRET') ?: 'hashharbour-super-secure-jwt-secret-key-change-in-prod');
+$hhDevJwtSecret = 'hashharbour-super-secure-jwt-secret-key-change-in-prod';
+$hhEnvJwtSecret = getenv('JWT_SECRET');
+
+if (getenv('APP_ENV') === 'production'
+    && ($hhEnvJwtSecret === false || trim($hhEnvJwtSecret) === '' || $hhEnvJwtSecret === $hhDevJwtSecret)) {
+    error_log('Production environment requires a secure, non-default JWT_SECRET.');
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(['error' => 'Server configuration error.'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
+define('JWT_SECRET', ($hhEnvJwtSecret !== false && $hhEnvJwtSecret !== '') ? $hhEnvJwtSecret : $hhDevJwtSecret);
 define('JWT_ACCESS_LIFETIME', 3600);       // 60 minutes
 define('JWT_REFRESH_LIFETIME', 604800);    // 7 days
 
@@ -76,6 +90,11 @@ function verify_jwt(string $token): ?array
     }
 
     [$base64Header, $base64Payload, $base64Signature] = $parts;
+
+    $hhHeader = json_decode(base64url_decode($base64Header), true);
+    if (!is_array($hhHeader) || ($hhHeader['alg'] ?? null) !== 'HS256') {
+        return null;
+    }
 
     $expectedSig = hash_hmac('sha256', "{$base64Header}.{$base64Payload}", JWT_SECRET, true);
     $actualSig = base64url_decode($base64Signature);
