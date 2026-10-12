@@ -88,6 +88,9 @@ export function AccountSidebar() {
         {/* Navigation list */}
         <nav aria-label="Account navigation" className="flex flex-col gap-1">
           {ACCOUNT_NAV_ITEMS.map((item) => {
+            if (item.staffOnly && !userIsStaff) {
+              return null;
+            }
             const Icon = item.icon;
             const isHome = Boolean(item.isHome);
             const isActive = !isHome && (

@@ -17,6 +17,7 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const ContainersPage = lazy(() => import('./pages/Containers/ContainersPage'));
 const AccountLayout = lazy(() => import('./pages/account/AccountLayout'));
 const MyBookingsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.MyBookingsPage })));
+const BookingTotalsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.BookingTotalsPage })));
 const TrackShipmentPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.TrackShipmentPage })));
 const DocumentsPage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.DocumentsPage })));
 const ProfilePage = lazy(() => import('./pages/account/AccountPages').then(m => ({ default: m.ProfilePage })));
@@ -162,6 +163,14 @@ export function App() {
             >
               <Route index element={<Navigate to="bookings" replace />} />
               <Route path="bookings" element={<MyBookingsPage />} />
+              <Route
+                path="booking-totals"
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin']}>
+                    <BookingTotalsPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="track" element={<TrackShipmentPage />} />
               <Route path="documents" element={<DocumentsPage />} />
               <Route path="profile" element={<ProfilePage />} />
