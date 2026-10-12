@@ -1,4 +1,4 @@
-import { Package, User, Bell } from 'lucide-react';
+import { Package, User, Bell, BarChart3 } from 'lucide-react';
 
 export const ACCOUNT_NAV_ITEMS = [
   {
@@ -9,6 +9,16 @@ export const ACCOUNT_NAV_ITEMS = [
     title: 'My Bookings',
     subtitle: 'View and manage your booked containers, track shipments, and access all related documents.',
     icon: Package,
+  },
+  {
+    id: 'booking-totals',
+    label: 'Booking Totals',
+    href: '/account/booking-totals',
+    path: 'booking-totals',
+    title: 'Booking Totals',
+    subtitle: 'Aggregated volume and total booking value by reservation status.',
+    icon: BarChart3,
+    staffOnly: true,
   },
   {
     id: 'profile',
